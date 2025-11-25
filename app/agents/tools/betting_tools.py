@@ -456,6 +456,7 @@ def fetch_upcoming_games(
     IMPORTANT: Use as many filters as possible to narrow down results:
     - Always specify sport/league when possible
     - Use date filters (start_date_after) to get only upcoming games
+    - Use start_date_before for past games
     - Use team_id to filter by specific team
     - Use sport_id/league_id for more precise filtering (preferred over names)
     
@@ -466,9 +467,11 @@ def fetch_upcoming_games(
         league_id: League ID - preferred over league name for precision
         fixture_id: Optional specific fixture ID (if provided, other filters are ignored)
         team_id: Optional team ID to filter games for a specific team
-        start_date: Specific date (YYYY-MM-DD format). Cannot be used with start_date_after/start_date_before
-        start_date_after: Get fixtures after this date (YYYY-MM-DD format). Defaults to today if no date params provided.
-        start_date_before: Get fixtures before this date (YYYY-MM-DD format)
+        start_date: Specific date (ISO 8601 datetime format: YYYY-MM-DDTHH:MM:SSZ). Cannot be used with start_date_after/start_date_before
+        start_date_after: Get fixtures after this datetime (ISO 8601 format: YYYY-MM-DDTHH:MM:SSZ, e.g., '2024-10-21T00:00:00Z'). 
+                         Defaults to current datetime in UTC if no date params provided.
+        start_date_before: Get fixtures before this datetime (ISO 8601 format: YYYY-MM-DDTHH:MM:SSZ, e.g., '2024-10-21T00:00:00Z'). 
+                          Use this for past games.
         paginate: Whether to fetch all pages of results (default: True to get complete data)
     
     Returns:
@@ -502,20 +505,22 @@ def fetch_upcoming_games(
             
             # Handle date filters - use judiciously to narrow results
             # API rule: Cannot use start_date with start_date_after or start_date_before
+            # API expects ISO 8601 datetime format (YYYY-MM-DDTHH:MM:SSZ) for best results
             if start_date:
-                # Specific date - most precise filter
+                # Specific date - most precise filter (should be ISO 8601 format)
                 params["start_date"] = str(start_date)
             elif start_date_after or start_date_before:
-                # Date range filters
+                # Date range filters (should be ISO 8601 format)
                 if start_date_after:
                     params["start_date_after"] = str(start_date_after)
                 if start_date_before:
                     params["start_date_before"] = str(start_date_before)
             else:
-                # Default: Only get upcoming games (from today onwards)
+                # Default: Only get upcoming games (from current datetime onwards)
                 # This prevents getting games from 3 days ago (API default)
-                today = datetime.now(get_user_timezone()).date()
-                params["start_date_after"] = today.isoformat()
+                # Format as ISO 8601 datetime in UTC (YYYY-MM-DDTHH:MM:SSZ)
+                now_utc = datetime.now(ZoneInfo("UTC"))
+                params["start_date_after"] = now_utc.strftime("%Y-%m-%dT%H:%M:%SZ")
         
         # Get fixtures from OpticOdds API with all filters applied
         result = client.get_fixtures(
