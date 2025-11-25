@@ -58,6 +58,9 @@ class Settings(BaseSettings):
     OPENAI_API_KEY: Optional[str] = Field(default=None)
     ANTHROPIC_API_KEY: Optional[str] = Field(default=None)
     
+    # OpticOdds API
+    OPTICODDS_API_KEY: Optional[str] = Field(default="f8a621e8-2583-4e97-a769-e70c99acdb85")
+    
     # LangSmith (for tracing and monitoring)
     LANGSMITH_API_KEY: Optional[str] = Field(default=None)
     LANGSMITH_TRACING: Optional[str] = Field(default=None)

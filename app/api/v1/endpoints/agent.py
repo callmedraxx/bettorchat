@@ -8,7 +8,8 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from typing import List, Dict, Any, Optional, AsyncIterator
 
-from app.agents.agent import create_research_agent
+from app.agents.agent import create_betting_agent
+from langchain_core.messages import AIMessage, BaseMessage
 from app.agents.langgraph_client import get_langgraph_client, get_agent_id
 
 router = APIRouter()
@@ -30,17 +31,27 @@ class ChatResponse(BaseModel):
 @router.post("/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest):
     """
-    Chat with the research agent (local).
+    Chat with the sports betting agent (local).
     """
     try:
-        agent = create_research_agent()
+        import uuid
+        agent = create_betting_agent()
         
         # Convert request messages to the format expected by the agent
         messages = [{"role": msg.role, "content": msg.content} for msg in request.messages]
         
-        result = agent.invoke({"messages": messages})
+        # Create a config with thread_id for the checkpointer
+        config = {"configurable": {"thread_id": str(uuid.uuid4())}}
         
-        return ChatResponse(messages=result["messages"])
+        result = agent.invoke({"messages": messages}, config=config)
+        
+        # Use LangChain's built-in message serialization
+        formatted_messages = [
+            msg.model_dump() if hasattr(msg, "model_dump") else msg
+            for msg in result["messages"]
+        ]
+        
+        return ChatResponse(messages=formatted_messages)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error processing chat request: {str(e)}")
 
@@ -110,19 +121,48 @@ async def chat_deployed(request: ChatRequest):
 @router.post("/chat/stream")
 async def chat_stream(request: ChatRequest):
     """
-    Stream chat with the research agent (local) - Server-Sent Events.
+    Stream chat with the sports betting agent (local) - Server-Sent Events.
+    Streams only agent responses, not tool calls or intermediate states.
     """
     async def generate() -> AsyncIterator[str]:
         try:
-            agent = create_research_agent()
+            import uuid
+            agent = create_betting_agent()
             
             # Convert request messages to the format expected by the agent
             messages = [{"role": msg.role, "content": msg.content} for msg in request.messages]
             
-            # Stream the agent execution
-            async for chunk in agent.astream({"messages": messages}, stream_mode="updates"):
-                # Format chunk as SSE
-                yield f"data: {json.dumps(chunk)}\n\n"
+            # Create a config with thread_id for the checkpointer
+            config = {"configurable": {"thread_id": str(uuid.uuid4())}}
+            
+            # Stream only final values (not tool calls/thoughts)
+            last_message_content = ""
+            async for chunk in agent.astream({"messages": messages}, config=config, stream_mode="values"):
+                # Extract messages from state
+                state = chunk.get("messages", [])
+                if state:
+                    # Get the last message (should be AIMessage)
+                    last_message = state[-1]
+                    
+                    # Only stream AIMessage content, skip tool calls
+                    if isinstance(last_message, AIMessage) and last_message.content:
+                        # Stream content chunks (incremental updates)
+                        current_content = last_message.content
+                        if isinstance(current_content, str):
+                            # If content has grown, stream the new part
+                            if len(current_content) > len(last_message_content):
+                                new_content = current_content[len(last_message_content):]
+                                yield f"data: {json.dumps({'type': 'content', 'content': new_content})}\n\n"
+                                last_message_content = current_content
+                        elif isinstance(current_content, list):
+                            # Handle list of content blocks
+                            text_parts = [item.get("text", "") if isinstance(item, dict) else str(item) 
+                                        for item in current_content if isinstance(item, (str, dict))]
+                            current_text = "".join(text_parts)
+                            if len(current_text) > len(last_message_content):
+                                new_content = current_text[len(last_message_content):]
+                                yield f"data: {json.dumps({'type': 'content', 'content': new_content})}\n\n"
+                                last_message_content = current_text
             
             # Send completion signal
             yield f"data: {json.dumps({'type': 'done'})}\n\n"
@@ -163,28 +203,52 @@ async def chat_deployed_stream(request: ChatRequest):
             thread = await client.threads.create()
             thread_id = thread["thread_id"]
             
-            # Create and stream the run
+            # Create the run (without stream parameter)
             run = await client.runs.create(
                 assistant_id=agent_id,
                 thread_id=thread_id,
-                input=input_data,
-                stream=True  # Enable streaming
+                input=input_data
             )
             
             run_id = run["run_id"]
             
-            # Stream run events
-            async for event in client.runs.stream(thread_id=thread_id, run_id=run_id):
-                # Format event as SSE
-                yield f"data: {json.dumps(event)}\n\n"
+            # Poll and stream updates
+            max_wait = 60  # Maximum wait time in seconds
+            wait_time = 0
+            poll_interval = 0.5  # Poll every 0.5 seconds
+            last_state = None
             
-            # Get final state
-            thread_state = await client.threads.get_state(thread_id=thread_id)
-            final_data = {
-                "type": "final",
-                "state": thread_state.get("values", {})
-            }
-            yield f"data: {json.dumps(final_data)}\n\n"
+            while wait_time < max_wait:
+                # Get current run status
+                run_status = await client.runs.get(thread_id=thread_id, run_id=run_id)
+                status = run_status.get("status")
+                
+                # Get current thread state
+                thread_state = await client.threads.get_state(thread_id=thread_id)
+                current_state = thread_state.get("values", {})
+                
+                # Stream state updates if changed
+                if current_state != last_state:
+                    update_data = {
+                        "type": "update",
+                        "status": status,
+                        "state": current_state
+                    }
+                    yield f"data: {json.dumps(update_data)}\n\n"
+                    last_state = current_state
+                
+                # Check if run is complete
+                if status in ["success", "error", "cancelled"]:
+                    final_data = {
+                        "type": "final",
+                        "status": status,
+                        "state": current_state
+                    }
+                    yield f"data: {json.dumps(final_data)}\n\n"
+                    break
+                
+                await asyncio.sleep(poll_interval)
+                wait_time += poll_interval
             
             # Send completion signal
             yield f"data: {json.dumps({'type': 'done'})}\n\n"

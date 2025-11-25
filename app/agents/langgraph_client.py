@@ -9,11 +9,17 @@ from app.core.config import settings
 
 def get_langgraph_client():
     """Get LangGraph SDK client configured from settings."""
-    api_key = settings.LANGGRAPH_API_KEY or os.getenv("LANGGRAPH_API_KEY")
+    # Support both correct spelling and typo variant
+    api_key = (
+        settings.LANGGRAPH_API_KEY 
+        or settings.LANGSGRAPH_API_KEY 
+        or os.getenv("LANGGRAPH_API_KEY")
+        or os.getenv("LANGSGRAPH_API_KEY")
+    )
     api_url = settings.LANGGRAPH_API_URL or os.getenv("LANGGRAPH_API_URL")
     
     if not api_key:
-        raise ValueError("LANGGRAPH_API_KEY must be set")
+        raise ValueError("LANGGRAPH_API_KEY or LANGSGRAPH_API_KEY must be set")
     if not api_url:
         raise ValueError("LANGGRAPH_API_URL must be set")
     
