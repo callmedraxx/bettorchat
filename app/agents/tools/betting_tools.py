@@ -1543,32 +1543,12 @@ def format_fixtures_response(data: Dict[str, Any]) -> str:
         if has_odds:
             formatted_lines.append("Odds Available")
         
-        # Add to structured data - include full fixture object for frontend reference
-        structured_fixtures.append({
-            "fixture_id": fixture_id,
-            "home_team": home_team,
-            "away_team": away_team,
-            "date": date_display,
-            "start_time": time_display,
-            "start_date": start_date_str,
-            "status": status,
-            "league": league_name,
-            "league_id": league_id,
-            "venue_name": venue_name,
-            "venue_location": venue_location,
-            "broadcast": broadcast,
-            "home_record": home_record,
-            "away_record": away_record,
-            "season_type": season_type,
-            "season_year": season_year,
-            "season_week": season_week,
-            "is_live": is_live,
-            "has_odds": has_odds,
-            # Include the full fixture object for frontend reference
-            "full_fixture": fixture,
-        })
+        # Add to structured data - full fixture object is the primary data
+        # Frontend will extract all needed fields from the full fixture object
+        structured_fixtures.append(fixture)
     
     # Add structured JSON block for frontend parsing
+    # This contains the complete fixture objects - frontend extracts what it needs
     if structured_fixtures:
         formatted_lines.append(f"\n\n<!-- FIXTURES_DATA_START -->\n{json.dumps({'fixtures': structured_fixtures}, indent=2)}\n<!-- FIXTURES_DATA_END -->")      
     
