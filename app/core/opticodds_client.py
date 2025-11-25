@@ -180,16 +180,28 @@ class OpticOddsClient:
         """
         return self._request("GET", "/sportsbooks", paginate=paginate)
     
-    def get_active_sportsbooks(self, sport: Optional[Union[str, int]] = None, paginate: bool = False) -> Dict[str, Any]:
+    def get_active_sportsbooks(
+        self, 
+        sport: Optional[Union[str, int]] = None,
+        league: Optional[Union[str, int]] = None,
+        fixture_id: Optional[Union[str, int]] = None,
+        paginate: bool = False
+    ) -> Dict[str, Any]:
         """Get active sportsbooks.
         
         Args:
-            sport: Sport name (e.g., 'basketball') or ID
+            sport: Optional sport name (e.g., 'basketball') or ID to filter sportsbooks by sport
+            league: Optional league name (e.g., 'nba') or ID to filter sportsbooks by league
+            fixture_id: Optional fixture ID to filter sportsbooks that have odds for this fixture
             paginate: If True, fetch all pages of results
         """
         params = {}
         if sport:
             params["sport"] = str(sport)
+        if league:
+            params["league"] = str(league)
+        if fixture_id:
+            params["fixture_id"] = str(fixture_id)
         return self._request("GET", "/sportsbooks/active", params=params, paginate=paginate)
     
     def get_markets(self, paginate: bool = False) -> Dict[str, Any]:

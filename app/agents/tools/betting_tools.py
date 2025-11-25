@@ -1189,24 +1189,37 @@ def fetch_available_markets() -> str:
 
 
 @tool
-def fetch_available_sportsbooks(sport: Optional[str] = None) -> str:
+def fetch_available_sportsbooks(
+    sport: Optional[str] = None,
+    league: Optional[str] = None,
+    fixture_id: Optional[str] = None,
+) -> str:
     """Fetch available sportsbooks using OpticOdds /sportsbooks/active endpoint.
     
-    This tool returns sportsbooks that are currently active.
-    Use this to discover valid sportsbook IDs and names for use in other endpoints.
+    This tool returns sportsbooks that are currently active and have odds available.
+    Use this BEFORE calling fetch_live_odds to verify which sportsbooks are available.
+    Also use when user asks about specific sportsbooks or when you need to confirm a sportsbook exists.
+    
+    IMPORTANT: Use filters to narrow down results:
+    - Use sport to filter by sport (e.g., 'basketball')
+    - Use league to filter by league (e.g., 'nba')
+    - Use fixture_id to see which sportsbooks have odds for a specific game
     
     Args:
-        sport: Optional sport name or ID to filter sportsbooks by sport
+        sport: Optional sport name or ID to filter sportsbooks by sport (e.g., 'basketball')
+        league: Optional league name or ID to filter sportsbooks by league (e.g., 'nba')
+        fixture_id: Optional fixture ID to filter sportsbooks that have odds for this specific fixture
     
     Returns:
-        Formatted string with sportsbooks information including IDs and names
+        Formatted string with sportsbooks information including IDs, names, and active status
     """
     try:
         client = get_client()
-        if sport:
-            result = client.get_active_sportsbooks(sport=sport)
-        else:
-            result = client.get_active_sportsbooks()
+        result = client.get_active_sportsbooks(
+            sport=sport if sport else None,
+            league=league if league else None,
+            fixture_id=fixture_id if fixture_id else None,
+        )
         formatted = format_sportsbooks_response(result)
         return formatted
     except Exception as e:
@@ -2001,11 +2014,15 @@ def format_sportsbooks_response(data: Dict[str, Any]) -> str:
         sportsbooks = [sportsbooks] if sportsbooks else []
     
     if not sportsbooks:
-        return "No sportsbooks found"
+        return "No active sportsbooks found"
     
-    formatted_lines.append("Available Sportsbooks:\n")
+    formatted_lines.append("Available Active Sportsbooks:\n")
     
     structured_sportsbooks = []
+    
+    # Separate onshore and offshore for better organization
+    onshore_sportsbooks = []
+    offshore_sportsbooks = []
     
     for sportsbook in sportsbooks:
         if not sportsbook:
@@ -2013,19 +2030,47 @@ def format_sportsbooks_response(data: Dict[str, Any]) -> str:
         
         sportsbook_id = sportsbook.get("id")
         sportsbook_name = sportsbook.get("name", "Unknown")
-        sportsbook_slug = sportsbook.get("slug", "")
+        is_onshore = sportsbook.get("is_onshore", False)
+        is_active = sportsbook.get("is_active", True)
+        logo = sportsbook.get("logo", "")
         
-        formatted_lines.append(f"\n{sportsbook_name}")
-        if sportsbook_id:
-            formatted_lines.append(f"  Sportsbook ID: {sportsbook_id}")
-        if sportsbook_slug:
-            formatted_lines.append(f"  Slug: {sportsbook_slug}")
+        # Only include active sportsbooks
+        if not is_active:
+            continue
+        
+        sportsbook_info = {
+            "id": sportsbook_id,
+            "name": sportsbook_name,
+            "is_onshore": is_onshore,
+            "is_active": is_active,
+            "logo": logo,
+        }
+        
+        if is_onshore:
+            onshore_sportsbooks.append(sportsbook_info)
+        else:
+            offshore_sportsbooks.append(sportsbook_info)
         
         structured_sportsbooks.append({
             "sportsbook_id": sportsbook_id,
             "sportsbook_name": sportsbook_name,
-            "sportsbook_slug": sportsbook_slug,
+            "is_onshore": is_onshore,
+            "is_active": is_active,
+            "logo": logo,
         })
+    
+    # Display onshore sportsbooks first (typically more commonly used)
+    if onshore_sportsbooks:
+        formatted_lines.append("\n📍 Onshore Sportsbooks:")
+        for sb in onshore_sportsbooks:
+            formatted_lines.append(f"  • {sb['name']} (ID: {sb['id']})")
+    
+    if offshore_sportsbooks:
+        formatted_lines.append("\n🌍 Offshore Sportsbooks:")
+        for sb in offshore_sportsbooks:
+            formatted_lines.append(f"  • {sb['name']} (ID: {sb['id']})")
+    
+    formatted_lines.append(f"\nTotal: {len(structured_sportsbooks)} active sportsbook(s)")
     
     # Add structured JSON block for frontend parsing
     if structured_sportsbooks:
