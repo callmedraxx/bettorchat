@@ -3,6 +3,7 @@ MCP-compatible betting tools wrapping OpticOdds API.
 """
 import json
 import base64
+import re
 from datetime import datetime, timedelta
 from typing import Optional, List, Dict, Any
 from langchain.tools import tool
@@ -530,6 +531,27 @@ def fetch_upcoming_games(
         
         # Format response
         formatted = format_fixtures_response(result)
+        
+        # Automatically extract and emit fixture objects to frontend
+        # Extract fixtures from the formatted response (from <!-- FIXTURES_DATA_START --> block)
+        try:
+            # Extract JSON between FIXTURES_DATA_START and FIXTURES_DATA_END
+            pattern = r'<!-- FIXTURES_DATA_START -->\s*(.*?)\s*<!-- FIXTURES_DATA_END -->'
+            match = re.search(pattern, formatted, re.DOTALL)
+            if match:
+                fixtures_json_str = match.group(1).strip()
+                fixtures_data = json.loads(fixtures_json_str)
+                fixtures_list = fixtures_data.get('fixtures', [])
+                
+                if fixtures_list:
+                    # Automatically emit fixture objects to SSE stream
+                    # Use default session_id (can be overridden by user context if needed)
+                    fixture_stream_manager.push_fixtures_sync("default", fixtures_list)
+        except Exception as emit_error:
+            # Don't fail the whole request if emit fails, just log it
+            # The formatted response will still be returned
+            pass
+        
         return formatted
     except Exception as e:
         return f"Error fetching upcoming games: {str(e)}"
