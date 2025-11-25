@@ -9,12 +9,14 @@ from tavily import TavilyClient
 from app.core.config import settings
 
 
-# Initialize Tavily client
+# Initialize Tavily client (optional - only if API key is available)
 _tavily_api_key = settings.TAVILY_API_KEY or os.environ.get("TAVILY_API_KEY")
-if not _tavily_api_key:
-    raise ValueError("TAVILY_API_KEY must be set in environment variables or config")
-
-tavily_client = TavilyClient(api_key=_tavily_api_key)
+tavily_client = None
+if _tavily_api_key:
+    try:
+        tavily_client = TavilyClient(api_key=_tavily_api_key)
+    except Exception:
+        tavily_client = None
 
 
 @tool
@@ -35,22 +37,28 @@ def internet_search(
     Returns:
         Search results as formatted string
     """
-    results = tavily_client.search(
-        query,
-        max_results=max_results,
-        include_raw_content=include_raw_content,
-        topic=topic,
-    )
+    if not tavily_client:
+        return f"Web search is not available. TAVILY_API_KEY must be set in environment variables to use this feature. Your query was: {query}"
     
-    # Format results
-    if isinstance(results, dict):
-        formatted = []
-        formatted.append(f"Search results for: {query}\n")
-        for i, result in enumerate(results.get("results", []), 1):
-            formatted.append(f"{i}. {result.get('title', 'No title')}")
-            formatted.append(f"   URL: {result.get('url', 'No URL')}")
-            formatted.append(f"   {result.get('content', 'No content')}\n")
-        return "\n".join(formatted)
-    
-    return str(results)
+    try:
+        results = tavily_client.search(
+            query,
+            max_results=max_results,
+            include_raw_content=include_raw_content,
+            topic=topic,
+        )
+        
+        # Format results
+        if isinstance(results, dict):
+            formatted = []
+            formatted.append(f"Search results for: {query}\n")
+            for i, result in enumerate(results.get("results", []), 1):
+                formatted.append(f"{i}. {result.get('title', 'No title')}")
+                formatted.append(f"   URL: {result.get('url', 'No URL')}")
+                formatted.append(f"   {result.get('content', 'No content')}\n")
+            return "\n".join(formatted)
+        
+        return str(results)
+    except Exception as e:
+        return f"Error performing web search: {str(e)}"
 
