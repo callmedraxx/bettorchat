@@ -7,12 +7,21 @@ import asyncio
 from fastapi import APIRouter, HTTPException, Query
 from fastapi.responses import StreamingResponse
 from typing import Optional, AsyncIterator
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from app.core.fixture_stream import fixture_stream_manager
 from app.core.odds_stream import odds_stream_manager
 
 router = APIRouter()
+
+
+class SSEEvent(BaseModel):
+    """SSE event model for streaming responses."""
+    type: str = Field(..., description="Event type: 'connected', 'ping', 'odds', 'fixtures', or 'error'")
+    data: Optional[dict] = Field(None, description="Event data payload")
+    session_id: Optional[str] = Field(None, description="Session identifier")
+    timestamp: Optional[float] = Field(None, description="Event timestamp")
+    message: Optional[str] = Field(None, description="Error message (for error events)")
 
 
 class FixturePushRequest(BaseModel):
@@ -58,19 +67,59 @@ async def push_fixtures(request: FixturePushRequest):
         raise HTTPException(status_code=500, detail=f"Error pushing fixtures: {str(e)}")
 
 
-@router.get("/fixtures/stream")
+@router.get(
+    "/fixtures/stream",
+    summary="Stream Fixture Data (SSE)",
+    description="""
+    **Server-Sent Events (SSE) endpoint for streaming fixture objects to frontend.**
+    
+    This endpoint streams fixture data that is automatically emitted by the `fetch_upcoming_games` tool.
+    The frontend connects to this endpoint and receives fixture JSON objects as they're pushed.
+    
+    **How it works:**
+    1. Frontend connects to this endpoint with an optional `session_id`
+    2. When `fetch_upcoming_games` tool is called, it automatically pushes fixture data to this stream
+    3. Frontend receives SSE events with complete fixture JSON objects
+    
+    **Event Types:**
+    - `connected`: Initial connection confirmation
+    - `fixtures`: Fixture data payload (contains full fixture objects)
+    - `ping`: Keep-alive heartbeat (every 30 seconds)
+    - `error`: Error message
+    
+    **Example SSE Event:**
+    ```
+    data: {"type":"connected","session_id":"user123"}
+    
+    data: {"type":"fixtures","data":[{"id":"20251127C95F3929","home_team":"Dallas Cowboys",...}]}
+    ```
+    
+    **Usage:**
+    ```javascript
+    const eventSource = new EventSource('/api/v1/fixtures/fixtures/stream?session_id=user123');
+    eventSource.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        if (data.type === 'fixtures') {
+            console.log('Received fixtures:', data.data);
+        }
+    };
+    ```
+    """,
+    response_description="Server-Sent Events stream with fixture data",
+    tags=["fixtures", "streaming"]
+)
 async def stream_fixtures(
-    session_id: Optional[str] = Query(None, description="Session identifier (user_id or thread_id)")
+    session_id: Optional[str] = Query(
+        None, 
+        description="Session identifier (user_id or thread_id). Defaults to 'default' if not provided.",
+        example="user_123"
+    )
 ):
     """
-    SSE endpoint for streaming fixture objects to frontend.
-    Frontend connects to this endpoint and receives fixture data as it's pushed.
+    Stream fixture objects via Server-Sent Events (SSE).
     
-    Args:
-        session_id: Optional session identifier. If not provided, uses "default"
-        
-    Returns:
-        StreamingResponse with Server-Sent Events
+    Returns a continuous stream of fixture data as it becomes available.
+    Automatically receives data when `fetch_upcoming_games` tool is called.
     """
     session_id = session_id or "default"
     
@@ -127,18 +176,27 @@ async def stream_fixtures(
     )
 
 
-@router.get("/fixtures/latest")
+@router.get(
+    "/fixtures/latest",
+    summary="Get Latest Fixtures (Non-Streaming)",
+    description="""
+    Get the latest fixture data for a session without establishing a streaming connection.
+    
+    This is a REST endpoint that returns the most recent fixture data that was pushed
+    to the stream for the given session. Useful for one-time fetches or fallback when
+    SSE is not available.
+    """,
+    tags=["fixtures"]
+)
 async def get_latest_fixtures(
-    session_id: Optional[str] = Query(None, description="Session identifier")
+    session_id: Optional[str] = Query(
+        None, 
+        description="Session identifier. Defaults to 'default' if not provided.",
+        example="user_123"
+    )
 ):
     """
     Get latest fixture data for a session (non-streaming API).
-    
-    Args:
-        session_id: Optional session identifier. If not provided, uses "default"
-        
-    Returns:
-        Latest fixture data or empty list
     """
     session_id = session_id or "default"
     
@@ -153,19 +211,82 @@ async def get_latest_fixtures(
         raise HTTPException(status_code=500, detail=f"Error getting fixtures: {str(e)}")
 
 
-@router.get("/odds/stream")
+@router.get(
+    "/odds/stream",
+    summary="Stream Odds Data (SSE)",
+    description="""
+    **Server-Sent Events (SSE) endpoint for streaming odds data to frontend.**
+    
+    This endpoint streams betting odds data that is automatically emitted by the `fetch_live_odds` tool.
+    The frontend connects to this endpoint and receives odds JSON objects as they're pushed.
+    
+    **How it works:**
+    1. Frontend connects to this endpoint with an optional `session_id`
+    2. When `fetch_live_odds` tool is called, it automatically pushes odds data to this stream
+    3. Frontend receives SSE events with complete odds JSON objects
+    
+    **Event Types:**
+    - `connected`: Initial connection confirmation
+    - `odds`: Odds data payload (contains full odds response from OpticOdds API)
+    - `ping`: Keep-alive heartbeat (every 30 seconds)
+    - `error`: Error message
+    
+    **Example SSE Event:**
+    ```
+    data: {"type":"connected","session_id":"user123"}
+    
+    data: {"type":"odds","data":{"data":[{"id":"20251127C95F3929","odds":[...]}]}}
+    ```
+    
+    **Odds Response Structure:**
+    The odds data follows the OpticOdds API response format:
+    ```json
+    {
+      "data": [
+        {
+          "id": "fixture_id",
+          "home_competitors": [...],
+          "away_competitors": [...],
+          "odds": [
+            {
+              "sportsbook": "FanDuel",
+              "market": "Moneyline",
+              "name": "Dallas Cowboys",
+              "price": 1800,
+              "deep_link": {...}
+            }
+          ]
+        }
+      ]
+    }
+    ```
+    
+    **Usage:**
+    ```javascript
+    const eventSource = new EventSource('/api/v1/fixtures/odds/stream?session_id=user123');
+    eventSource.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        if (data.type === 'odds') {
+            console.log('Received odds:', data.data);
+        }
+    };
+    ```
+    """,
+    response_description="Server-Sent Events stream with odds data",
+    tags=["odds", "streaming"]
+)
 async def stream_odds(
-    session_id: Optional[str] = Query(None, description="Session identifier (user_id or thread_id)")
+    session_id: Optional[str] = Query(
+        None, 
+        description="Session identifier (user_id or thread_id). Defaults to 'default' if not provided.",
+        example="user_123"
+    )
 ):
     """
-    SSE endpoint for streaming odds data to frontend.
-    Frontend connects to this endpoint and receives odds data as it's pushed.
+    Stream odds data via Server-Sent Events (SSE).
     
-    Args:
-        session_id: Optional session identifier. If not provided, uses "default"
-        
-    Returns:
-        StreamingResponse with Server-Sent Events
+    Returns a continuous stream of odds data as it becomes available.
+    Automatically receives data when `fetch_live_odds` tool is called.
     """
     session_id = session_id or "default"
     
@@ -222,18 +343,27 @@ async def stream_odds(
     )
 
 
-@router.get("/odds/latest")
+@router.get(
+    "/odds/latest",
+    summary="Get Latest Odds (Non-Streaming)",
+    description="""
+    Get the latest odds data for a session without establishing a streaming connection.
+    
+    This is a REST endpoint that returns the most recent odds data that was pushed
+    to the stream for the given session. Useful for one-time fetches or fallback when
+    SSE is not available.
+    """,
+    tags=["odds"]
+)
 async def get_latest_odds(
-    session_id: Optional[str] = Query(None, description="Session identifier")
+    session_id: Optional[str] = Query(
+        None, 
+        description="Session identifier. Defaults to 'default' if not provided.",
+        example="user_123"
+    )
 ):
     """
     Get latest odds data for a session (non-streaming API).
-    
-    Args:
-        session_id: Optional session identifier. If not provided, uses "default"
-        
-    Returns:
-        Latest odds data or None
     """
     session_id = session_id or "default"
     
