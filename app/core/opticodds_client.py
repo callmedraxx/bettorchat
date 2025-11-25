@@ -76,6 +76,22 @@ class OpticOddsClient:
         self._check_rate_limit(endpoint_type)
         
         try:
+            # Debug: Log the actual request URL and params (for debugging)
+            params = kwargs.get("params", {})
+            if params:
+                # Build URL for debugging
+                base_url = f"{self.base_url}{endpoint}"
+                query_parts = []
+                for key, value in params.items():
+                    if isinstance(value, list):
+                        for v in value:
+                            query_parts.append(f"{key}={v}")
+                    else:
+                        query_parts.append(f"{key}={value}")
+                debug_url = f"{base_url}?{'&'.join(query_parts)}"
+                # Only log if there's an issue - uncomment for debugging
+                # print(f"DEBUG: Request URL: {debug_url}")
+            
             response = self.client.request(method, endpoint, **kwargs)
             response.raise_for_status()
             result = response.json()
@@ -358,10 +374,12 @@ class OpticOddsClient:
         if sportsbook:
             if isinstance(sportsbook, list):
                 # Limit to 5 sportsbooks per API requirement
-                sportsbooks = [str(sb) for sb in sportsbook[:5]]
+                # Normalize to lowercase for consistency (API may be case-sensitive)
+                sportsbooks = [str(sb).strip().lower() for sb in sportsbook[:5]]
                 params["sportsbook"] = sportsbooks
             else:
-                params["sportsbook"] = str(sportsbook)
+                # Normalize to lowercase for consistency (API may be case-sensitive)
+                params["sportsbook"] = str(sportsbook).strip().lower()
         
         # Handle multiple markets - use list to create multiple query params
         # httpx automatically URL encodes special characters like + in market names

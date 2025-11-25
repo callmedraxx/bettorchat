@@ -334,11 +334,11 @@ def fetch_live_odds(
             return "Error: sportsbook is required. Provide at least 1 sportsbook (max 5), e.g., 'DraftKings,FanDuel'"
         
         if isinstance(sportsbook, str) and ',' in sportsbook:
-            resolved_sportsbook = [sb.strip() for sb in sportsbook.split(',') if sb.strip()][:5]
+            resolved_sportsbook = [sb.strip().lower() for sb in sportsbook.split(',') if sb.strip()][:5]
         elif isinstance(sportsbook, str):
-            resolved_sportsbook = [sportsbook.strip()]
+            resolved_sportsbook = [sportsbook.strip().lower()]
         else:
-            resolved_sportsbook = list(sportsbook)[:5] if isinstance(sportsbook, (list, tuple)) else [str(sportsbook)]
+            resolved_sportsbook = [str(sb).strip().lower() for sb in (list(sportsbook)[:5] if isinstance(sportsbook, (list, tuple)) else [sportsbook])]
         
         if not resolved_sportsbook:
             return "Error: Invalid sportsbook. Provide at least 1 sportsbook name or ID."
@@ -424,6 +424,32 @@ def fetch_live_odds(
         
         # Make API call
         result = client.get_fixture_odds(**api_params)
+        
+        # Debug: Log the raw response structure (remove in production)
+        if not result:
+            return "Error: No response from API"
+        
+        # Check if response has data
+        response_data = result.get("data", [])
+        if not response_data:
+            # Return helpful error message with request details and response structure
+            error_msg = f"No odds data returned from API.\n\n"
+            error_msg += f"Request parameters sent:\n"
+            error_msg += f"  - sportsbook: {resolved_sportsbook}\n"
+            if fixture_ids_list:
+                error_msg += f"  - fixture_id: {fixture_ids_list}\n"
+            if resolved_market:
+                error_msg += f"  - market: {resolved_market}\n"
+            error_msg += f"\nAPI Response structure: {list(result.keys()) if isinstance(result, dict) else type(result)}\n"
+            if isinstance(result, dict) and result.get("data") is not None:
+                error_msg += f"Response 'data' type: {type(result.get('data'))}, length: {len(result.get('data')) if isinstance(result.get('data'), list) else 'N/A'}\n"
+            error_msg += f"\nPossible reasons:\n"
+            error_msg += f"- The fixture(s) may not have odds available yet\n"
+            error_msg += f"- The sportsbook(s) may not have odds for this fixture (try lowercase: 'fanduel' not 'FanDuel')\n"
+            error_msg += f"- The fixture_id(s) may be invalid\n"
+            if fixture_ids_list:
+                error_msg += f"\nTry calling fetch_available_sportsbooks(fixture_id='{fixture_ids_list[0]}') to see which sportsbooks have odds for this fixture."
+            return error_msg
         
         # Automatically emit odds data to SSE stream
         session = session_id or "default"
@@ -1322,9 +1348,31 @@ def extract_fixture_ids_from_objects(fixtures_input: Optional[str]) -> List[str]
 
 
 def format_odds_response(data: Dict[str, Any]) -> str:
-    """Format odds response for display with structured data for frontend parsing."""
+    """Format odds response for display with structured data for frontend parsing.
+    
+    Expected API response structure:
+    {
+        "data": [
+            {
+                "id": "fixture_id",
+                "home_competitors": [{"name": "..."}],
+                "away_competitors": [{"name": "..."}],
+                "odds": [
+                    {
+                        "sportsbook": "FanDuel",
+                        "market": "Moneyline",
+                        "name": "Dallas Cowboys",
+                        "selection": "Dallas Cowboys",
+                        "price": 1800,  # American odds (1800 = +1800)
+                        "deep_link": {"desktop": "...", "android": "...", "ios": "..."}
+                    }
+                ]
+            }
+        ]
+    }
+    """
     if not data:
-        return "No odds data available"
+        return "No odds data available - API returned empty response"
     
     formatted_lines = []
     fixtures = data.get("data", [])
@@ -1333,90 +1381,124 @@ def format_odds_response(data: Dict[str, Any]) -> str:
     if not isinstance(fixtures, list):
         fixtures = [fixtures] if fixtures else []
     
+    # If no fixtures, return early with helpful message
+    if not fixtures:
+        response_keys = list(data.keys()) if isinstance(data, dict) else []
+        error_msg = "No odds data available. The API returned an empty 'data' array.\n"
+        error_msg += f"Response structure: {response_keys}\n"
+        error_msg += "\nPossible reasons:\n"
+        error_msg += "- The fixture(s) don't have odds available yet\n"
+        error_msg += "- The sportsbook(s) don't have odds for this fixture\n"
+        error_msg += "- The fixture_id(s) may be invalid\n"
+        error_msg += "\nTry calling fetch_available_sportsbooks with fixture_id to see which sportsbooks have odds."
+        return error_msg
+    
     # Collect structured data for frontend
     structured_odds = []
     
     for fixture in fixtures:
         if not fixture:
             continue
-            
-        fixture_info = fixture.get("fixture", {})
-        if not fixture_info:
-            fixture_info = fixture  # Sometimes fixture data is at top level
         
-        fixture_id = fixture_info.get("id")
-        home_team_info = fixture_info.get("home_team", {})
-        away_team_info = fixture_info.get("away_team", {})
-        home_team = home_team_info.get("name", "") if isinstance(home_team_info, dict) else str(home_team_info)
-        away_team = away_team_info.get("name", "") if isinstance(away_team_info, dict) else str(away_team_info)
+        # Extract fixture information
+        fixture_id = fixture.get("id")
+        
+        # Extract team names from competitors arrays
+        home_competitors = fixture.get("home_competitors", [])
+        away_competitors = fixture.get("away_competitors", [])
+        home_team = home_competitors[0].get("name", "") if home_competitors and isinstance(home_competitors[0], dict) else fixture.get("home_team_display", "")
+        away_team = away_competitors[0].get("name", "") if away_competitors and isinstance(away_competitors[0], dict) else fixture.get("away_team_display", "")
+        
+        # Fallback to display names if competitors not available
+        if not home_team:
+            home_team = fixture.get("home_team_display", "")
+        if not away_team:
+            away_team = fixture.get("away_team_display", "")
         
         if home_team or away_team:
-            formatted_lines.append(f"\n{home_team} vs {away_team}")
+            formatted_lines.append(f"\n{'='*60}")
+            formatted_lines.append(f"{home_team} vs {away_team}")
+            formatted_lines.append(f"{'='*60}")
         
-        markets = fixture.get("markets", [])
-        if not isinstance(markets, list):
-            markets = [markets] if markets else []
-        for market in markets:
-            market_type = market.get("market_type", "")
-            market_id = market.get("id")
-            formatted_lines.append(f"\n{market_type.upper()}:")
+        # Get odds array (flat structure, not nested)
+        odds_list = fixture.get("odds", [])
+        if not isinstance(odds_list, list):
+            odds_list = [odds_list] if odds_list else []
+        
+        if not odds_list:
+            formatted_lines.append("\nNo odds available for this fixture.")
+            continue
+        
+        # Group odds by market for better organization
+        markets_dict = {}
+        for odds_entry in odds_list:
+            if not isinstance(odds_entry, dict):
+                continue
             
-            selections = market.get("selections", [])
-            for selection in selections:
-                selection_id = selection.get("id")
-                selection_name = selection.get("name", "")
-                
-                # Handle odds as either a single object or a list
-                odds_data = selection.get("odds", [])
-                if not isinstance(odds_data, list):
-                    odds_data = [odds_data] if odds_data else []
-                
-                # If no odds, still add the selection
-                if not odds_data:
-                    formatted_lines.append(f"• {selection_name}: No odds available")
+            market_name = odds_entry.get("market", "Unknown Market")
+            if market_name not in markets_dict:
+                markets_dict[market_name] = []
+            markets_dict[market_name].append(odds_entry)
+        
+        # Format each market
+        for market_name, market_odds in markets_dict.items():
+            formatted_lines.append(f"\n{market_name.upper()}:")
+            
+            # Group by selection name to show all sportsbooks for each selection
+            selections_dict = {}
+            for odds_entry in market_odds:
+                selection_name = odds_entry.get("name") or odds_entry.get("selection", "Unknown")
+                if selection_name not in selections_dict:
+                    selections_dict[selection_name] = []
+                selections_dict[selection_name].append(odds_entry)
+            
+            # Display each selection with all its odds
+            for selection_name, selection_odds in selections_dict.items():
+                odds_strings = []
+                for odds_entry in selection_odds:
+                    sportsbook_name = odds_entry.get("sportsbook", "Unknown")
+                    price = odds_entry.get("price")
+                    
+                    # Convert price to American odds format
+                    if price is not None:
+                        if price >= 100:
+                            american_odds = f"+{price}"
+                        elif price <= -100:
+                            american_odds = str(price)
+                        else:
+                            # Handle edge cases
+                            american_odds = f"+{price}" if price > 0 else str(price)
+                    else:
+                        american_odds = "N/A"
+                    
+                    odds_strings.append(f"{american_odds} ({sportsbook_name})")
+                    
+                    # Extract deep link
+                    deep_link_obj = odds_entry.get("deep_link", {})
+                    deep_link = None
+                    if isinstance(deep_link_obj, dict):
+                        deep_link = deep_link_obj.get("desktop") or deep_link_obj.get("android") or deep_link_obj.get("ios")
+                    
+                    # Add structured data
                     structured_odds.append({
                         "fixture_id": fixture_id,
                         "fixture": f"{home_team} vs {away_team}",
-                        "market_type": market_type,
-                        "market_id": market_id,
-                        "selection_id": selection_id,
-                        "selection_name": selection_name,
-                        "sportsbook_id": None,
-                        "sportsbook_name": "Unknown",
-                        "american_odds": None,
-                        "decimal_odds": None,
-                        "deep_link": None,
+                        "market": market_name,
+                        "market_id": odds_entry.get("market_id"),
+                        "selection": selection_name,
+                        "selection_id": odds_entry.get("id"),
+                        "sportsbook": sportsbook_name,
+                        "sportsbook_id": None,  # API doesn't return sportsbook ID in this format
+                        "american_odds": american_odds,
+                        "price": price,
+                        "deep_link": deep_link,
+                        "player_id": odds_entry.get("player_id"),
+                        "team_id": odds_entry.get("team_id"),
                     })
-                else:
-                    # Process each odds entry
-                    for odds in odds_data:
-                        sportsbook = odds.get("sportsbook", {}) if isinstance(odds, dict) else {}
-                        sportsbook_name = sportsbook.get("name", "Unknown") if sportsbook else "Unknown"
-                        sportsbook_id = sportsbook.get("id") if sportsbook else None
-                        american_odds = odds.get("american", "") if isinstance(odds, dict) else ""
-                        decimal_odds = odds.get("decimal", "") if isinstance(odds, dict) else ""
-                        deep_link = odds.get("deep_link") if isinstance(odds, dict) else None
-                        
-                        # Format line with deep link if available
-                        odds_line = f"• {selection_name}: {american_odds} ({sportsbook_name})"
-                        if deep_link:
-                            odds_line += f" [Deep Link: {deep_link}]"
-                        formatted_lines.append(odds_line)
-                        
-                        # Add structured data for frontend (one entry per odds)
-                        structured_odds.append({
-                            "fixture_id": fixture_id,
-                            "fixture": f"{home_team} vs {away_team}",
-                            "market_type": market_type,
-                            "market_id": market_id,
-                            "selection_id": selection_id,
-                            "selection_name": selection_name,
-                            "sportsbook_id": sportsbook_id,
-                            "sportsbook_name": sportsbook_name,
-                            "american_odds": american_odds,
-                            "decimal_odds": decimal_odds,
-                            "deep_link": deep_link,
-                        })
+                
+                # Format selection line with all odds
+                odds_display = " | ".join(odds_strings)
+                formatted_lines.append(f"  • {selection_name}: {odds_display}")
     
     # Add structured JSON block for frontend parsing
     if structured_odds:
