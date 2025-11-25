@@ -23,6 +23,11 @@ _client: Optional[OpticOddsClient] = None
 # Simple in-memory cache for user timezones (in production, this would be in user preferences)
 _user_timezone_cache: Dict[str, str] = {}
 
+# Cache for available sportsbooks (to avoid repeated API calls)
+_sportsbooks_cache: Optional[List[str]] = None
+_sportsbooks_cache_timestamp: Optional[float] = None
+_sportsbooks_cache_ttl: float = 3600.0  # Cache for 1 hour
+
 
 def get_client() -> OpticOddsClient:
     """Get or create OpticOdds client."""
@@ -79,6 +84,73 @@ def set_user_timezone(user_id: str, timezone: str) -> bool:
         return True
     except Exception:
         return False
+
+
+def get_default_sportsbooks(sport_id: Optional[str] = None, league_id: Optional[str] = None) -> List[str]:
+    """Get default sportsbooks by fetching from API, with caching and fallback.
+    
+    Fetches available sportsbooks from OpticOdds API and returns the first 3-5 sportsbook IDs/names.
+    Uses caching to avoid repeated API calls. Falls back to hardcoded defaults if API call fails.
+    
+    Args:
+        sport_id: Optional sport ID to filter sportsbooks by sport
+        league_id: Optional league ID (not used for filtering, but kept for consistency)
+    
+    Returns:
+        List of sportsbook IDs/names (up to 5)
+    """
+    import time
+    
+    global _sportsbooks_cache, _sportsbooks_cache_timestamp
+    
+    # Check cache validity
+    current_time = time.time()
+    if (_sportsbooks_cache is not None and 
+        _sportsbooks_cache_timestamp is not None and 
+        (current_time - _sportsbooks_cache_timestamp) < _sportsbooks_cache_ttl):
+        return _sportsbooks_cache[:5]  # Return up to 5 sportsbooks
+    
+    # Try to fetch from API
+    try:
+        client = get_client()
+        result = client.get_active_sportsbooks(sport=sport_id if sport_id else None)
+        
+        sportsbooks_data = result.get("data", [])
+        if not isinstance(sportsbooks_data, list):
+            sportsbooks_data = [sportsbooks_data] if sportsbooks_data else []
+        
+        if sportsbooks_data:
+            # Extract sportsbook IDs or names
+            default_sportsbooks = []
+            for sb in sportsbooks_data[:5]:  # Take first 5
+                if not sb:
+                    continue
+                # Prefer ID, fallback to name, then slug
+                sportsbook_id = sb.get("id")
+                sportsbook_name = sb.get("name")
+                sportsbook_slug = sb.get("slug")
+                
+                if sportsbook_id:
+                    default_sportsbooks.append(str(sportsbook_id))
+                elif sportsbook_name:
+                    default_sportsbooks.append(sportsbook_name)
+                elif sportsbook_slug:
+                    default_sportsbooks.append(sportsbook_slug)
+            
+            if default_sportsbooks:
+                # Update cache
+                _sportsbooks_cache = default_sportsbooks
+                _sportsbooks_cache_timestamp = current_time
+                return default_sportsbooks[:5]
+    except Exception:
+        # If API call fails, fall through to hardcoded defaults
+        pass
+    
+    # Fallback to hardcoded defaults if API fetch fails
+    fallback_sportsbooks = ["DraftKings", "FanDuel", "BetMGM"]
+    _sportsbooks_cache = fallback_sportsbooks
+    _sportsbooks_cache_timestamp = current_time
+    return fallback_sportsbooks
 
 
 @tool
@@ -228,6 +300,11 @@ def fetch_live_odds(
 ) -> str:
     """Fetch live betting odds for fixtures using OpticOdds /fixtures/odds endpoint.
     
+    IMPORTANT: The OpticOdds API requires at least 1 sportsbook to be specified (max 5).
+    If sportsbook_ids is not provided, the tool will automatically fetch available sportsbooks 
+    from the API and use the first 3-5 as defaults. This ensures valid sportsbook IDs/names 
+    are used. Results are cached for 1 hour to avoid repeated API calls.
+    
     Args:
         fixture_id: Specific fixture ID to get odds for (string ID)
         fixture: Full fixture object as JSON string (alternative to fixture_id). 
@@ -235,8 +312,10 @@ def fetch_live_odds(
         fixtures: JSON string containing multiple full fixture objects (array).
                  If provided, odds will be fetched for all fixtures. Can be used for bet slip building.
         league_id: Filter by league ID. Can also be extracted from fixture object if provided.
-        sport_id: Filter by sport ID (e.g., 'NBA' = 1)
-        sportsbook_ids: Comma-separated list of sportsbook IDs
+        sport_id: Filter by sport ID (e.g., 'NBA' = 1). Used to filter available sportsbooks if sportsbook_ids not provided.
+        sportsbook_ids: Comma-separated list of sportsbook IDs or names (REQUIRED by API, max 5).
+                       If not provided, automatically fetches available sportsbooks from API.
+                       Use fetch_available_sportsbooks to get valid sportsbook IDs manually.
         market_types: Comma-separated list of market types (e.g., 'moneyline,spread,total')
     
     Returns:
@@ -251,17 +330,48 @@ def fetch_live_odds(
             if isinstance(market_types, str) and ',' in market_types:
                 # Split comma-separated string into list
                 resolved_market_types = [mt.strip() for mt in market_types.split(',') if mt.strip()]
+            elif isinstance(market_types, str):
+                resolved_market_types = [market_types.strip()]
             else:
                 resolved_market_types = market_types
         
         # Convert comma-separated sportsbook_ids string to list if needed
+        # IMPORTANT: OpticOdds API requires at least 1 sportsbook (max 5) for /fixtures/odds endpoint
         resolved_sportsbook_ids = None
         if sportsbook_ids:
             if isinstance(sportsbook_ids, str) and ',' in sportsbook_ids:
                 # Split comma-separated string into list
                 resolved_sportsbook_ids = [sb.strip() for sb in sportsbook_ids.split(',') if sb.strip()]
+            elif isinstance(sportsbook_ids, str):
+                resolved_sportsbook_ids = [sportsbook_ids.strip()]
             else:
                 resolved_sportsbook_ids = sportsbook_ids
+        
+        # Extract league_id early if we have fixture object (needed for sportsbook filtering)
+        resolved_league_id = league_id
+        if fixture:
+            try:
+                fixture_obj = json.loads(fixture) if isinstance(fixture, str) else fixture
+                if isinstance(fixture_obj, dict):
+                    league_info = fixture_obj.get("league") or fixture_obj.get("full_fixture", {}).get("league", {})
+                    if isinstance(league_info, dict) and not resolved_league_id:
+                        resolved_league_id = league_info.get("id") or league_info.get("numerical_id")
+            except Exception:
+                pass
+        
+        # If no sportsbook_ids provided, fetch available sportsbooks from API and use as defaults
+        # This ensures we use valid sportsbook IDs/names that are actually available
+        if not resolved_sportsbook_ids:
+            try:
+                # Fetch default sportsbooks (cached, with fallback)
+                # Filter by sport_id if available for better results
+                resolved_sportsbook_ids = get_default_sportsbooks(
+                    sport_id=sport_id if sport_id else None,
+                    league_id=resolved_league_id if resolved_league_id else None
+                )
+            except Exception:
+                # Fallback to hardcoded defaults if fetching fails
+                resolved_sportsbook_ids = ["DraftKings", "FanDuel", "BetMGM"]
         
         # Handle multiple fixtures (for bet slip building)
         if fixtures:
@@ -293,14 +403,13 @@ def fetch_live_odds(
         
         # Handle single fixture object or fixture_id
         resolved_fixture_id = None
-        resolved_league_id = league_id
         
         if fixture:
             fixture_obj = json.loads(fixture) if isinstance(fixture, str) else fixture
             if isinstance(fixture_obj, dict):
                 # Extract fixture_id
                 resolved_fixture_id = extract_fixture_id(fixture if isinstance(fixture, str) else json.dumps(fixture_obj))
-                # Extract league_id if not provided
+                # Extract league_id if not provided (already done above, but ensure it's set)
                 if not resolved_league_id:
                     league_info = fixture_obj.get("league") or fixture_obj.get("full_fixture", {}).get("league", {})
                     if isinstance(league_info, dict):
@@ -330,17 +439,37 @@ def fetch_live_odds(
 @tool
 def fetch_upcoming_games(
     sport: Optional[str] = None,
+    sport_id: Optional[str] = None,
     league: Optional[str] = None,
+    league_id: Optional[str] = None,
     fixture_id: Optional[str] = None,
+    team_id: Optional[str] = None,
+    start_date: Optional[str] = None,
+    start_date_after: Optional[str] = None,
+    start_date_before: Optional[str] = None,
+    paginate: bool = True,
 ) -> str:
     """Fetch upcoming game schedules/fixtures using OpticOdds /fixtures endpoint.
     
     This is the PRIMARY tool for getting game schedules. Use this before falling back to web search.
     
+    IMPORTANT: Use as many filters as possible to narrow down results:
+    - Always specify sport/league when possible
+    - Use date filters (start_date_after) to get only upcoming games
+    - Use team_id to filter by specific team
+    - Use sport_id/league_id for more precise filtering (preferred over names)
+    
     Args:
-        sport: Sport name (e.g., 'basketball')
-        league: League name (e.g., 'nba', 'nfl', 'mlb')
-        fixture_id: Optional specific fixture ID
+        sport: Sport name (e.g., 'basketball') - use if sport_id not available
+        sport_id: Sport ID (e.g., '1' for basketball) - preferred over sport name for precision
+        league: League name (e.g., 'nba', 'nfl', 'mlb') - use if league_id not available
+        league_id: League ID - preferred over league name for precision
+        fixture_id: Optional specific fixture ID (if provided, other filters are ignored)
+        team_id: Optional team ID to filter games for a specific team
+        start_date: Specific date (YYYY-MM-DD format). Cannot be used with start_date_after/start_date_before
+        start_date_after: Get fixtures after this date (YYYY-MM-DD format). Defaults to today if no date params provided.
+        start_date_before: Get fixtures before this date (YYYY-MM-DD format)
+        paginate: Whether to fetch all pages of results (default: True to get complete data)
     
     Returns:
         Formatted string with upcoming game schedules including teams, dates, times, and fixture IDs
@@ -348,11 +477,50 @@ def fetch_upcoming_games(
     try:
         client = get_client()
         
-        # Get fixtures from OpticOdds API
+        # Build parameters dict - use all available filters to narrow results
+        params = {}
+        
+        # If fixture_id is provided, use only that (most specific filter)
+        if fixture_id:
+            params["fixture_id"] = str(fixture_id)
+        else:
+            # Use sport_id if provided (more precise), otherwise fall back to sport name
+            if sport_id:
+                params["sport_id"] = str(sport_id)
+            elif sport:
+                params["sport"] = str(sport)
+            
+            # Use league_id if provided (more precise), otherwise fall back to league name
+            if league_id:
+                params["league_id"] = str(league_id)
+            elif league:
+                params["league"] = str(league)
+            
+            # Add team filter if provided
+            if team_id:
+                params["team_id"] = str(team_id)
+            
+            # Handle date filters - use judiciously to narrow results
+            # API rule: Cannot use start_date with start_date_after or start_date_before
+            if start_date:
+                # Specific date - most precise filter
+                params["start_date"] = str(start_date)
+            elif start_date_after or start_date_before:
+                # Date range filters
+                if start_date_after:
+                    params["start_date_after"] = str(start_date_after)
+                if start_date_before:
+                    params["start_date_before"] = str(start_date_before)
+            else:
+                # Default: Only get upcoming games (from today onwards)
+                # This prevents getting games from 3 days ago (API default)
+                today = datetime.now(get_user_timezone()).date()
+                params["start_date_after"] = today.isoformat()
+        
+        # Get fixtures from OpticOdds API with all filters applied
         result = client.get_fixtures(
-            sport=sport if sport else None,
-            league=league if league else None,
-            fixture_id=fixture_id if fixture_id else None,
+            paginate=paginate,
+            **params
         )
         
         # Format response
