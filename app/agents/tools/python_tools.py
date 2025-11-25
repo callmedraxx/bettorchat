@@ -38,6 +38,9 @@ class PythonREPL:
         stdout_capture = io.StringIO()
         stderr_capture = io.StringIO()
         
+        # Maximum output size to prevent issues with large tool results (500KB)
+        MAX_OUTPUT_SIZE = 500 * 1024
+        
         try:
             with redirect_stdout(stdout_capture), redirect_stderr(stderr_capture):
                 # Try to compile and execute
@@ -56,9 +59,18 @@ class PythonREPL:
             stderr_output = stderr_capture.getvalue()
             
             if stderr_output:
-                return f"Error output:\n{stderr_output}\n\nStandard output:\n{stdout_output}"
+                output = f"Error output:\n{stderr_output}\n\nStandard output:\n{stdout_output}"
+                # Truncate if too large
+                if len(output) > MAX_OUTPUT_SIZE:
+                    truncated_size = len(output) - MAX_OUTPUT_SIZE
+                    output = output[:MAX_OUTPUT_SIZE] + f"\n\n[Output truncated: {truncated_size} characters removed. Consider filtering or summarizing the data.]"
+                return output
             
             if stdout_output:
+                # Truncate if too large
+                if len(stdout_output) > MAX_OUTPUT_SIZE:
+                    truncated_size = len(stdout_output) - MAX_OUTPUT_SIZE
+                    stdout_output = stdout_output[:MAX_OUTPUT_SIZE] + f"\n\n[Output truncated: {truncated_size} characters removed. Consider filtering or summarizing the data.]"
                 return stdout_output
             
             # If no output but no error, the code executed successfully
@@ -141,8 +153,19 @@ print(json.dumps(filtered, indent=2))
         
         # Execute the command
         result = _repl.run(command)
+        
+        # Ensure result is a string and handle any edge cases
+        if not isinstance(result, str):
+            result = str(result)
+        
+        # Additional safety check for very large outputs
+        MAX_RESULT_SIZE = 500 * 1024  # 500KB
+        if len(result) > MAX_RESULT_SIZE:
+            truncated = result[:MAX_RESULT_SIZE]
+            result = truncated + f"\n\n[Output truncated: {len(result) - MAX_RESULT_SIZE} characters removed. Consider filtering or summarizing the data to reduce output size.]"
+        
         return result
         
     except Exception as e:
-        return f"Error setting up Python REPL: {str(e)}"
+        return f"Error setting up Python REPL: {str(e)}\nType: {type(e).__name__}"
 

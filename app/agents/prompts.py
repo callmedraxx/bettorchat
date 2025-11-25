@@ -296,6 +296,10 @@ Moneyline/Game Odds (e.g., "What are the Lakers moneyline odds?"):
 
 STEP 1: Use fetch_live_odds to get betting odds
 - CRITICAL: sportsbook parameter is REQUIRED (at least 1, max 5). Always pass comma-separated string like "DraftKings,FanDuel,BetMGM"
+- STREAMING CONTROL: 
+  * If fetch_live_odds is the FINAL tool that directly answers the user's request (e.g., user asks "get me odds"), use stream_output=True (default) or omit it
+  * If fetch_live_odds is called as an INTERMEDIATE step (e.g., to get fixture_ids before calling another tool), use stream_output=False
+  * Example: If user asks "odds for NFL games Thursday", call fetch_upcoming_games with stream_output=False first, then fetch_live_odds with stream_output=True
 - BEFORE calling fetch_live_odds: If unsure which sportsbooks are available, use fetch_available_sportsbooks to verify. This is especially important when:
   * User requests odds from a specific sportsbook (verify it exists)
   * You need to know which sportsbooks have odds for a specific sport/league/fixture
@@ -337,6 +341,10 @@ STEP 1: Get current date using get_current_datetime tool - this is REQUIRED for 
 
 STEP 2: Use fetch_upcoming_games as the PRIMARY tool for game schedules
 - IMPORTANT: Use as many filters as possible to narrow results and avoid too many results
+- STREAMING CONTROL:
+  * If fetch_upcoming_games is the FINAL tool that directly answers the user's request (e.g., user asks "show me games"), use stream_output=True (default) or omit it
+  * If fetch_upcoming_games is called as an INTERMEDIATE step (e.g., to get fixture_ids before calling fetch_live_odds), use stream_output=False
+  * Example: If user asks "odds for NFL games Thursday", call fetch_upcoming_games with stream_output=False first, then fetch_live_odds with stream_output=True
 - Call with league='nba' (or league_id) for NBA games
 - ALWAYS use date filters: start_date_after='YYYY-MM-DDTHH:MM:SSZ' (ISO 8601 format, e.g., '2024-10-21T00:00:00Z') for "upcoming" games (defaults to current UTC datetime if not specified), start_date_before='YYYY-MM-DDTHH:MM:SSZ' for past games
 - Use team_id parameter if user asks about a specific team's games
@@ -537,7 +545,7 @@ When to Use Each Tool:
 
 fetch_available_sportsbooks: Use this tool BEFORE calling fetch_live_odds to verify which sportsbooks are available. CRITICAL: Use when user requests odds from a specific sportsbook (verify it exists), when you need to know which sportsbooks have odds for a sport/league/fixture, or when unsure which sportsbooks to use. Optional filters: sport (e.g., 'basketball'), league (e.g., 'nba'), fixture_id (to see which sportsbooks have odds for a specific game). Returns list of active sportsbooks with IDs and names. Example: fetch_available_sportsbooks(sport='basketball', league='nba') to get NBA sportsbooks.
 
-fetch_live_odds: REQUIRED tool for getting betting odds (moneyline, spread, totals, etc.). CRITICAL: sportsbook parameter is REQUIRED - always pass at least 1 sportsbook (max 5) as comma-separated string like "DraftKings,FanDuel". If unsure which sportsbooks are available, call fetch_available_sportsbooks first. Must also provide at least one of: fixture_id (extract from fetch_upcoming_games response), fixture (full fixture object JSON), fixtures (array of fixture objects), team_id, or player_id. Can pass up to 5 fixture_ids as comma-separated string. Optional market parameter for specific markets like "Moneyline,Run Line". Example: fetch_live_odds(sportsbook="DraftKings,FanDuel", fixture_id="20251127E5C64DE0")
+fetch_live_odds: REQUIRED tool for getting betting odds (moneyline, spread, totals, etc.). CRITICAL: sportsbook parameter is REQUIRED - always pass at least 1 sportsbook (max 5) as comma-separated string like "DraftKings,FanDuel". If unsure which sportsbooks are available, call fetch_available_sportsbooks first. Must also provide at least one of: fixture_id (extract from fetch_upcoming_games response), fixture (full fixture object JSON), fixtures (array of fixture objects), team_id, or player_id. Can pass up to 5 fixture_ids as comma-separated string. Optional market parameter for specific markets like "Moneyline,Run Line". STREAMING: Use stream_output=True (default) when this is the FINAL tool answering user's request. Use stream_output=False when calling as intermediate step (e.g., to get data before another tool). Example: fetch_live_odds(sportsbook="DraftKings,FanDuel", fixture_id="20251127E5C64DE0")
 
 
 
@@ -563,7 +571,7 @@ image_to_bet_analysis: When users upload images of bet slips or odds screens
 
 get_current_datetime: ALWAYS call this FIRST when user mentions dates like "today", "tomorrow", "next week", or any relative date. This is critical for accurate date interpretation.
 
-fetch_upcoming_games: PRIMARY tool for getting game schedules. Use this FIRST for queries like "games tomorrow", "upcoming NBA games", "schedule", etc. Only fall back to web search if this fails. IMPORTANT: Use as many filters as possible to narrow results - always specify league, use date filters (start_date_after for "upcoming", start_date_before for "past"), team_id for specific teams. Date parameters MUST use ISO 8601 datetime format (YYYY-MM-DDTHH:MM:SSZ, e.g., '2024-10-21T00:00:00Z'). Parameters: league='nba' or league_id='123', start_date_after='YYYY-MM-DDTHH:MM:SSZ' (defaults to current UTC datetime), start_date_before='YYYY-MM-DDTHH:MM:SSZ' (for past games), team_id for specific team. Returns formatted summaries AND full fixture objects in structured data block (<!-- FIXTURES_DATA_START -->). NOTE: This tool automatically emits fixture objects to the frontend, so you don't need to manually call emit_fixture_objects.
+fetch_upcoming_games: PRIMARY tool for getting game schedules. Use this FIRST for queries like "games tomorrow", "upcoming NBA games", "schedule", etc. Only fall back to web search if this fails. IMPORTANT: Use as many filters as possible to narrow results - always specify league, use date filters (start_date_after for "upcoming", start_date_before for "past"), team_id for specific teams. Date parameters MUST use ISO 8601 datetime format (YYYY-MM-DDTHH:MM:SSZ, e.g., '2024-10-21T00:00:00Z'). Parameters: league='nba' or league_id='123', start_date_after='YYYY-MM-DDTHH:MM:SSZ' (defaults to current UTC datetime), start_date_before='YYYY-MM-DDTHH:MM:SSZ' (for past games), team_id for specific team, stream_output=True/False (set to False when calling as intermediate step, True for final answer). Returns formatted summaries AND full fixture objects in structured data block (<!-- FIXTURES_DATA_START -->). NOTE: This tool automatically emits fixture objects to the frontend when stream_output=True, so you don't need to manually call emit_fixture_objects.
 
 emit_fixture_objects: Tool for emitting complete fixture JSON objects to frontend. NOTE: fetch_upcoming_games now automatically emits fixture objects, so you typically don't need to call this manually. However, if you need to emit fixtures from other sources or re-emit filtered fixtures, you can use this tool. Extract fixture objects from tool responses (from <!-- FIXTURES_DATA_START --> block) and call emit_fixture_objects(fixtures='[{{...}}, {{...}}]') with the extracted objects.
 

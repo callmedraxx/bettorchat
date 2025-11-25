@@ -300,6 +300,7 @@ def fetch_live_odds(
     player_id: Optional[str] = None,
     team_id: Optional[str] = None,
     session_id: Optional[str] = None,
+    stream_output: bool = True,
 ) -> str:
     """Fetch live betting odds for fixtures using OpticOdds /fixtures/odds endpoint.
     
@@ -322,9 +323,11 @@ def fetch_live_odds(
         player_id: Optional. Player ID for player prop odds.
         team_id: Optional. Team ID to filter odds for a specific team.
         session_id: Optional session identifier for SSE streaming. Defaults to "default".
+        stream_output: Whether to emit odds data to SSE stream. Set to False when calling as intermediate step.
+                      Defaults to True. Only set to True for the final tool call that directly answers user's request.
     
     Returns:
-        Formatted string with odds from multiple sportsbooks. Odds data is automatically emitted to SSE stream.
+        Formatted string with odds from multiple sportsbooks. Odds data is automatically emitted to SSE stream if stream_output=True.
     """
     try:
         client = get_client()
@@ -451,14 +454,15 @@ def fetch_live_odds(
                 error_msg += f"\nTry calling fetch_available_sportsbooks(fixture_id='{fixture_ids_list[0]}') to see which sportsbooks have odds for this fixture."
             return error_msg
         
-        # Automatically emit odds data to SSE stream
-        session = session_id or "default"
-        try:
-            if result and result.get("data"):
-                odds_stream_manager.push_odds_sync(session, result)
-        except Exception as emit_error:
-            # Don't fail the whole request if emit fails
-            pass
+        # Automatically emit odds data to SSE stream (only if stream_output=True)
+        if stream_output:
+            session = session_id or "default"
+            try:
+                if result and result.get("data"):
+                    odds_stream_manager.push_odds_sync(session, result)
+            except Exception as emit_error:
+                # Don't fail the whole request if emit fails
+                pass
         
         # Format response for frontend
         formatted = format_odds_response(result)
@@ -477,6 +481,7 @@ def fetch_upcoming_games(
     start_date_after: Optional[str] = None,
     start_date_before: Optional[str] = None,
     paginate: bool = True,
+    stream_output: bool = True,
 ) -> str:
     """Fetch upcoming game schedules/fixtures using OpticOdds /fixtures endpoint.
     
@@ -500,9 +505,12 @@ def fetch_upcoming_games(
         start_date_before: Get fixtures before this datetime (ISO 8601 format: YYYY-MM-DDTHH:MM:SSZ, e.g., '2024-10-21T00:00:00Z'). 
                           Use this for past games.
         paginate: Whether to fetch all pages of results (default: True to get complete data)
+        stream_output: Whether to emit fixture data to SSE stream. Set to False when calling as intermediate step.
+                      Defaults to True. Only set to True for the final tool call that directly answers user's request.
     
     Returns:
-        Formatted string with upcoming game schedules including teams, dates, times, and fixture IDs
+        Formatted string with upcoming game schedules including teams, dates, times, and fixture IDs.
+        Fixture data is automatically emitted to SSE stream if stream_output=True.
     """
     try:
         client = get_client()
@@ -563,8 +571,8 @@ def fetch_upcoming_games(
                 fixtures_data = json.loads(fixtures_json_str)
                 fixtures_list = fixtures_data.get('fixtures', [])
                 
-                if fixtures_list:
-                    # Automatically emit fixture objects to SSE stream
+                if fixtures_list and stream_output:
+                    # Automatically emit fixture objects to SSE stream (only if stream_output=True)
                     # Use default session_id (can be overridden by user context if needed)
                     fixture_stream_manager.push_fixtures_sync("default", fixtures_list)
         except Exception as emit_error:
