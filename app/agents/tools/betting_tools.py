@@ -439,8 +439,6 @@ def fetch_live_odds(
 
 @tool
 def fetch_upcoming_games(
-    sport: Optional[str] = None,
-    sport_id: Optional[str] = None,
     league: Optional[str] = None,
     league_id: Optional[str] = None,
     fixture_id: Optional[str] = None,
@@ -455,15 +453,13 @@ def fetch_upcoming_games(
     This is the PRIMARY tool for getting game schedules. Use this before falling back to web search.
     
     IMPORTANT: Use as many filters as possible to narrow down results:
-    - Always specify sport/league when possible
+    - Always specify league when possible
     - Use date filters (start_date_after) to get only upcoming games
     - Use start_date_before for past games
     - Use team_id to filter by specific team
-    - Use sport_id/league_id for more precise filtering (preferred over names)
+    - Use league_id for more precise filtering
     
     Args:
-        sport: Sport name (e.g., 'basketball') - use if sport_id not available
-        sport_id: Sport ID (e.g., '1' for basketball) - preferred over sport name for precision
         league: League name (e.g., 'nba', 'nfl', 'mlb') - use if league_id not available
         league_id: League ID - preferred over league name for precision
         fixture_id: Optional specific fixture ID (if provided, other filters are ignored)
@@ -488,12 +484,6 @@ def fetch_upcoming_games(
         if fixture_id:
             params["fixture_id"] = str(fixture_id)
         else:
-            # Use sport_id if provided (more precise), otherwise fall back to sport name
-            if sport_id:
-                params["sport_id"] = str(sport_id)
-            elif sport:
-                params["sport"] = str(sport)
-            
             # Use league_id if provided (more precise), otherwise fall back to league name
             if league_id:
                 params["league_id"] = str(league_id)
