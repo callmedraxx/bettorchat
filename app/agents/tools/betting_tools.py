@@ -244,6 +244,24 @@ def fetch_live_odds(
     try:
         client = get_client()
         
+        # Convert comma-separated market_types string to list if needed
+        resolved_market_types = None
+        if market_types:
+            if isinstance(market_types, str) and ',' in market_types:
+                # Split comma-separated string into list
+                resolved_market_types = [mt.strip() for mt in market_types.split(',') if mt.strip()]
+            else:
+                resolved_market_types = market_types
+        
+        # Convert comma-separated sportsbook_ids string to list if needed
+        resolved_sportsbook_ids = None
+        if sportsbook_ids:
+            if isinstance(sportsbook_ids, str) and ',' in sportsbook_ids:
+                # Split comma-separated string into list
+                resolved_sportsbook_ids = [sb.strip() for sb in sportsbook_ids.split(',') if sb.strip()]
+            else:
+                resolved_sportsbook_ids = sportsbook_ids
+        
         # Handle multiple fixtures (for bet slip building)
         if fixtures:
             fixture_ids = extract_fixture_ids_from_objects(fixtures)
@@ -256,8 +274,8 @@ def fetch_live_odds(
                             fixture_id=fid,
                             sport_id=sport_id if sport_id else None,
                             league_id=league_id if league_id else None,
-                            sportsbook=sportsbook_ids if sportsbook_ids else None,
-                            market_types=market_types if market_types else None,
+                            sportsbook=resolved_sportsbook_ids,
+                            market_types=resolved_market_types,
                         )
                         if result and result.get("data"):
                             all_results.extend(result.get("data", []))
@@ -297,8 +315,8 @@ def fetch_live_odds(
             fixture_id=resolved_fixture_id,
             sport_id=sport_id if sport_id else None,
             league_id=resolved_league_id if resolved_league_id else None,
-            sportsbook=sportsbook_ids if sportsbook_ids else None,
-            market_types=market_types if market_types else None,
+            sportsbook=resolved_sportsbook_ids,
+            market_types=resolved_market_types,
         )
         
         # Format response for frontend
