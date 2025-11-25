@@ -21,6 +21,8 @@ from app.agents.tools import (
     image_to_bet_analysis,
     generate_bet_deep_link,
     read_url_content,
+    get_current_datetime,
+    fetch_upcoming_games,
     internet_search,
 )
 from app.agents.prompts import SPORTS_BETTING_INSTRUCTIONS
@@ -74,6 +76,8 @@ def create_betting_agent(
     
     # All betting tools
     betting_tools = [
+        get_current_datetime,  # Date/time awareness - should be called first for date queries
+        fetch_upcoming_games,  # Primary tool for game schedules
         fetch_live_odds,
         fetch_player_props,
         fetch_live_game_stats,
@@ -86,7 +90,7 @@ def create_betting_agent(
         image_to_bet_analysis,
         generate_bet_deep_link,
         read_url_content,
-        internet_search,  # Keep web search
+        internet_search,  # Keep web search as fallback
     ]
     
     # Format system prompt with user information

@@ -204,7 +204,9 @@ class OpticOddsClient:
         self,
         fixture_id: Optional[Union[str, int]] = None,
         sport: Optional[Union[str, int]] = None,
+        sport_id: Optional[Union[str, int]] = None,
         league: Optional[Union[str, int]] = None,
+        league_id: Optional[Union[str, int]] = None,
         sportsbook: Optional[Union[str, int, List[Union[str, int]]]] = None,
         market_types: Optional[Union[str, List[str]]] = None,
         player_id: Optional[Union[str, int]] = None,
@@ -215,8 +217,10 @@ class OpticOddsClient:
         
         Args:
             fixture_id: Fixture ID
-            sport: Sport name (e.g., 'basketball') or ID
-            league: League name (e.g., 'nba') or ID
+            sport: Sport name (e.g., 'basketball') - use for string names
+            sport_id: Sport ID (e.g., 1) - use for numeric IDs
+            league: League name (e.g., 'nba') - use for string names
+            league_id: League ID - use for numeric IDs
             sportsbook: Sportsbook name/ID or list of sportsbooks
             market_types: Market type(s) as string or list
             player_id: Player ID (for player props)
@@ -225,10 +229,35 @@ class OpticOddsClient:
         params = {}
         if fixture_id:
             params["fixture_id"] = str(fixture_id)
-        if sport:
-            params["sport"] = str(sport)
-        if league:
-            params["league"] = str(league)
+        
+        # Handle sport parameter - prefer sport_id if provided, otherwise use sport
+        # If sport is numeric, treat it as sport_id
+        if sport_id:
+            params["sport_id"] = str(sport_id)
+        elif sport:
+            # Check if sport is numeric (ID) or string (name)
+            try:
+                # Try to convert to int - if successful, it's an ID
+                sport_int = int(sport)
+                params["sport_id"] = str(sport_int)
+            except (ValueError, TypeError):
+                # Not numeric, treat as name
+                params["sport"] = str(sport)
+        
+        # Handle league parameter - prefer league_id if provided, otherwise use league
+        # If league is numeric, treat it as league_id
+        if league_id:
+            params["league_id"] = str(league_id)
+        elif league:
+            # Check if league is numeric (ID) or string (name)
+            try:
+                # Try to convert to int - if successful, it's an ID
+                league_int = int(league)
+                params["league_id"] = str(league_int)
+            except (ValueError, TypeError):
+                # Not numeric, treat as name
+                params["league"] = str(league)
+        
         if sportsbook:
             if isinstance(sportsbook, list):
                 params["sportsbook"] = ",".join(map(str, sportsbook))

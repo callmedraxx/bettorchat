@@ -14,6 +14,8 @@ from app.agents.tools.betting_tools import (
     image_to_bet_analysis,
     generate_bet_deep_link,
     read_url_content,
+    get_current_datetime,
+    fetch_upcoming_games,
 )
 from app.agents.tools.web_tools import internet_search
 
@@ -30,6 +32,8 @@ __all__ = [
     "image_to_bet_analysis",
     "generate_bet_deep_link",
     "read_url_content",
+    "get_current_datetime",
+    "fetch_upcoming_games",
     "internet_search",
 ]
 

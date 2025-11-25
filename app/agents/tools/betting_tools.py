@@ -3,6 +3,7 @@ MCP-compatible betting tools wrapping OpticOdds API.
 """
 import json
 import base64
+from datetime import datetime, timedelta
 from typing import Optional, List, Dict, Any
 from langchain.tools import tool
 import httpx
@@ -20,6 +21,37 @@ def get_client() -> OpticOddsClient:
     if _client is None:
         _client = OpticOddsClient()
     return _client
+
+
+@tool
+def get_current_datetime() -> str:
+    """Get the current date, time, timezone, and day of week.
+    
+    This tool should be called whenever the user mentions dates like "today", "tomorrow", 
+    "next week", or any relative date references. Always use this tool to get the current 
+    date before interpreting date-related queries.
+    
+    Returns:
+        Formatted string with current date, time, timezone, and day of week
+    """
+    now = datetime.now()
+    
+    # Format date and time information
+    formatted = f"""Current Date and Time Information:
+
+Date: {now.strftime('%A, %B %d, %Y')}
+Time: {now.strftime('%I:%M %p')}
+Timezone: {now.strftime('%Z')} (UTC{now.strftime('%z')})
+Day of Week: {now.strftime('%A')}
+ISO Format: {now.isoformat()}
+
+Use this information to interpret relative dates:
+- "Today" = {now.strftime('%B %d, %Y')}
+- "Tomorrow" = {(now + timedelta(days=1)).strftime('%B %d, %Y')}
+- "This week" = Week of {now.strftime('%B %d, %Y')}
+"""
+    
+    return formatted
 
 
 @tool
@@ -46,10 +78,11 @@ def fetch_live_odds(
         client = get_client()
         
         # Convert to correct parameter format
+        # Pass sport_id and league_id directly to the client method
         result = client.get_fixture_odds(
             fixture_id=fixture_id,
-            sport=sport_id if sport_id else None,
-            league=league_id if league_id else None,
+            sport_id=sport_id if sport_id else None,
+            league_id=league_id if league_id else None,
             sportsbook=sportsbook_ids if sportsbook_ids else None,
             market_types=market_types if market_types else None,
         )
@@ -59,6 +92,41 @@ def fetch_live_odds(
         return formatted
     except Exception as e:
         return f"Error fetching live odds: {str(e)}"
+
+
+@tool
+def fetch_upcoming_games(
+    sport: Optional[str] = None,
+    league: Optional[str] = None,
+    fixture_id: Optional[str] = None,
+) -> str:
+    """Fetch upcoming game schedules/fixtures using OpticOdds /fixtures endpoint.
+    
+    This is the PRIMARY tool for getting game schedules. Use this before falling back to web search.
+    
+    Args:
+        sport: Sport name (e.g., 'basketball')
+        league: League name (e.g., 'nba', 'nfl', 'mlb')
+        fixture_id: Optional specific fixture ID
+    
+    Returns:
+        Formatted string with upcoming game schedules including teams, dates, times, and fixture IDs
+    """
+    try:
+        client = get_client()
+        
+        # Get fixtures from OpticOdds API
+        result = client.get_fixtures(
+            sport=sport if sport else None,
+            league=league if league else None,
+            fixture_id=fixture_id if fixture_id else None,
+        )
+        
+        # Format response
+        formatted = format_fixtures_response(result)
+        return formatted
+    except Exception as e:
+        return f"Error fetching upcoming games: {str(e)}"
 
 
 @tool
@@ -492,6 +560,7 @@ def format_odds_response(data: Dict[str, Any]) -> str:
                         "sportsbook_name": "Unknown",
                         "american_odds": None,
                         "decimal_odds": None,
+                        "deep_link": None,
                     })
                 else:
                     # Process each odds entry
@@ -501,22 +570,28 @@ def format_odds_response(data: Dict[str, Any]) -> str:
                         sportsbook_id = sportsbook.get("id") if sportsbook else None
                         american_odds = odds.get("american", "") if isinstance(odds, dict) else ""
                         decimal_odds = odds.get("decimal", "") if isinstance(odds, dict) else ""
+                        deep_link = odds.get("deep_link") if isinstance(odds, dict) else None
                         
-                        formatted_lines.append(f"• {selection_name}: {american_odds} ({sportsbook_name})")
-                
-                # Add structured data for frontend
-                structured_odds.append({
-                    "fixture_id": fixture_id,
-                    "fixture": f"{home_team} vs {away_team}",
-                    "market_type": market_type,
-                    "market_id": market_id,
-                    "selection_id": selection_id,
-                    "selection_name": selection_name,
-                    "sportsbook_id": sportsbook_id,
-                    "sportsbook_name": sportsbook_name,
-                    "american_odds": american_odds,
-                    "decimal_odds": decimal_odds,
-                })
+                        # Format line with deep link if available
+                        odds_line = f"• {selection_name}: {american_odds} ({sportsbook_name})"
+                        if deep_link:
+                            odds_line += f" [Deep Link: {deep_link}]"
+                        formatted_lines.append(odds_line)
+                        
+                        # Add structured data for frontend (one entry per odds)
+                        structured_odds.append({
+                            "fixture_id": fixture_id,
+                            "fixture": f"{home_team} vs {away_team}",
+                            "market_type": market_type,
+                            "market_id": market_id,
+                            "selection_id": selection_id,
+                            "selection_name": selection_name,
+                            "sportsbook_id": sportsbook_id,
+                            "sportsbook_name": sportsbook_name,
+                            "american_odds": american_odds,
+                            "decimal_odds": decimal_odds,
+                            "deep_link": deep_link,
+                        })
     
     # Add structured JSON block for frontend parsing
     if structured_odds:
@@ -814,4 +889,75 @@ def format_parlay_response(data: Dict[str, Any], legs: List[Dict[str, Any]]) -> 
         formatted_lines.append(f"\n\n<!-- PARLAY_DATA_START -->\n{json.dumps({'parlays': structured_parlays}, indent=2)}\n<!-- PARLAY_DATA_END -->")
     
     return "\n".join(formatted_lines) if formatted_lines else "No parlay odds available"
+
+
+def format_fixtures_response(data: Dict[str, Any]) -> str:
+    """Format fixtures response for display with structured data for frontend parsing."""
+    if not data:
+        return "No fixtures data available"
+    
+    formatted_lines = []
+    fixtures = data.get("data", [])
+    
+    # Handle case where data might be a single fixture object
+    if not isinstance(fixtures, list):
+        fixtures = [fixtures] if fixtures else []
+    
+    if not fixtures:
+        return "No upcoming games found"
+    
+    # Collect structured data for frontend
+    structured_fixtures = []
+    
+    formatted_lines.append("Upcoming Games Schedule:\n")
+    
+    for fixture in fixtures:
+        if not fixture:
+            continue
+        
+        fixture_id = fixture.get("id")
+        home_team_info = fixture.get("home_team", {})
+        away_team_info = fixture.get("away_team", {})
+        
+        home_team = home_team_info.get("name", "Unknown") if isinstance(home_team_info, dict) else str(home_team_info)
+        away_team = away_team_info.get("name", "Unknown") if isinstance(away_team_info, dict) else str(away_team_info)
+        
+        # Get date/time information
+        start_time = fixture.get("start_time")
+        date = fixture.get("date")
+        status = fixture.get("status", "Scheduled")
+        league_info = fixture.get("league", {})
+        league_name = league_info.get("name", "") if isinstance(league_info, dict) else ""
+        
+        # Format game information
+        game_line = f"{away_team} @ {home_team}"
+        if date:
+            game_line += f" | {date}"
+        if start_time:
+            game_line += f" | {start_time}"
+        if status:
+            game_line += f" | Status: {status}"
+        
+        formatted_lines.append(f"\n{game_line}")
+        if fixture_id:
+            formatted_lines.append(f"Fixture ID: {fixture_id}")
+        if league_name:
+            formatted_lines.append(f"League: {league_name}")
+        
+        # Add to structured data
+        structured_fixtures.append({
+            "fixture_id": fixture_id,
+            "home_team": home_team,
+            "away_team": away_team,
+            "date": date,
+            "start_time": start_time,
+            "status": status,
+            "league": league_name,
+        })
+    
+    # Add structured JSON block for frontend parsing
+    if structured_fixtures:
+        formatted_lines.append(f"\n\n<!-- FIXTURES_DATA_START -->\n{json.dumps({'fixtures': structured_fixtures}, indent=2)}\n<!-- FIXTURES_DATA_END -->")
+    
+    return "\n".join(formatted_lines) if formatted_lines else "No fixtures available"
 
