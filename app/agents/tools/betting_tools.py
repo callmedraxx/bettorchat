@@ -365,88 +365,60 @@ def fetch_upcoming_games(
 def emit_fixture_objects(
     fixtures: Optional[str] = None,
     fixture_ids: Optional[str] = None,
-    sport: Optional[str] = None,
-    league: Optional[str] = None,
 ) -> str:
-    """Emit full fixture JSON objects for use in responses or bet slip building.
+    """Emit full fixture JSON objects extracted from previous tool responses.
     
-    This tool returns complete fixture objects with all fields. Use this when users request
-    full fixture JSON data or when building bet slips that need complete fixture information.
-    This is different from fetch_upcoming_games which returns formatted summaries.
+    This tool formats and emits complete fixture objects that were already retrieved
+    from previous tool calls (like fetch_upcoming_games). It does NOT fetch from the API.
+    Use this to extract full fixture JSON from structured data blocks in previous responses.
+    
+    IMPORTANT: Extract fixture objects from previous tool responses (e.g., from the 
+    <!-- FIXTURES_DATA_START --> block in fetch_upcoming_games response) and pass them here.
     
     Args:
-        fixtures: JSON string containing fixture objects (from previous tool calls).
-                 If provided, fixture IDs will be extracted and full objects fetched from API.
-        fixture_ids: Comma-separated string of fixture IDs (alternative to fixtures).
-                    Example: "20251127E5C64DE0,20251127C95F3929"
-        sport: Optional sport filter (e.g., 'football', 'basketball')
-        league: Optional league filter (e.g., 'nfl', 'nba')
+        fixtures: JSON string containing full fixture objects extracted from previous tool responses.
+                 This should be the complete fixture objects from fetch_upcoming_games or other tools.
+                 Can be a single object or array of objects.
+                 Example: '[{"id": "20251127E5C64DE0", "numerical_id": 258739, ...}, {...}]'
+        fixture_ids: Comma-separated string of fixture IDs. If provided, you must extract the 
+                    corresponding fixture objects from previous tool responses and pass them 
+                    in the fixtures parameter. This parameter is mainly for reference.
     
     Returns:
         Formatted string containing full fixture JSON objects with proper indentation.
         The JSON can be directly included in AI responses.
     
     Examples:
-        - emit_fixture_objects(fixture_ids="20251127E5C64DE0")
-        - emit_fixture_objects(fixtures='[{"id": "20251127E5C64DE0", ...}]')
+        - emit_fixture_objects(fixtures='[{{"id": "20251127E5C64DE0", ...}}]')
+        - Extract fixtures from fetch_upcoming_games response, then call emit_fixture_objects(fixtures=extracted_fixtures)
     """
     try:
-        client = get_client()
         fixture_objects = []
         
-        # Collect fixture IDs to fetch
-        fixture_id_list = []
+        if not fixtures:
+            if fixture_ids:
+                return f"Error: When using fixture_ids parameter, you must extract the corresponding fixture objects from previous tool responses and pass them in the 'fixtures' parameter. The fixture_ids '{fixture_ids}' are for reference only - extract the full objects from fetch_upcoming_games response."
+            return "Error: Must provide 'fixtures' parameter with full fixture objects extracted from previous tool responses."
         
-        # If fixtures provided, extract fixture IDs from them
-        if fixtures:
-            try:
-                fixtures_data = json.loads(fixtures) if isinstance(fixtures, str) else fixtures
-                
-                # Handle array of fixtures
-                if isinstance(fixtures_data, list):
-                    for fixture_obj in fixtures_data:
-                        if isinstance(fixture_obj, dict):
-                            fixture_id = fixture_obj.get("id") or fixture_obj.get("fixture_id")
-                            if fixture_id:
-                                fixture_id_list.append(str(fixture_id))
-                # Handle single fixture object
-                elif isinstance(fixtures_data, dict):
-                    fixture_id = fixtures_data.get("id") or fixtures_data.get("fixture_id")
-                    if fixture_id:
-                        fixture_id_list.append(str(fixture_id))
-            except (json.JSONDecodeError, ValueError, TypeError) as e:
-                return f"Error parsing fixtures JSON: {str(e)}. Please provide valid JSON."
-        
-        # If fixture_ids provided, parse comma-separated list
-        if fixture_ids:
-            fixture_id_list.extend([fid.strip() for fid in fixture_ids.split(",") if fid.strip()])
-        
-        if not fixture_id_list:
-            return "Error: Must provide either 'fixtures' (JSON string) or 'fixture_ids' (comma-separated string) parameter."
-        
-        # Fetch full fixture objects from API
-        for fid in fixture_id_list:
-            try:
-                result = client.get_fixtures(
-                    fixture_id=fid,
-                    sport=sport if sport else None,
-                    league=league if league else None,
-                )
-                
-                # Extract fixture objects from response
-                if result and "data" in result:
-                    data = result["data"]
-                    # Handle both list and single object responses
-                    if isinstance(data, list):
-                        fixture_objects.extend(data)
-                    elif isinstance(data, dict):
-                        fixture_objects.append(data)
-            except Exception as e:
-                # Continue with other fixtures even if one fails
-                continue
+        # Parse fixtures JSON
+        try:
+            fixtures_data = json.loads(fixtures) if isinstance(fixtures, str) else fixtures
+            
+            # Handle array of fixtures
+            if isinstance(fixtures_data, list):
+                for fixture_obj in fixtures_data:
+                    if isinstance(fixture_obj, dict):
+                        fixture_objects.append(fixture_obj)
+            # Handle single fixture object
+            elif isinstance(fixtures_data, dict):
+                fixture_objects.append(fixtures_data)
+            else:
+                return f"Error: Invalid fixtures format. Expected JSON object or array of objects, got {type(fixtures_data)}"
+        except (json.JSONDecodeError, ValueError, TypeError) as e:
+            return f"Error parsing fixtures JSON: {str(e)}. Please provide valid JSON with full fixture objects from previous tool responses."
         
         if not fixture_objects:
-            return f"Error: Could not fetch fixture objects. No fixtures found for the provided IDs."
+            return "Error: No valid fixture objects found in the provided fixtures parameter."
         
         # Format response with full JSON objects
         formatted_lines = [

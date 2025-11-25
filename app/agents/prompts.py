@@ -150,9 +150,9 @@ Present data in a clear, structured format that frontends can render as clickabl
 
 CRITICAL: When showing upcoming games/fixtures, ALWAYS include both:
 - Formatted summary (teams, dates, times, venue, etc.) from fetch_upcoming_games for readability
-- Complete fixture JSON objects by calling emit_fixture_objects with the fixture IDs from fetch_upcoming_games
+- Complete fixture JSON objects by extracting from fetch_upcoming_games response and calling emit_fixture_objects
 - The full JSON ensures users have access to all fixture data (id, numerical_id, competitors, venue details, records, etc.)
-- Workflow: fetch_upcoming_games → extract fixture IDs → call emit_fixture_objects(fixture_ids="...") → include both summary and full JSON in response
+- Workflow: fetch_upcoming_games → extract fixture objects from <!-- FIXTURES_DATA_START --> block → call emit_fixture_objects(fixtures='[...]') → include both summary and full JSON in response
 
 
 
@@ -351,11 +351,12 @@ STEP 4: When presenting results from web search, clearly indicate it's from web 
 
 Present games with: teams, date, time, fixture IDs (if available), and league information
 
-STEP 5: ALWAYS call emit_fixture_objects to get full fixture JSON
-- After fetch_upcoming_games returns fixture data, extract the fixture IDs from the response
-- Then call emit_fixture_objects with the fixture_ids parameter (comma-separated string of all fixture IDs)
-- Example: If fetch_upcoming_games shows 3 games with IDs "20251127E5C64DE0,20251127C95F3929,202511287C093769", call:
-  emit_fixture_objects(fixture_ids="20251127E5C64DE0,20251127C95F3929,202511287C093769")
+STEP 5: ALWAYS call emit_fixture_objects to emit full fixture JSON
+- After fetch_upcoming_games returns fixture data, extract the full fixture objects from the structured data block
+- Look for <!-- FIXTURES_DATA_START --> in the response and extract the fixture objects array
+- Call emit_fixture_objects with the fixtures parameter containing the extracted fixture objects
+- Example: Extract fixtures from fetch_upcoming_games response, then call:
+  emit_fixture_objects(fixtures='[{{"id": "20251127E5C64DE0", ...}}, {{"id": "20251127C95F3929", ...}}]')
 - Present the formatted summary first (teams, dates, times from fetch_upcoming_games), then include the complete fixture JSON objects from emit_fixture_objects
 - This ensures users have access to all fixture fields (id, numerical_id, game_id, start_date, competitors, venue, broadcast, records, etc.)
 - Example format:
@@ -365,9 +366,9 @@ STEP 5: ALWAYS call emit_fixture_objects to get full fixture JSON
   [Complete fixture JSON objects from emit_fixture_objects]
 
 STEP 6: When users explicitly request ONLY full JSON (without summaries):
-- Skip fetch_upcoming_games and go directly to emit_fixture_objects
-- Use emit_fixture_objects tool to return complete fixture JSON with all fields
-- This tool accepts fixture_ids (comma-separated) or fixtures (JSON string from previous calls)
+- Still call fetch_upcoming_games first to get the fixture data
+- Extract fixture objects from the structured data block (<!-- FIXTURES_DATA_START -->)
+- Call emit_fixture_objects with the extracted fixtures to format and emit the JSON
 - Use this when users specifically ask for "just the JSON" or "only the fixture objects"
 
 
@@ -550,9 +551,9 @@ image_to_bet_analysis: When users upload images of bet slips or odds screens
 
 get_current_datetime: ALWAYS call this FIRST when user mentions dates like "today", "tomorrow", "next week", or any relative date. This is critical for accurate date interpretation.
 
-fetch_upcoming_games: PRIMARY tool for getting game schedules. Use this FIRST for queries like "games tomorrow", "upcoming NBA games", "schedule", etc. Only fall back to web search if this fails. Parameters: sport='basketball', league='nba' for NBA games. Returns formatted summaries with fixture IDs. After calling this tool, YOU MUST call emit_fixture_objects with the fixture IDs to get full JSON objects.
+fetch_upcoming_games: PRIMARY tool for getting game schedules. Use this FIRST for queries like "games tomorrow", "upcoming NBA games", "schedule", etc. Only fall back to web search if this fails. Parameters: sport='basketball', league='nba' for NBA games. Returns formatted summaries AND full fixture objects in structured data block (<!-- FIXTURES_DATA_START -->). After calling this tool, YOU MUST extract the fixture objects from the structured data block and call emit_fixture_objects to format and emit them.
 
-emit_fixture_objects: REQUIRED tool to call after fetch_upcoming_games to get complete fixture JSON objects. Extract fixture IDs from fetch_upcoming_games response and call emit_fixture_objects(fixture_ids="id1,id2,id3") to get full JSON. This tool returns complete fixture objects with all fields. Accepts fixture_ids (comma-separated string) or fixtures (JSON string from previous tool calls). ALWAYS call this after fetch_upcoming_games to include full fixture JSON in your response.
+emit_fixture_objects: REQUIRED tool to call after fetch_upcoming_games to format and emit complete fixture JSON objects. This tool does NOT fetch from API - it formats fixture objects already retrieved from previous tool calls. Extract fixture objects from fetch_upcoming_games response (from <!-- FIXTURES_DATA_START --> block) and call emit_fixture_objects(fixtures='[{{...}}, {{...}}]') with the extracted objects. ALWAYS call this after fetch_upcoming_games to include full fixture JSON in your response.
 
 internet_search (web search): FALLBACK ONLY for game schedules if fetch_upcoming_games fails. When using web search, ALWAYS include accurate current date from get_current_datetime in the search query (e.g., "NBA games November 26, 2025"). Also use for recent news, roster changes, or context not available via betting APIs.
 
