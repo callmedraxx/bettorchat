@@ -56,14 +56,76 @@ class OpticOddsClient:
         
         self._request_times.append(now)
     
-    def _request(self, method: str, endpoint: str, endpoint_type: str = "standard", **kwargs) -> Dict[str, Any]:
-        """Make API request with rate limiting."""
+    def _request(
+        self, 
+        method: str, 
+        endpoint: str, 
+        endpoint_type: str = "standard", 
+        paginate: bool = False,
+        **kwargs
+    ) -> Dict[str, Any]:
+        """Make API request with rate limiting and optional pagination.
+        
+        Args:
+            method: HTTP method
+            endpoint: API endpoint
+            endpoint_type: Rate limit type ("standard" or "historical")
+            paginate: If True, fetch all pages and combine results
+            **kwargs: Additional request parameters
+        """
         self._check_rate_limit(endpoint_type)
         
         try:
             response = self.client.request(method, endpoint, **kwargs)
             response.raise_for_status()
-            return response.json()
+            result = response.json()
+            
+            # Handle pagination if requested
+            if paginate and isinstance(result, dict):
+                total_pages = result.get("total_pages", 1)
+                current_page = result.get("page", 1)
+                data = result.get("data", [])
+                
+                # Fetch remaining pages
+                if total_pages > 1 and current_page == 1:
+                    # Initialize combined data - preserve original structure
+                    all_data = list(data) if isinstance(data, list) else [data] if data else []
+                    
+                    # Update params for pagination
+                    params = kwargs.get("params", {})
+                    if not isinstance(params, dict):
+                        params = {}
+                    
+                    # Fetch remaining pages
+                    for page in range(2, total_pages + 1):
+                        self._check_rate_limit(endpoint_type)
+                        page_params = params.copy()
+                        page_params["page"] = page
+                        page_kwargs = kwargs.copy()
+                        page_kwargs["params"] = page_params
+                        
+                        try:
+                            page_response = self.client.request(method, endpoint, **page_kwargs)
+                            page_response.raise_for_status()
+                            page_result = page_response.json()
+                            page_data = page_result.get("data", [])
+                            
+                            if isinstance(page_data, list):
+                                all_data.extend(page_data)
+                            elif page_data:
+                                all_data.append(page_data)
+                        except Exception as e:
+                            # Log error but continue with pages we got
+                            # In production, you might want to log this properly
+                            break
+                    
+                    # Return combined result
+                    result["data"] = all_data
+                    result["page"] = total_pages
+                    result["all_pages_fetched"] = True
+                    result["total_items"] = len(all_data)
+            
+            return result
         except httpx.HTTPStatusError as e:
             if e.response.status_code == 429:
                 # Rate limited, wait and retry once
@@ -74,80 +136,118 @@ class OpticOddsClient:
             raise
     
     # Common endpoints
-    def get_sports(self) -> Dict[str, Any]:
-        """Get all sports."""
-        return self._request("GET", "/sports")
+    def get_sports(self, paginate: bool = False) -> Dict[str, Any]:
+        """Get all sports.
+        
+        Args:
+            paginate: If True, fetch all pages of results
+        """
+        return self._request("GET", "/sports", paginate=paginate)
     
-    def get_active_sports(self) -> Dict[str, Any]:
-        """Get active sports."""
-        return self._request("GET", "/sports/active")
+    def get_active_sports(self, paginate: bool = False) -> Dict[str, Any]:
+        """Get active sports.
+        
+        Args:
+            paginate: If True, fetch all pages of results
+        """
+        return self._request("GET", "/sports/active", paginate=paginate)
     
-    def get_leagues(self, sport: Optional[Union[str, int]] = None) -> Dict[str, Any]:
+    def get_leagues(self, sport: Optional[Union[str, int]] = None, paginate: bool = False) -> Dict[str, Any]:
         """Get leagues.
         
         Args:
             sport: Sport name (e.g., 'basketball') or ID
+            paginate: If True, fetch all pages of results
         """
         params = {}
         if sport:
             params["sport"] = str(sport)
-        return self._request("GET", "/leagues", params=params)
+        return self._request("GET", "/leagues", params=params, paginate=paginate)
     
-    def get_active_leagues(self) -> Dict[str, Any]:
-        """Get active leagues."""
-        return self._request("GET", "/leagues/active")
+    def get_active_leagues(self, paginate: bool = False) -> Dict[str, Any]:
+        """Get active leagues.
+        
+        Args:
+            paginate: If True, fetch all pages of results
+        """
+        return self._request("GET", "/leagues/active", paginate=paginate)
     
-    def get_sportsbooks(self) -> Dict[str, Any]:
-        """Get all sportsbooks."""
-        return self._request("GET", "/sportsbooks")
+    def get_sportsbooks(self, paginate: bool = False) -> Dict[str, Any]:
+        """Get all sportsbooks.
+        
+        Args:
+            paginate: If True, fetch all pages of results
+        """
+        return self._request("GET", "/sportsbooks", paginate=paginate)
     
-    def get_active_sportsbooks(self, sport: Optional[Union[str, int]] = None) -> Dict[str, Any]:
+    def get_active_sportsbooks(self, sport: Optional[Union[str, int]] = None, paginate: bool = False) -> Dict[str, Any]:
         """Get active sportsbooks.
         
         Args:
             sport: Sport name (e.g., 'basketball') or ID
+            paginate: If True, fetch all pages of results
         """
         params = {}
         if sport:
             params["sport"] = str(sport)
-        return self._request("GET", "/sportsbooks/active", params=params)
+        return self._request("GET", "/sportsbooks/active", params=params, paginate=paginate)
     
-    def get_markets(self) -> Dict[str, Any]:
-        """Get all markets."""
-        return self._request("GET", "/markets")
+    def get_markets(self, paginate: bool = False) -> Dict[str, Any]:
+        """Get all markets.
+        
+        Args:
+            paginate: If True, fetch all pages of results
+        """
+        return self._request("GET", "/markets", paginate=paginate)
     
-    def get_active_markets(self) -> Dict[str, Any]:
-        """Get active markets."""
-        return self._request("GET", "/markets/active")
+    def get_active_markets(self, paginate: bool = False) -> Dict[str, Any]:
+        """Get active markets.
+        
+        Args:
+            paginate: If True, fetch all pages of results
+        """
+        return self._request("GET", "/markets/active", paginate=paginate)
     
     # Squads endpoints
-    def get_teams(self, league: Optional[Union[str, int]] = None, sport: Optional[Union[str, int]] = None) -> Dict[str, Any]:
+    def get_teams(
+        self, 
+        league: Optional[Union[str, int]] = None, 
+        sport: Optional[Union[str, int]] = None,
+        paginate: bool = False
+    ) -> Dict[str, Any]:
         """Get teams.
         
         Args:
             league: League name (e.g., 'nba') or ID
             sport: Sport name (e.g., 'basketball') or ID
+            paginate: If True, fetch all pages of results
         """
         params = {}
         if league:
             params["league"] = str(league)
         if sport:
             params["sport"] = str(sport)
-        return self._request("GET", "/teams", params=params)
+        return self._request("GET", "/teams", params=params, paginate=paginate)
     
-    def get_players(self, league: Optional[Union[str, int]] = None, team: Optional[Union[str, int]] = None) -> Dict[str, Any]:
+    def get_players(
+        self, 
+        league: Optional[Union[str, int]] = None, 
+        team: Optional[Union[str, int]] = None,
+        paginate: bool = False
+    ) -> Dict[str, Any]:
         """Get players.
         
         Args:
             league: League name (e.g., 'nba') or ID
             team: Team name or ID
+            paginate: If True, fetch all pages of results
         """
         params = {}
         if league:
             params["league"] = str(league)
         if team:
             params["team"] = str(team)
-        return self._request("GET", "/players", params=params)
+        return self._request("GET", "/players", params=params, paginate=paginate)
     
     # Fixtures endpoints
     def get_fixtures(
@@ -155,6 +255,7 @@ class OpticOddsClient:
         sport: Optional[Union[str, int]] = None,
         league: Optional[Union[str, int]] = None,
         fixture_id: Optional[Union[str, int]] = None,
+        paginate: bool = False,
         **kwargs
     ) -> Dict[str, Any]:
         """Get fixtures.
@@ -163,6 +264,7 @@ class OpticOddsClient:
             sport: Sport name (e.g., 'basketball') or ID
             league: League name (e.g., 'nba') or ID
             fixture_id: Fixture ID
+            paginate: If True, fetch all pages of results
         """
         params = {}
         if sport:
@@ -172,21 +274,27 @@ class OpticOddsClient:
         if fixture_id:
             params["fixture_id"] = str(fixture_id)
         params.update(kwargs)
-        return self._request("GET", "/fixtures", params=params)
+        return self._request("GET", "/fixtures", params=params, paginate=paginate)
     
-    def get_active_fixtures(self, sport: Optional[Union[str, int]] = None, league: Optional[Union[str, int]] = None) -> Dict[str, Any]:
+    def get_active_fixtures(
+        self, 
+        sport: Optional[Union[str, int]] = None, 
+        league: Optional[Union[str, int]] = None,
+        paginate: bool = False
+    ) -> Dict[str, Any]:
         """Get active fixtures.
         
         Args:
             sport: Sport name (e.g., 'basketball') or ID
             league: League name (e.g., 'nba') or ID
+            paginate: If True, fetch all pages of results
         """
         params = {}
         if sport:
             params["sport"] = str(sport)
         if league:
             params["league"] = str(league)
-        return self._request("GET", "/fixtures/active", params=params)
+        return self._request("GET", "/fixtures/active", params=params, paginate=paginate)
     
     def get_tournaments(self, league: Optional[Union[str, int]] = None) -> Dict[str, Any]:
         """Get tournaments.
@@ -211,6 +319,7 @@ class OpticOddsClient:
         market_types: Optional[Union[str, List[str]]] = None,
         player_id: Optional[Union[str, int]] = None,
         team_id: Optional[Union[str, int]] = None,
+        paginate: bool = False,
         **kwargs
     ) -> Dict[str, Any]:
         """Get fixture odds.
@@ -221,10 +330,11 @@ class OpticOddsClient:
             sport_id: Sport ID (e.g., 1) - use for numeric IDs
             league: League name (e.g., 'nba') - use for string names
             league_id: League ID - use for numeric IDs
-            sportsbook: Sportsbook name/ID or list of sportsbooks
-            market_types: Market type(s) as string or list
+            sportsbook: Sportsbook name/ID or list of sportsbooks (will create multiple query params)
+            market_types: Market type(s) as string or list (will create multiple query params, URL encoded)
             player_id: Player ID (for player props)
             team_id: Team ID
+            paginate: If True, fetch all pages of results
         """
         params = {}
         if fixture_id:
@@ -258,22 +368,32 @@ class OpticOddsClient:
                 # Not numeric, treat as name
                 params["league"] = str(league)
         
+        # Handle multiple sportsbooks - use list to create multiple query params
+        # API expects: &sportsbook=DraftKings&sportsbook=Fanduel (not comma-separated)
+        # httpx automatically creates multiple query params when a list is passed
         if sportsbook:
             if isinstance(sportsbook, list):
-                params["sportsbook"] = ",".join(map(str, sportsbook))
+                # Pass as list - httpx will create: ?sportsbook=DraftKings&sportsbook=Fanduel
+                params["sportsbook"] = [str(sb) for sb in sportsbook]
             else:
                 params["sportsbook"] = str(sportsbook)
+        
+        # Handle multiple market types - use list to create multiple query params
+        # httpx automatically URL encodes special characters like + in market names
+        # Example: "Player Passing + Rushing Yards" → "Player%20Passing%20%2B%20Rushing%20Yards"
         if market_types:
             if isinstance(market_types, list):
-                params["market_types"] = ",".join(market_types)
+                # Pass as list - httpx will create multiple params and URL encode
+                params["market_types"] = [str(mt) for mt in market_types]
             else:
-                params["market_types"] = market_types
+                # Single market type - httpx will automatically URL encode
+                params["market_types"] = str(market_types)
         if player_id:
             params["player_id"] = str(player_id)
         if team_id:
             params["team_id"] = str(team_id)
         params.update(kwargs)
-        return self._request("GET", "/fixtures/odds", params=params)
+        return self._request("GET", "/fixtures/odds", params=params, paginate=paginate)
     
     def get_historical_odds(
         self,
@@ -349,6 +469,7 @@ class OpticOddsClient:
         self,
         sport: Optional[Union[str, int]] = None,
         league: Optional[Union[str, int]] = None,
+        paginate: bool = False,
         **kwargs
     ) -> Dict[str, Any]:
         """Get futures markets.
@@ -356,6 +477,7 @@ class OpticOddsClient:
         Args:
             sport: Sport name (e.g., 'basketball') or ID
             league: League name (e.g., 'nba') or ID
+            paginate: If True, fetch all pages of results
         """
         params = {}
         if sport:
@@ -363,12 +485,13 @@ class OpticOddsClient:
         if league:
             params["league"] = str(league)
         params.update(kwargs)
-        return self._request("GET", "/futures", params=params)
+        return self._request("GET", "/futures", params=params, paginate=paginate)
     
     def get_futures_odds(
         self,
         future_id: Optional[Union[str, int]] = None,
         sport: Optional[Union[str, int]] = None,
+        paginate: bool = False,
         **kwargs
     ) -> Dict[str, Any]:
         """Get futures odds.
@@ -376,6 +499,7 @@ class OpticOddsClient:
         Args:
             future_id: Future ID
             sport: Sport name (e.g., 'basketball') or ID
+            paginate: If True, fetch all pages of results
         """
         params = {}
         if future_id:
@@ -383,7 +507,7 @@ class OpticOddsClient:
         if sport:
             params["sport"] = str(sport)
         params.update(kwargs)
-        return self._request("GET", "/futures/odds", params=params)
+        return self._request("GET", "/futures/odds", params=params, paginate=paginate)
     
     # Grader endpoints
     def get_grader_odds(

@@ -7,12 +7,20 @@ from datetime import datetime, timedelta
 from typing import Optional, List, Dict, Any
 from langchain.tools import tool
 import httpx
+try:
+    from zoneinfo import ZoneInfo
+except ImportError:
+    # Fallback for Python < 3.9
+    from backports.zoneinfo import ZoneInfo
 
 from app.core.opticodds_client import OpticOddsClient
 
 
 # Initialize OpticOdds client (singleton pattern)
 _client: Optional[OpticOddsClient] = None
+
+# Simple in-memory cache for user timezones (in production, this would be in user preferences)
+_user_timezone_cache: Dict[str, str] = {}
 
 
 def get_client() -> OpticOddsClient:
@@ -23,25 +31,89 @@ def get_client() -> OpticOddsClient:
     return _client
 
 
+def get_user_timezone(user_id: Optional[str] = None, timezone_override: Optional[str] = None) -> ZoneInfo:
+    """Get user's timezone from cache/preferences, defaulting to EST/EDT.
+    
+    Args:
+        user_id: Optional user ID to look up preferences
+        timezone_override: Optional timezone string to use (e.g., "America/Los_Angeles")
+    
+    Returns:
+        ZoneInfo object for the user's timezone
+    """
+    # Default to Eastern Time
+    default_tz = ZoneInfo("America/New_York")
+    
+    # If timezone override provided, use it
+    if timezone_override:
+        try:
+            return ZoneInfo(timezone_override)
+        except Exception:
+            return default_tz
+    
+    # Try to get from cache if user_id provided
+    if user_id and user_id in _user_timezone_cache:
+        try:
+            return ZoneInfo(_user_timezone_cache[user_id])
+        except Exception:
+            return default_tz
+    
+    return default_tz
+
+
+def set_user_timezone(user_id: str, timezone: str) -> bool:
+    """Set user's timezone in cache.
+    
+    Args:
+        user_id: User ID
+        timezone: Timezone string (e.g., "America/Los_Angeles")
+    
+    Returns:
+        True if successful
+    """
+    try:
+        # Validate timezone
+        ZoneInfo(timezone)
+        _user_timezone_cache[user_id] = timezone
+        return True
+    except Exception:
+        return False
+
+
 @tool
-def get_current_datetime() -> str:
-    """Get the current date, time, timezone, and day of week.
+def get_current_datetime(user_id: Optional[str] = None, timezone: Optional[str] = None) -> str:
+    """Get the current date, time, timezone, and day of week in the user's timezone.
     
     This tool should be called whenever the user mentions dates like "today", "tomorrow", 
     "next week", or any relative date references. Always use this tool to get the current 
     date before interpreting date-related queries.
     
+    The timezone is determined by:
+    1. timezone parameter (if provided)
+    2. User's saved timezone preference (if user_id provided and preference exists)
+    3. Default to Eastern Time (EST/EDT) if no preference
+    
+    Args:
+        user_id: Optional user ID to look up timezone preference
+        timezone: Optional timezone string (e.g., "America/Los_Angeles", "America/New_York")
+    
     Returns:
         Formatted string with current date, time, timezone, and day of week
     """
-    now = datetime.now()
+    # Get user's timezone (defaults to EST/EDT)
+    tz = get_user_timezone(user_id, timezone)
+    now = datetime.now(tz)
+    
+    # Get timezone name for display
+    tz_name = str(tz).split("/")[-1].replace("_", " ")
+    tz_abbr = now.strftime('%Z')
     
     # Format date and time information
-    formatted = f"""Current Date and Time Information:
+    formatted = f"""Current Date and Time Information ({tz_abbr}):
 
 Date: {now.strftime('%A, %B %d, %Y')}
-Time: {now.strftime('%I:%M %p')}
-Timezone: {now.strftime('%Z')} (UTC{now.strftime('%z')})
+Time: {now.strftime('%I:%M %p')} {tz_abbr}
+Timezone: {tz_abbr} ({tz_name}) (UTC{now.strftime('%z')})
 Day of Week: {now.strftime('%A')}
 ISO Format: {now.isoformat()}
 
@@ -49,9 +121,98 @@ Use this information to interpret relative dates:
 - "Today" = {now.strftime('%B %d, %Y')}
 - "Tomorrow" = {(now + timedelta(days=1)).strftime('%B %d, %Y')}
 - "This week" = Week of {now.strftime('%B %d, %Y')}
+
+Note: Times are displayed in your local timezone ({tz_abbr}). If you'd like to change your timezone, use the detect_user_location tool or set it in your preferences.
 """
     
     return formatted
+
+
+@tool
+def detect_user_location(ip_address: Optional[str] = None, user_id: Optional[str] = None) -> str:
+    """Detect user's location and timezone from IP address or set location preference.
+    
+    This tool detects the user's location using IP geolocation and automatically sets
+    their timezone preference. If IP address is not provided, it will use a free
+    geolocation service to detect from the current request.
+    
+    Args:
+        ip_address: Optional IP address to geolocate. If not provided, attempts to detect automatically.
+        user_id: Optional user ID to save location/timezone preference
+    
+    Returns:
+        Formatted string with detected location and timezone information
+    """
+    try:
+        # Use a free IP geolocation service
+        if ip_address:
+            # Use ip-api.com (free, no API key required)
+            geo_url = f"http://ip-api.com/json/{ip_address}"
+        else:
+            # Get location from current IP
+            geo_url = "http://ip-api.com/json/"
+        
+        response = httpx.get(geo_url, timeout=5.0)
+        response.raise_for_status()
+        geo_data = response.json()
+        
+        if geo_data.get("status") == "fail":
+            error_msg = geo_data.get("message", "Unknown error")
+            return f"Error detecting location: {error_msg}. Defaulting to Eastern Time (EST/EDT)."
+        
+        # Extract location data
+        city = geo_data.get("city", "Unknown")
+        region = geo_data.get("regionName", geo_data.get("region", "Unknown"))
+        country = geo_data.get("country", "Unknown")
+        country_code = geo_data.get("countryCode", "")
+        timezone_str = geo_data.get("timezone", "America/New_York")
+        lat = geo_data.get("lat")
+        lon = geo_data.get("lon")
+        
+        # Convert timezone string to ZoneInfo
+        try:
+            tz = ZoneInfo(timezone_str)
+        except Exception:
+            # Fallback to EST if timezone is invalid
+            tz = ZoneInfo("America/New_York")
+            timezone_str = "America/New_York"
+        
+        # Get current time in detected timezone
+        now = datetime.now(tz)
+        tz_abbr = now.strftime('%Z')
+        
+        location_info = {
+            "city": city,
+            "region": region,
+            "country": country,
+            "country_code": country_code,
+            "timezone": timezone_str,
+            "latitude": lat,
+            "longitude": lon,
+        }
+        
+        # Save timezone to cache if user_id provided
+        if user_id:
+            set_user_timezone(user_id, timezone_str)
+        
+        formatted = f"""Location Detected:
+
+City: {city}
+Region/State: {region}
+Country: {country}
+Timezone: {tz_abbr} ({timezone_str})
+Current Time: {now.strftime('%I:%M %p %Z')} on {now.strftime('%B %d, %Y')}
+
+Your timezone preference has been set to {tz_abbr}. All times will now be displayed in your local timezone.
+"""
+        
+        # Add structured data for agent to save to preferences
+        formatted += f"\n\n<!-- LOCATION_DATA_START -->\n{json.dumps(location_info, indent=2)}\n<!-- LOCATION_DATA_END -->"
+        
+        return formatted
+        
+    except Exception as e:
+        return f"Error detecting location: {str(e)}. Defaulting to Eastern Time (EST/EDT). You can manually set your timezone preference."
 
 
 @tool
@@ -492,6 +653,97 @@ def read_url_content(url: str) -> str:
         return response.text[:5000]  # Limit to first 5000 chars
     except Exception as e:
         return f"Error reading URL content: {str(e)}"
+
+
+@tool
+def fetch_available_sports() -> str:
+    """Fetch available sports that currently have fixtures with odds using OpticOdds /sports/active endpoint.
+    
+    This tool returns sports that are currently active and have fixtures with odds available.
+    Use this to discover valid sport IDs and names for use in other endpoints.
+    
+    Returns:
+        Formatted string with sports information including IDs, names, and other details
+    """
+    try:
+        client = get_client()
+        result = client.get_active_sports()
+        formatted = format_sports_response(result)
+        return formatted
+    except Exception as e:
+        return f"Error fetching available sports: {str(e)}"
+
+
+@tool
+def fetch_available_leagues(sport: Optional[str] = None) -> str:
+    """Fetch available leagues that currently have fixtures with odds using OpticOdds /leagues/active endpoint.
+    
+    This tool returns leagues that are currently active and have fixtures with odds available.
+    Use this to discover valid league IDs and names for use in other endpoints.
+    
+    Args:
+        sport: Optional sport name or ID to filter leagues. If provided, returns all leagues for that sport.
+              If not provided, returns only active leagues with fixtures and odds.
+    
+    Returns:
+        Formatted string with leagues information including IDs, names, and associated sport info
+    """
+    try:
+        client = get_client()
+        if sport:
+            # Get all leagues for the sport (not just active)
+            result = client.get_leagues(sport=sport)
+        else:
+            # Get only active leagues with fixtures and odds
+            result = client.get_active_leagues()
+        formatted = format_leagues_response(result)
+        return formatted
+    except Exception as e:
+        return f"Error fetching available leagues: {str(e)}"
+
+
+@tool
+def fetch_available_markets() -> str:
+    """Fetch available market types using OpticOdds /markets/active endpoint.
+    
+    This tool returns market types that are currently available.
+    Use this to discover valid market_types parameter values (e.g., 'moneyline', 'spread', 'total').
+    
+    Returns:
+        Formatted string with markets information including IDs, names, and market types
+    """
+    try:
+        client = get_client()
+        result = client.get_active_markets()
+        formatted = format_markets_response(result)
+        return formatted
+    except Exception as e:
+        return f"Error fetching available markets: {str(e)}"
+
+
+@tool
+def fetch_available_sportsbooks(sport: Optional[str] = None) -> str:
+    """Fetch available sportsbooks using OpticOdds /sportsbooks/active endpoint.
+    
+    This tool returns sportsbooks that are currently active.
+    Use this to discover valid sportsbook IDs and names for use in other endpoints.
+    
+    Args:
+        sport: Optional sport name or ID to filter sportsbooks by sport
+    
+    Returns:
+        Formatted string with sportsbooks information including IDs and names
+    """
+    try:
+        client = get_client()
+        if sport:
+            result = client.get_active_sportsbooks(sport=sport)
+        else:
+            result = client.get_active_sportsbooks()
+        formatted = format_sportsbooks_response(result)
+        return formatted
+    except Exception as e:
+        return f"Error fetching available sportsbooks: {str(e)}"
 
 
 # Helper functions for formatting responses
@@ -957,7 +1209,198 @@ def format_fixtures_response(data: Dict[str, Any]) -> str:
     
     # Add structured JSON block for frontend parsing
     if structured_fixtures:
-        formatted_lines.append(f"\n\n<!-- FIXTURES_DATA_START -->\n{json.dumps({'fixtures': structured_fixtures}, indent=2)}\n<!-- FIXTURES_DATA_END -->")
+        formatted_lines.append(f"\n\n<!-- FIXTURES_DATA_START -->\n{json.dumps({'fixtures': structured_fixtures}, indent=2)}\n<!-- FIXTURES_DATA_END -->")      
     
     return "\n".join(formatted_lines) if formatted_lines else "No fixtures available"
+
+
+def format_sports_response(data: Dict[str, Any]) -> str:
+    """Format sports response with structured data for frontend parsing."""
+    if not data:
+        return "No sports data available"
+    
+    formatted_lines = []
+    sports = data.get("data", [])
+    
+    if not isinstance(sports, list):
+        sports = [sports] if sports else []
+    
+    if not sports:
+        return "No active sports found"
+    
+    formatted_lines.append("Active Sports (with fixtures and odds available):\n")
+    
+    structured_sports = []
+    
+    for sport in sports:
+        if not sport:
+            continue
+        
+        sport_id = sport.get("id")
+        sport_name = sport.get("name", "Unknown")
+        sport_slug = sport.get("slug", "")
+        
+        formatted_lines.append(f"\n{sport_name}")
+        if sport_id:
+            formatted_lines.append(f"  ID: {sport_id}")
+        if sport_slug:
+            formatted_lines.append(f"  Slug: {sport_slug}")
+        
+        structured_sports.append({
+            "sport_id": sport_id,
+            "sport_name": sport_name,
+            "sport_slug": sport_slug,
+        })
+    
+    # Add structured JSON block for frontend parsing
+    if structured_sports:
+        formatted_lines.append(f"\n\n<!-- SPORTS_DATA_START -->\n{json.dumps({'sports': structured_sports}, indent=2)}\n<!-- SPORTS_DATA_END -->")
+    
+    return "\n".join(formatted_lines) if formatted_lines else "No sports available"
+
+
+def format_leagues_response(data: Dict[str, Any]) -> str:
+    """Format leagues response with structured data for frontend parsing."""
+    if not data:
+        return "No leagues data available"
+    
+    formatted_lines = []
+    leagues = data.get("data", [])
+    
+    if not isinstance(leagues, list):
+        leagues = [leagues] if leagues else []
+    
+    if not leagues:
+        return "No leagues found"
+    
+    formatted_lines.append("Available Leagues:\n")
+    
+    structured_leagues = []
+    
+    for league in leagues:
+        if not league:
+            continue
+        
+        league_id = league.get("id")
+        league_name = league.get("name", "Unknown")
+        league_slug = league.get("slug", "")
+        sport_info = league.get("sport", {})
+        sport_id = sport_info.get("id") if isinstance(sport_info, dict) else None
+        sport_name = sport_info.get("name", "") if isinstance(sport_info, dict) else ""
+        
+        formatted_lines.append(f"\n{league_name}")
+        if league_id:
+            formatted_lines.append(f"  League ID: {league_id}")
+        if league_slug:
+            formatted_lines.append(f"  Slug: {league_slug}")
+        if sport_name:
+            formatted_lines.append(f"  Sport: {sport_name} (ID: {sport_id})")
+        
+        structured_leagues.append({
+            "league_id": league_id,
+            "league_name": league_name,
+            "league_slug": league_slug,
+            "sport_id": sport_id,
+            "sport_name": sport_name,
+        })
+    
+    # Add structured JSON block for frontend parsing
+    if structured_leagues:
+        formatted_lines.append(f"\n\n<!-- LEAGUES_DATA_START -->\n{json.dumps({'leagues': structured_leagues}, indent=2)}\n<!-- LEAGUES_DATA_END -->")
+    
+    return "\n".join(formatted_lines) if formatted_lines else "No leagues available"
+
+
+def format_markets_response(data: Dict[str, Any]) -> str:
+    """Format markets response with structured data for frontend parsing."""
+    if not data:
+        return "No markets data available"
+    
+    formatted_lines = []
+    markets = data.get("data", [])
+    
+    if not isinstance(markets, list):
+        markets = [markets] if markets else []
+    
+    if not markets:
+        return "No markets found"
+    
+    formatted_lines.append("Available Market Types:\n")
+    
+    structured_markets = []
+    
+    for market in markets:
+        if not market:
+            continue
+        
+        market_id = market.get("id")
+        market_name = market.get("name", "Unknown")
+        market_type = market.get("market_type", "")
+        market_slug = market.get("slug", "")
+        
+        formatted_lines.append(f"\n{market_name}")
+        if market_type:
+            formatted_lines.append(f"  Market Type: {market_type}")
+        if market_id:
+            formatted_lines.append(f"  Market ID: {market_id}")
+        if market_slug:
+            formatted_lines.append(f"  Slug: {market_slug}")
+        
+        structured_markets.append({
+            "market_id": market_id,
+            "market_name": market_name,
+            "market_type": market_type,
+            "market_slug": market_slug,
+        })
+    
+    # Add structured JSON block for frontend parsing
+    if structured_markets:
+        formatted_lines.append(f"\n\n<!-- MARKETS_DATA_START -->\n{json.dumps({'markets': structured_markets}, indent=2)}\n<!-- MARKETS_DATA_END -->")
+    
+    return "\n".join(formatted_lines) if formatted_lines else "No markets available"
+
+
+def format_sportsbooks_response(data: Dict[str, Any]) -> str:
+    """Format sportsbooks response with structured data for frontend parsing."""
+    if not data:
+        return "No sportsbooks data available"
+    
+    formatted_lines = []
+    sportsbooks = data.get("data", [])
+    
+    if not isinstance(sportsbooks, list):
+        sportsbooks = [sportsbooks] if sportsbooks else []
+    
+    if not sportsbooks:
+        return "No sportsbooks found"
+    
+    formatted_lines.append("Available Sportsbooks:\n")
+    
+    structured_sportsbooks = []
+    
+    for sportsbook in sportsbooks:
+        if not sportsbook:
+            continue
+        
+        sportsbook_id = sportsbook.get("id")
+        sportsbook_name = sportsbook.get("name", "Unknown")
+        sportsbook_slug = sportsbook.get("slug", "")
+        
+        formatted_lines.append(f"\n{sportsbook_name}")
+        if sportsbook_id:
+            formatted_lines.append(f"  Sportsbook ID: {sportsbook_id}")
+        if sportsbook_slug:
+            formatted_lines.append(f"  Slug: {sportsbook_slug}")
+        
+        structured_sportsbooks.append({
+            "sportsbook_id": sportsbook_id,
+            "sportsbook_name": sportsbook_name,
+            "sportsbook_slug": sportsbook_slug,
+        })
+    
+    # Add structured JSON block for frontend parsing
+    if structured_sportsbooks:
+        formatted_lines.append(f"\n\n<!-- SPORTSBOOKS_DATA_START -->\n{json.dumps({'sportsbooks': structured_sportsbooks}, indent=2)}\n<!-- SPORTSBOOKS_DATA_END -->")
+    
+    return "\n".join(formatted_lines) if formatted_lines else "No sportsbooks available"
 

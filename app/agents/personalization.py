@@ -46,6 +46,8 @@ def load_user_preferences(user_id: str, read_file_func) -> Dict[str, Any]:
         "preferred_sportsbooks": [],
         "betting_style": "moderate",  # conservative, moderate, aggressive
         "preferred_markets": [],  # moneyline, spread, total, props, etc.
+        "timezone": "America/New_York",  # Default to EST/EDT
+        "location": None,  # {"city": str, "region": str, "country": str, "timezone": str}
     }
 
 
@@ -174,6 +176,20 @@ def save_communication_style(user_id: str, style: Dict[str, Any], write_file_fun
         return False
 
 
+def get_user_timezone(user_id: str, read_file_func) -> Optional[str]:
+    """Get user's timezone from preferences.
+    
+    Args:
+        user_id: User identifier
+        read_file_func: Function to read file (from agent's filesystem tools)
+    
+    Returns:
+        Timezone string (e.g., "America/New_York") or None if not set
+    """
+    preferences = load_user_preferences(user_id, read_file_func)
+    return preferences.get("timezone")
+
+
 def get_personalization_context(user_id: str, read_file_func) -> str:
     """Get formatted personalization context for agent system prompt.
     
@@ -198,6 +214,17 @@ def get_personalization_context(user_id: str, read_file_func) -> str:
         context_parts.append(f"Preferred sportsbooks: {', '.join(preferences['preferred_sportsbooks'])}")
     if preferences.get("betting_style"):
         context_parts.append(f"Betting style: {preferences['betting_style']}")
+    if preferences.get("timezone"):
+        context_parts.append(f"Timezone: {preferences['timezone']}")
+    if preferences.get("location"):
+        loc = preferences["location"]
+        if isinstance(loc, dict):
+            city = loc.get("city", "")
+            region = loc.get("region", "")
+            country = loc.get("country", "")
+            if city or region or country:
+                location_str = ", ".join(filter(None, [city, region, country]))
+                context_parts.append(f"Location: {location_str}")
     
     if style.get("tone"):
         context_parts.append(f"Communication tone: {style['tone']}")

@@ -22,7 +22,12 @@ from app.agents.tools import (
     generate_bet_deep_link,
     read_url_content,
     get_current_datetime,
+    detect_user_location,
     fetch_upcoming_games,
+    fetch_available_sports,
+    fetch_available_leagues,
+    fetch_available_markets,
+    fetch_available_sportsbooks,
     internet_search,
 )
 from app.agents.prompts import SPORTS_BETTING_INSTRUCTIONS
@@ -77,6 +82,7 @@ def create_betting_agent(
     # All betting tools
     betting_tools = [
         get_current_datetime,  # Date/time awareness - should be called first for date queries
+        detect_user_location,  # Location detection and timezone setup
         fetch_upcoming_games,  # Primary tool for game schedules
         fetch_live_odds,
         fetch_player_props,
@@ -90,6 +96,10 @@ def create_betting_agent(
         image_to_bet_analysis,
         generate_bet_deep_link,
         read_url_content,
+        fetch_available_sports,  # Reference data: sports with active fixtures and odds
+        fetch_available_leagues,  # Reference data: leagues with active fixtures and odds
+        fetch_available_markets,  # Reference data: available market types
+        fetch_available_sportsbooks,  # Reference data: available sportsbooks
         internet_search,  # Keep web search as fallback
     ]
     

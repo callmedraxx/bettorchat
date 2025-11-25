@@ -25,6 +25,11 @@ from app.agents.tools.betting_tools import (
     image_to_bet_analysis,
     generate_bet_deep_link,
     read_url_content,
+    detect_user_location,
+    fetch_available_sports,
+    fetch_available_leagues,
+    fetch_available_markets,
+    fetch_available_sportsbooks,
 )
 
 
@@ -67,6 +72,11 @@ betting_tools = [
     image_to_bet_analysis,
     generate_bet_deep_link,
     read_url_content,
+    detect_user_location,
+    fetch_available_sports,
+    fetch_available_leagues,
+    fetch_available_markets,
+    fetch_available_sportsbooks,
 ]
 
 

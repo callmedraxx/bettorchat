@@ -15,7 +15,12 @@ from app.agents.tools.betting_tools import (
     generate_bet_deep_link,
     read_url_content,
     get_current_datetime,
+    detect_user_location,
     fetch_upcoming_games,
+    fetch_available_sports,
+    fetch_available_leagues,
+    fetch_available_markets,
+    fetch_available_sportsbooks,
 )
 from app.agents.tools.web_tools import internet_search
 
@@ -33,7 +38,12 @@ __all__ = [
     "generate_bet_deep_link",
     "read_url_content",
     "get_current_datetime",
+    "detect_user_location",
     "fetch_upcoming_games",
+    "fetch_available_sports",
+    "fetch_available_leagues",
+    "fetch_available_markets",
+    "fetch_available_sportsbooks",
     "internet_search",
 ]
 
