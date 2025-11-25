@@ -14,6 +14,7 @@ except ImportError:
     from backports.zoneinfo import ZoneInfo
 
 from app.core.opticodds_client import OpticOddsClient
+from app.core.fixture_stream import fixture_stream_manager
 
 
 # Initialize OpticOdds client (singleton pattern)
@@ -365,15 +366,17 @@ def fetch_upcoming_games(
 def emit_fixture_objects(
     fixtures: Optional[str] = None,
     fixture_ids: Optional[str] = None,
+    session_id: Optional[str] = None,
 ) -> str:
-    """Emit full fixture JSON objects extracted from previous tool responses.
+    """Emit full fixture JSON objects to frontend via SSE stream.
     
-    This tool formats and emits complete fixture objects that were already retrieved
-    from previous tool calls (like fetch_upcoming_games). It does NOT fetch from the API.
-    Use this to extract full fixture JSON from structured data blocks in previous responses.
+    This tool filters and emits complete fixture objects that were already retrieved
+    from previous tool calls (like fetch_upcoming_games). It pushes the filtered JSON data
+    to an SSE endpoint which streams it to the frontend.
     
     IMPORTANT: Extract fixture objects from previous tool responses (e.g., from the 
     <!-- FIXTURES_DATA_START --> block in fetch_upcoming_games response) and pass them here.
+    The tool will filter/validate the data and push it to the SSE stream.
     
     Args:
         fixtures: JSON string containing full fixture objects extracted from previous tool responses.
@@ -383,13 +386,15 @@ def emit_fixture_objects(
         fixture_ids: Comma-separated string of fixture IDs. If provided, you must extract the 
                     corresponding fixture objects from previous tool responses and pass them 
                     in the fixtures parameter. This parameter is mainly for reference.
+        session_id: Optional session identifier (user_id or thread_id). If not provided, uses "default".
+                    Frontend should connect to /api/v1/fixtures/stream?session_id=<same_id> to receive data.
     
     Returns:
-        Formatted string containing full fixture JSON objects with proper indentation.
-        The JSON can be directly included in AI responses.
+        Confirmation message indicating that fixture data has been pushed to the SSE stream.
+        The frontend will receive the full JSON data via Server-Sent Events.
     
     Examples:
-        - emit_fixture_objects(fixtures='[{{"id": "20251127E5C64DE0", ...}}]')
+        - emit_fixture_objects(fixtures='[{{"id": "20251127E5C64DE0", ...}}]', session_id='user123')
         - Extract fixtures from fetch_upcoming_games response, then call emit_fixture_objects(fixtures=extracted_fixtures)
     """
     try:
@@ -420,18 +425,19 @@ def emit_fixture_objects(
         if not fixture_objects:
             return "Error: No valid fixture objects found in the provided fixtures parameter."
         
-        # Format response with full JSON objects
-        formatted_lines = [
-            "Full Fixture Objects (JSON):",
-            "",
-            "The following are complete fixture objects with all available fields:",
-            "",
-            json.dumps(fixture_objects, indent=2),
-            "",
-            "You can include this JSON data directly in your response to provide complete fixture information to the user.",
-        ]
+        # Push filtered fixture data to SSE stream
+        session = session_id or "default"
+        success = fixture_stream_manager.push_fixtures_sync(session, fixture_objects)
         
-        return "\n".join(formatted_lines)
+        if not success:
+            return f"Error: Failed to push fixture data to SSE stream. Data was filtered but could not be streamed."
+        
+        # Return confirmation message
+        return (
+            f"Successfully pushed {len(fixture_objects)} fixture object(s) to SSE stream.\n"
+            f"Frontend connected to /api/v1/fixtures/stream?session_id={session} will receive the full JSON data.\n"
+            f"The fixture data has been filtered and is ready for streaming."
+        )
     except Exception as e:
         return f"Error emitting fixture objects: {str(e)}"
 

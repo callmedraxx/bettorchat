@@ -5,7 +5,7 @@ from fastapi import APIRouter
 
 # Import routers here as you add them
 # from app.api.v1.endpoints import chat, auth, etc.
-from app.api.v1.endpoints import example_stream, agent
+from app.api.v1.endpoints import example_stream, agent, fixtures
 
 api_router = APIRouter()
 
@@ -25,6 +25,13 @@ api_router.include_router(
     example_stream.router,
     prefix="/example",
     tags=["example"]
+)
+
+# Fixture streaming endpoints
+api_router.include_router(
+    fixtures.router,
+    prefix="/fixtures",
+    tags=["fixtures"]
 )
 
 
