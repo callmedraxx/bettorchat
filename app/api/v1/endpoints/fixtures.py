@@ -10,6 +10,7 @@ from typing import Optional, AsyncIterator
 from pydantic import BaseModel
 
 from app.core.fixture_stream import fixture_stream_manager
+from app.core.odds_stream import odds_stream_manager
 
 router = APIRouter()
 
@@ -150,4 +151,99 @@ async def get_latest_fixtures(
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error getting fixtures: {str(e)}")
+
+
+@router.get("/odds/stream")
+async def stream_odds(
+    session_id: Optional[str] = Query(None, description="Session identifier (user_id or thread_id)")
+):
+    """
+    SSE endpoint for streaming odds data to frontend.
+    Frontend connects to this endpoint and receives odds data as it's pushed.
+    
+    Args:
+        session_id: Optional session identifier. If not provided, uses "default"
+        
+    Returns:
+        StreamingResponse with Server-Sent Events
+    """
+    session_id = session_id or "default"
+    
+    async def generate() -> AsyncIterator[str]:
+        """Generator function for SSE streaming."""
+        queue = None
+        try:
+            # Subscribe to odds updates
+            queue = await odds_stream_manager.subscribe(session_id)
+            
+            # Send initial connection message
+            yield f"data: {json.dumps({'type': 'connected', 'session_id': session_id})}\n\n"
+            
+            # Keep connection alive and stream odds data
+            while True:
+                try:
+                    # Wait for odds data with timeout
+                    odds_data = await asyncio.wait_for(queue.get(), timeout=30.0)
+                    
+                    # Stream the full JSON data as one SSE event
+                    yield f"data: {json.dumps(odds_data)}\n\n"
+                    
+                except asyncio.TimeoutError:
+                    # Send keep-alive ping
+                    yield f"data: {json.dumps({'type': 'ping'})}\n\n"
+                except Exception as e:
+                    # Send error and break
+                    error_data = {
+                        "type": "error",
+                        "message": str(e)
+                    }
+                    yield f"data: {json.dumps(error_data)}\n\n"
+                    break
+                    
+        except Exception as e:
+            error_data = {
+                "type": "error",
+                "message": f"Stream error: {str(e)}"
+            }
+            yield f"data: {json.dumps(error_data)}\n\n"
+        finally:
+            # Cleanup: unsubscribe from updates
+            if queue:
+                await odds_stream_manager.unsubscribe(session_id, queue)
+    
+    return StreamingResponse(
+        generate(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no",
+        }
+    )
+
+
+@router.get("/odds/latest")
+async def get_latest_odds(
+    session_id: Optional[str] = Query(None, description="Session identifier")
+):
+    """
+    Get latest odds data for a session (non-streaming API).
+    
+    Args:
+        session_id: Optional session identifier. If not provided, uses "default"
+        
+    Returns:
+        Latest odds data or None
+    """
+    session_id = session_id or "default"
+    
+    try:
+        odds = await odds_stream_manager.get_latest_odds(session_id)
+        return {
+            "status": "success",
+            "odds": odds,
+            "session_id": session_id
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error getting odds: {str(e)}")
 

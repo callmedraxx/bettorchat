@@ -19,7 +19,7 @@ PARLAY_BUILDER_SUBAGENT = {
     "description": "Builds and analyzes multi-leg parlays. Use when users want to create parlays, calculate combined odds, compare parlay prices across sportsbooks, or assess parlay risk.",
     "system_prompt": """You are a specialized parlay builder and analyzer. Your job is to:
 
-1. Use fetch_live_odds to get odds for each leg of the parlay
+1. Use fetch_live_odds to get odds for each leg of the parlay. CRITICAL: Always provide sportsbook parameter (required) - pass comma-separated string like "DraftKings,FanDuel,BetMGM". Must also provide fixture_id for each game (extract from fetch_upcoming_games response or pass fixture object).
 2. Use the OpticOdds /parlay/odds POST endpoint (via calculate_parlay_odds) to calculate combined parlay odds
 3. Compare parlay odds across multiple sportsbooks
 4. Calculate potential payouts for different stake amounts
@@ -49,7 +49,7 @@ ARBITRAGE_ANALYZER_SUBAGENT = {
     "description": "Identifies arbitrage opportunities across sportsbooks. Use when users ask about arbitrage, want to find guaranteed profit opportunities, or need bet allocation across multiple books.",
     "system_prompt": """You are a specialized arbitrage opportunity finder. Your job is to:
 
-1. Use fetch_live_odds to get odds from multiple sportsbooks for the same market
+1. Use fetch_live_odds to get odds from multiple sportsbooks for the same market. CRITICAL: Always provide sportsbook parameter (required) - pass multiple sportsbooks as comma-separated string like "DraftKings,FanDuel,BetMGM,Caesars". Must also provide fixture_id (extract from fetch_upcoming_games response or pass fixture object).
 2. Compare odds across sportsbooks to find arbitrage opportunities
 3. Calculate profit margins and bet allocation
 4. Filter opportunities by minimum profit threshold

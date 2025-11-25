@@ -16,6 +16,7 @@ except ImportError:
 
 from app.core.opticodds_client import OpticOddsClient
 from app.core.fixture_stream import fixture_stream_manager
+from app.core.odds_stream import odds_stream_manager
 
 
 # Initialize OpticOdds client (singleton pattern)
@@ -291,144 +292,147 @@ Your timezone preference has been set to {tz_abbr}. All times will now be displa
 
 @tool
 def fetch_live_odds(
+    sportsbook: str,
     fixture_id: Optional[str] = None,
     fixture: Optional[str] = None,
     fixtures: Optional[str] = None,
-    league_id: Optional[str] = None,
-    sport_id: Optional[str] = None,
-    sportsbook_ids: Optional[str] = None,
-    market_types: Optional[str] = None,
+    market: Optional[str] = None,
+    player_id: Optional[str] = None,
+    team_id: Optional[str] = None,
+    session_id: Optional[str] = None,
 ) -> str:
     """Fetch live betting odds for fixtures using OpticOdds /fixtures/odds endpoint.
     
-    IMPORTANT: The OpticOdds API requires at least 1 sportsbook to be specified (max 5).
-    If sportsbook_ids is not provided, the tool will automatically fetch available sportsbooks 
-    from the API and use the first 3-5 as defaults. This ensures valid sportsbook IDs/names 
-    are used. Results are cached for 1 hour to avoid repeated API calls.
+    IMPORTANT: 
+    - sportsbook is REQUIRED (at least 1, max 5). Pass comma-separated string (e.g., "DraftKings,FanDuel").
+    - If requesting odds for fixtures, fixture_id must be provided (up to 5 fixture_ids per request).
+    - API requires at least one of: fixture_id, team_id, or player_id AND at least 1 sportsbook.
     
     Args:
-        fixture_id: Specific fixture ID to get odds for (string ID)
+        sportsbook: REQUIRED. Comma-separated list of sportsbook IDs or names (max 5).
+                   Example: "DraftKings,FanDuel,BetMGM"
+        fixture_id: Single fixture ID or comma-separated list of fixture IDs (up to 5).
+                   Example: "20251127E5C64DE0" or "20251127E5C64DE0,20251127C95F3929"
         fixture: Full fixture object as JSON string (alternative to fixture_id). 
                  If provided, fixture_id will be extracted from it.
-        fixtures: JSON string containing multiple full fixture objects (array).
-                 If provided, odds will be fetched for all fixtures. Can be used for bet slip building.
-        league_id: Filter by league ID. Can also be extracted from fixture object if provided.
-        sport_id: Filter by sport ID (e.g., 'NBA' = 1). Used to filter available sportsbooks if sportsbook_ids not provided.
-        sportsbook_ids: Comma-separated list of sportsbook IDs or names (REQUIRED by API, max 5).
-                       If not provided, automatically fetches available sportsbooks from API.
-                       Use fetch_available_sportsbooks to get valid sportsbook IDs manually.
-        market_types: Comma-separated list of market types (e.g., 'moneyline,spread,total')
+        fixtures: JSON string containing multiple full fixture objects (array, up to 5).
+                 If provided, fixture_ids will be extracted and odds fetched for all.
+        market: Optional. Comma-separated list of market names (e.g., 'Moneyline,Run Line,Total Runs').
+               If not provided, returns all available markets.
+        player_id: Optional. Player ID for player prop odds.
+        team_id: Optional. Team ID to filter odds for a specific team.
+        session_id: Optional session identifier for SSE streaming. Defaults to "default".
     
     Returns:
-        Formatted string with odds from multiple sportsbooks
+        Formatted string with odds from multiple sportsbooks. Odds data is automatically emitted to SSE stream.
     """
     try:
         client = get_client()
         
-        # Convert comma-separated market_types string to list if needed
-        resolved_market_types = None
-        if market_types:
-            if isinstance(market_types, str) and ',' in market_types:
-                # Split comma-separated string into list
-                resolved_market_types = [mt.strip() for mt in market_types.split(',') if mt.strip()]
-            elif isinstance(market_types, str):
-                resolved_market_types = [market_types.strip()]
-            else:
-                resolved_market_types = market_types
+        # Process sportsbook - REQUIRED, split comma-separated, limit to 5
+        if not sportsbook:
+            return "Error: sportsbook is required. Provide at least 1 sportsbook (max 5), e.g., 'DraftKings,FanDuel'"
         
-        # Convert comma-separated sportsbook_ids string to list if needed
-        # IMPORTANT: OpticOdds API requires at least 1 sportsbook (max 5) for /fixtures/odds endpoint
-        resolved_sportsbook_ids = None
-        if sportsbook_ids:
-            if isinstance(sportsbook_ids, str) and ',' in sportsbook_ids:
-                # Split comma-separated string into list
-                resolved_sportsbook_ids = [sb.strip() for sb in sportsbook_ids.split(',') if sb.strip()]
-            elif isinstance(sportsbook_ids, str):
-                resolved_sportsbook_ids = [sportsbook_ids.strip()]
-            else:
-                resolved_sportsbook_ids = sportsbook_ids
+        if isinstance(sportsbook, str) and ',' in sportsbook:
+            resolved_sportsbook = [sb.strip() for sb in sportsbook.split(',') if sb.strip()][:5]
+        elif isinstance(sportsbook, str):
+            resolved_sportsbook = [sportsbook.strip()]
+        else:
+            resolved_sportsbook = list(sportsbook)[:5] if isinstance(sportsbook, (list, tuple)) else [str(sportsbook)]
         
-        # Extract league_id early if we have fixture object (needed for sportsbook filtering)
-        resolved_league_id = league_id
-        if fixture:
+        if not resolved_sportsbook:
+            return "Error: Invalid sportsbook. Provide at least 1 sportsbook name or ID."
+        
+        # Process market parameter (optional)
+        resolved_market = None
+        if market:
+            if isinstance(market, str) and ',' in market:
+                resolved_market = [m.strip() for m in market.split(',') if m.strip()]
+            elif isinstance(market, str):
+                resolved_market = [market.strip()]
+            else:
+                resolved_market = market if isinstance(market, list) else [str(market)]
+        
+        # Collect fixture IDs (up to 5)
+        fixture_ids_list = []
+        
+        # Extract from fixtures parameter (JSON array of fixture objects)
+        if fixtures:
             try:
-                fixture_obj = json.loads(fixture) if isinstance(fixture, str) else fixture
-                if isinstance(fixture_obj, dict):
-                    league_info = fixture_obj.get("league") or fixture_obj.get("full_fixture", {}).get("league", {})
-                    if isinstance(league_info, dict) and not resolved_league_id:
-                        resolved_league_id = league_info.get("id") or league_info.get("numerical_id")
+                fixtures_data = json.loads(fixtures) if isinstance(fixtures, str) else fixtures
+                if isinstance(fixtures_data, list):
+                    for fixture_obj in fixtures_data[:5]:  # Limit to 5
+                        if isinstance(fixture_obj, dict):
+                            fid = extract_fixture_id(json.dumps(fixture_obj))
+                            if fid and fid not in fixture_ids_list:
+                                fixture_ids_list.append(fid)
+                elif isinstance(fixtures_data, dict):
+                    fid = extract_fixture_id(json.dumps(fixtures_data))
+                    if fid:
+                        fixture_ids_list.append(fid)
             except Exception:
                 pass
         
-        # If no sportsbook_ids provided, fetch available sportsbooks from API and use as defaults
-        # This ensures we use valid sportsbook IDs/names that are actually available
-        if not resolved_sportsbook_ids:
+        # Extract from fixture parameter (single fixture object)
+        if fixture and not fixture_ids_list:
             try:
-                # Fetch default sportsbooks (cached, with fallback)
-                # Filter by sport_id if available for better results
-                resolved_sportsbook_ids = get_default_sportsbooks(
-                    sport_id=sport_id if sport_id else None,
-                    league_id=resolved_league_id if resolved_league_id else None
-                )
+                fixture_obj = json.loads(fixture) if isinstance(fixture, str) else fixture
+                if isinstance(fixture_obj, dict):
+                    fid = extract_fixture_id(json.dumps(fixture_obj) if isinstance(fixture, str) else json.dumps(fixture_obj))
+                    if fid:
+                        fixture_ids_list.append(fid)
             except Exception:
-                # Fallback to hardcoded defaults if fetching fails
-                resolved_sportsbook_ids = ["DraftKings", "FanDuel", "BetMGM"]
+                pass
         
-        # Handle multiple fixtures (for bet slip building)
-        if fixtures:
-            fixture_ids = extract_fixture_ids_from_objects(fixtures)
-            if fixture_ids:
-                # Fetch odds for all fixtures and combine results
-                all_results = []
-                for fid in fixture_ids:
-                    try:
-                        result = client.get_fixture_odds(
-                            fixture_id=fid,
-                            sport_id=sport_id if sport_id else None,
-                            league_id=league_id if league_id else None,
-                            sportsbook=resolved_sportsbook_ids,
-                            market_types=resolved_market_types,
-                        )
-                        if result and result.get("data"):
-                            all_results.extend(result.get("data", []))
-                    except Exception:
-                        continue
-                
-                if all_results:
-                    # Combine results
-                    combined_result = {"data": all_results}
-                    formatted = format_odds_response(combined_result)
-                    return formatted
-                else:
-                    return "No odds data found for the provided fixtures"
+        # Extract from fixture_id parameter (single or comma-separated)
+        if fixture_id:
+            if isinstance(fixture_id, str) and ',' in fixture_id:
+                # Comma-separated list
+                ids = [fid.strip() for fid in fixture_id.split(',') if fid.strip()][:5]
+                for fid in ids:
+                    if fid not in fixture_ids_list:
+                        fixture_ids_list.append(fid)
+            else:
+                # Single fixture ID
+                fid = extract_fixture_id(fixture_id) if fixture_id else None
+                if fid and fid not in fixture_ids_list:
+                    fixture_ids_list.append(fid)
         
-        # Handle single fixture object or fixture_id
-        resolved_fixture_id = None
+        # Limit to 5 fixture IDs per API requirement
+        fixture_ids_list = fixture_ids_list[:5]
         
-        if fixture:
-            fixture_obj = json.loads(fixture) if isinstance(fixture, str) else fixture
-            if isinstance(fixture_obj, dict):
-                # Extract fixture_id
-                resolved_fixture_id = extract_fixture_id(fixture if isinstance(fixture, str) else json.dumps(fixture_obj))
-                # Extract league_id if not provided (already done above, but ensure it's set)
-                if not resolved_league_id:
-                    league_info = fixture_obj.get("league") or fixture_obj.get("full_fixture", {}).get("league", {})
-                    if isinstance(league_info, dict):
-                        resolved_league_id = league_info.get("id") or league_info.get("numerical_id")
+        # API requires at least one of: fixture_id, team_id, or player_id
+        if not fixture_ids_list and not team_id and not player_id:
+            return "Error: Must provide at least one of: fixture_id, fixtures, fixture, team_id, or player_id"
         
-        # Use provided fixture_id if fixture object not provided
-        if not resolved_fixture_id:
-            resolved_fixture_id = extract_fixture_id(fixture_id)
+        # Build API call parameters
+        api_params = {
+            "sportsbook": resolved_sportsbook,
+        }
         
-        # Convert to correct parameter format
-        # Pass sport_id and league_id directly to the client method
-        result = client.get_fixture_odds(
-            fixture_id=resolved_fixture_id,
-            sport_id=sport_id if sport_id else None,
-            league_id=resolved_league_id if resolved_league_id else None,
-            sportsbook=resolved_sportsbook_ids,
-            market_types=resolved_market_types,
-        )
+        # Add fixture_ids if available (up to 5)
+        if fixture_ids_list:
+            api_params["fixture_id"] = fixture_ids_list if len(fixture_ids_list) > 1 else fixture_ids_list[0]
+        
+        # Add optional parameters
+        if resolved_market:
+            api_params["market"] = resolved_market
+        if player_id:
+            api_params["player_id"] = str(player_id)
+        if team_id:
+            api_params["team_id"] = str(team_id)
+        
+        # Make API call
+        result = client.get_fixture_odds(**api_params)
+        
+        # Automatically emit odds data to SSE stream
+        session = session_id or "default"
+        try:
+            if result and result.get("data"):
+                odds_stream_manager.push_odds_sync(session, result)
+        except Exception as emit_error:
+            # Don't fail the whole request if emit fails
+            pass
         
         # Format response for frontend
         formatted = format_odds_response(result)

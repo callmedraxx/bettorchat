@@ -310,13 +310,9 @@ class OpticOddsClient:
     # Odds endpoints
     def get_fixture_odds(
         self,
-        fixture_id: Optional[Union[str, int]] = None,
-        sport: Optional[Union[str, int]] = None,
-        sport_id: Optional[Union[str, int]] = None,
-        league: Optional[Union[str, int]] = None,
-        league_id: Optional[Union[str, int]] = None,
+        fixture_id: Optional[Union[str, int, List[Union[str, int]]]] = None,
         sportsbook: Optional[Union[str, int, List[Union[str, int]]]] = None,
-        market_types: Optional[Union[str, List[str]]] = None,
+        market: Optional[Union[str, List[str]]] = None,
         player_id: Optional[Union[str, int]] = None,
         team_id: Optional[Union[str, int]] = None,
         paginate: bool = False,
@@ -325,69 +321,47 @@ class OpticOddsClient:
         """Get fixture odds.
         
         Args:
-            fixture_id: Fixture ID
-            sport: Sport name (e.g., 'basketball') - use for string names
-            sport_id: Sport ID (e.g., 1) - use for numeric IDs
-            league: League name (e.g., 'nba') - use for string names
-            league_id: League ID - use for numeric IDs
-            sportsbook: Sportsbook name/ID or list of sportsbooks (will create multiple query params)
-            market_types: Market type(s) as string or list (will create multiple query params, URL encoded)
+            fixture_id: Fixture ID or list of fixture IDs (up to 5). Creates multiple query params.
+            sportsbook: Sportsbook name/ID or list of sportsbooks (REQUIRED, max 5). Creates multiple query params.
+            market: Market name(s) as string or list (will create multiple query params, URL encoded)
             player_id: Player ID (for player props)
             team_id: Team ID
             paginate: If True, fetch all pages of results
         """
         params = {}
+        
+        # Handle multiple fixture_ids - use list to create multiple query params
+        # API expects: &fixture_id=ID1&fixture_id=ID2 (up to 5)
         if fixture_id:
-            params["fixture_id"] = str(fixture_id)
-        
-        # Handle sport parameter - prefer sport_id if provided, otherwise use sport
-        # If sport is numeric, treat it as sport_id
-        if sport_id:
-            params["sport_id"] = str(sport_id)
-        elif sport:
-            # Check if sport is numeric (ID) or string (name)
-            try:
-                # Try to convert to int - if successful, it's an ID
-                sport_int = int(sport)
-                params["sport_id"] = str(sport_int)
-            except (ValueError, TypeError):
-                # Not numeric, treat as name
-                params["sport"] = str(sport)
-        
-        # Handle league parameter - prefer league_id if provided, otherwise use league
-        # If league is numeric, treat it as league_id
-        if league_id:
-            params["league_id"] = str(league_id)
-        elif league:
-            # Check if league is numeric (ID) or string (name)
-            try:
-                # Try to convert to int - if successful, it's an ID
-                league_int = int(league)
-                params["league_id"] = str(league_int)
-            except (ValueError, TypeError):
-                # Not numeric, treat as name
-                params["league"] = str(league)
+            if isinstance(fixture_id, list):
+                # Limit to 5 fixture_ids per API requirement
+                fixture_ids = [str(fid) for fid in fixture_id[:5]]
+                params["fixture_id"] = fixture_ids
+            else:
+                params["fixture_id"] = str(fixture_id)
         
         # Handle multiple sportsbooks - use list to create multiple query params
-        # API expects: &sportsbook=DraftKings&sportsbook=Fanduel (not comma-separated)
+        # API expects: &sportsbook=DraftKings&sportsbook=Fanduel (REQUIRED, max 5)
         # httpx automatically creates multiple query params when a list is passed
         if sportsbook:
             if isinstance(sportsbook, list):
-                # Pass as list - httpx will create: ?sportsbook=DraftKings&sportsbook=Fanduel
-                params["sportsbook"] = [str(sb) for sb in sportsbook]
+                # Limit to 5 sportsbooks per API requirement
+                sportsbooks = [str(sb) for sb in sportsbook[:5]]
+                params["sportsbook"] = sportsbooks
             else:
                 params["sportsbook"] = str(sportsbook)
         
-        # Handle multiple market types - use list to create multiple query params
+        # Handle multiple markets - use list to create multiple query params
         # httpx automatically URL encodes special characters like + in market names
         # Example: "Player Passing + Rushing Yards" → "Player%20Passing%20%2B%20Rushing%20Yards"
-        if market_types:
-            if isinstance(market_types, list):
+        if market:
+            if isinstance(market, list):
                 # Pass as list - httpx will create multiple params and URL encode
-                params["market_types"] = [str(mt) for mt in market_types]
+                params["market"] = [str(m) for m in market]
             else:
-                # Single market type - httpx will automatically URL encode
-                params["market_types"] = str(market_types)
+                # Single market - httpx will automatically URL encode
+                params["market"] = str(market)
+        
         if player_id:
             params["player_id"] = str(player_id)
         if team_id:
