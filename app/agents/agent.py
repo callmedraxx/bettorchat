@@ -24,6 +24,7 @@ from app.agents.tools import (
     get_current_datetime,
     detect_user_location,
     fetch_upcoming_games,
+    emit_fixture_objects,
     fetch_available_sports,
     fetch_available_leagues,
     fetch_available_markets,
@@ -85,6 +86,7 @@ def create_betting_agent(
         get_current_datetime,  # Date/time awareness - should be called first for date queries
         detect_user_location,  # Location detection and timezone setup
         fetch_upcoming_games,  # Primary tool for game schedules
+        emit_fixture_objects,  # Tool for emitting full fixture JSON objects
         fetch_live_odds,
         fetch_player_props,
         fetch_live_game_stats,

@@ -1,65 +1,41 @@
-Perfect! Here are **this week's NFL games** with dates and times (converted to EST):
+Based on the schedule I just fetched, here's what's happening:
 
-## **🏈 THIS WEEK - WEEK 13 (November 27 - December 2, 2025)**
+## **📅 TODAY - Tuesday, November 25, 2025**
 
-### **Thursday, November 27 (Thanksgiving Day)**
-🦃 **Thanksgiving Triple-Header:**
-- **Green Bay Packers @ Detroit Lions** - 1:00 PM EST (FOX)
-  - Records: Packers 7-3-1, Lions 7-4-0
-  
-- **Kansas City Chiefs @ Dallas Cowboys** - 4:30 PM EST (CBS)
-  - Records: Chiefs 6-5-0, Cowboys 5-5-1
-  
-- **Cincinnati Bengals @ Baltimore Ravens** - 8:20 PM EST (NBC)
-  - Records: Bengals 3-8-0, Ravens 6-5-0
-
-### **Friday, November 28 (Black Friday)**
-- **Chicago Bears @ Philadelphia Eagles** - 3:00 PM EST (Amazon Prime)
-  - Records: Bears 8-3-0, Eagles 8-3-0
-
-### **Sunday, November 30**
-
-**Early Games (1:00 PM EST):**
-- **Arizona Cardinals @ Tampa Bay Buccaneers** (FOX)
-  - Records: Cardinals 3-8-0, Bucs 6-5-0
-  
-- **Los Angeles Rams @ Carolina Panthers** (FOX)
-  - Records: Rams 9-2-0, Panthers 6-6-0
-  
-- **New Orleans Saints @ Miami Dolphins** (FOX)
-  - Records: Saints 2-9-0, Dolphins 4-7-0
-  
-- **Atlanta Falcons @ New York Jets** (FOX)
-  - Records: Falcons 4-7-0, Jets 2-9-0
-  
-- **Jacksonville Jaguars @ Tennessee Titans** (CBS)
-  - Records: Jaguars 7-4-0, Titans 1-10-0
-  
-- **Houston Texans @ Indianapolis Colts** (CBS)
-  - Records: Texans 6-5-0, Colts 8-3-0
-  
-- **San Francisco 49ers @ Cleveland Browns** (CBS)
-  - Records: 49ers 8-4-0, Browns 3-8-0
-
-**Late Games (4:05 PM EST):**
-- **Minnesota Vikings @ Seattle Seahawks** (FOX)
-  - Records: Vikings 4-7-0, Seahawks 8-3-0
-
-**Late Games (4:25 PM EST):**
-- **Buffalo Bills @ Pittsburgh Steelers** (CBS)
-  - Records: Bills 7-4-0, Steelers 6-5-0
-  
-- **Las Vegas Raiders @ Los Angeles Chargers** (CBS)
-  - Records: Raiders 2-9-0, Chargers 7-4-0
-
-**Sunday Night Football (8:20 PM EST):**
-- **Denver Broncos @ Washington Commanders** (NBC)
-  - Records: Broncos 9-2-0, Commanders 3-8-0
-
-### **Monday, December 2**
-- **New York Giants @ New England Patriots** - 8:15 PM EST (ESPN)
-  - Records: Giants 2-10-0, Patriots 10-2-0
+**No NFL games scheduled today.** The last game was Monday night (Carolina Panthers @ San Francisco 49ers - already completed).
 
 ---
 
-**Total: 17 games this week!** All games have odds available. Would you like me to show you the odds for any specific game?
+## **📅 TOMORROW - Wednesday, November 26, 2025**
+
+**No NFL games scheduled tomorrow.** 
+
+---
+
+## **🦃 NEXT GAMES - Thursday, November 27 (Thanksgiving)**
+
+The next NFL games are on **Thanksgiving Day** (2 days from now):
+
+### **Thursday, November 27 - Thanksgiving Triple-Header**
+
+1. **Green Bay Packers @ Detroit Lions** - 1:00 PM EST
+   - Fixture ID: 20251127E5C64DE0
+   - Venue: Ford Field (Detroit, MI)
+   - Broadcast: FOX
+   - Records: Packers 7-3-1, Lions 7-4-0
+
+2. **Kansas City Chiefs @ Dallas Cowboys** - 4:30 PM EST
+   - Fixture ID: 20251127C95F3929
+   - Venue: AT&T Stadium (Arlington, TX)
+   - Broadcast: CBS
+   - Records: Chiefs 6-5-0, Cowboys 5-5-1
+
+3. **Cincinnati Bengals @ Baltimore Ravens** - 8:20 PM EST
+   - Fixture ID: 202511287C093769
+   - Venue: M&T Bank Stadium (Baltimore, MD)
+   - Broadcast: NBC
+   - Records: Bengals 3-8-0, Ravens 6-5-0
+
+---
+
+**Would you like me to show you the odds for any of the Thanksgiving games?**
