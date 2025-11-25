@@ -1,0 +1,7334 @@
+{
+    "data": [
+      {
+        "id": "afc_-_champions_league",
+        "name": "AFC - Champions League",
+        "numerical_id": 2,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "INTERNATIONAL",
+        "region_code": "INT",
+        "gender": "men"
+      },
+      {
+        "id": "afc_-_champions_league_2",
+        "name": "AFC - Champions League 2",
+        "numerical_id": 771,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "INTERNATIONAL",
+        "region_code": "INT",
+        "gender": "men"
+      },
+      {
+        "id": "argentina_-_lla",
+        "name": "Argentina - LLA",
+        "numerical_id": 897,
+        "sport": {
+          "id": "basketball",
+          "name": "Basketball",
+          "numerical_id": 4,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "point_spread",
+              "name": "Point Spread",
+              "numerical_id": 1172
+            },
+            {
+              "id": "total_points",
+              "name": "Total Points",
+              "numerical_id": 1358
+            }
+          ]
+        },
+        "region": "ARGENTINA",
+        "region_code": "ARG",
+        "gender": "men"
+      },
+      {
+        "id": "argentina_-_llf",
+        "name": "Argentina - LLF",
+        "numerical_id": 857,
+        "sport": {
+          "id": "basketball",
+          "name": "Basketball",
+          "numerical_id": 4,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "point_spread",
+              "name": "Point Spread",
+              "numerical_id": 1172
+            },
+            {
+              "id": "total_points",
+              "name": "Total Points",
+              "numerical_id": 1358
+            }
+          ]
+        },
+        "region": "ARGENTINA",
+        "region_code": "ARG",
+        "gender": "women"
+      },
+      {
+        "id": "argentina_-_primera_division",
+        "name": "Argentina - Primera Division",
+        "numerical_id": 15,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "ARGENTINA",
+        "region_code": "ARG",
+        "gender": "men"
+      },
+      {
+        "id": "argentina_-_primera_nacional",
+        "name": "Argentina - Primera Nacional",
+        "numerical_id": 16,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "ARGENTINA",
+        "region_code": "ARG",
+        "gender": "men"
+      },
+      {
+        "id": "armenia_-_1st_league",
+        "name": "Armenia - 1st League",
+        "numerical_id": 17,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "ARMENIA",
+        "region_code": "ARM",
+        "gender": "men"
+      },
+      {
+        "id": "armenia_-_premier_league",
+        "name": "Armenia - Premier League",
+        "numerical_id": 19,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "ARMENIA",
+        "region_code": "ARM",
+        "gender": "men"
+      },
+      {
+        "id": "atp_challenger",
+        "name": "ATP Challenger",
+        "numerical_id": 21,
+        "sport": {
+          "id": "tennis",
+          "name": "Tennis",
+          "numerical_id": 25,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "game_spread",
+              "name": "Game Spread",
+              "numerical_id": 929
+            },
+            {
+              "id": "total_games",
+              "name": "Total Games",
+              "numerical_id": 1339
+            }
+          ]
+        },
+        "region": "INTERNATIONAL",
+        "region_code": "INT",
+        "gender": "men"
+      },
+      {
+        "id": "australia_-_a-league",
+        "name": "Australia - A-League",
+        "numerical_id": 22,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "AUSTRALIA",
+        "region_code": "AUS",
+        "gender": "men"
+      },
+      {
+        "id": "australia_-_a-league_women",
+        "name": "Australia - A-League Women",
+        "numerical_id": 23,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "AUSTRALIA",
+        "region_code": "AUS",
+        "gender": "women"
+      },
+      {
+        "id": "australia_-_big_bash_league_women",
+        "name": "Australia - Big Bash League Women",
+        "numerical_id": 25,
+        "sport": {
+          "id": "cricket",
+          "name": "Cricket",
+          "numerical_id": 6,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "total_runs",
+              "name": "Total Runs",
+              "numerical_id": 1367
+            }
+          ]
+        },
+        "region": "AUSTRALIA",
+        "region_code": "AUS",
+        "gender": "women"
+      },
+      {
+        "id": "australia_-_championship",
+        "name": "Australia - Championship",
+        "numerical_id": 839,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "AUSTRALIA",
+        "region_code": "AUS",
+        "gender": "men"
+      },
+      {
+        "id": "australia_-_sheffield_shield",
+        "name": "Australia - Sheffield Shield",
+        "numerical_id": 603,
+        "sport": {
+          "id": "cricket",
+          "name": "Cricket",
+          "numerical_id": 6,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "total_runs",
+              "name": "Total Runs",
+              "numerical_id": 1367
+            }
+          ]
+        },
+        "region": "AUSTRALIA",
+        "region_code": "AUS",
+        "gender": "men"
+      },
+      {
+        "id": "australia_-_wnbl",
+        "name": "Australia - WNBL",
+        "numerical_id": 39,
+        "sport": {
+          "id": "basketball",
+          "name": "Basketball",
+          "numerical_id": 4,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "point_spread",
+              "name": "Point Spread",
+              "numerical_id": 1172
+            },
+            {
+              "id": "total_points",
+              "name": "Total Points",
+              "numerical_id": 1358
+            }
+          ]
+        },
+        "region": "AUSTRALIA",
+        "region_code": "AUS",
+        "gender": "women"
+      },
+      {
+        "id": "austria_-_2_liga",
+        "name": "Austria - 2. Liga",
+        "numerical_id": 40,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "AUSTRIA",
+        "region_code": "AUT",
+        "gender": "men"
+      },
+      {
+        "id": "austria_-_bundesliga",
+        "name": "Austria - Bundesliga",
+        "numerical_id": 43,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "AUSTRIA",
+        "region_code": "AUT",
+        "gender": "men"
+      },
+      {
+        "id": "austria_-_ice_hockey_league",
+        "name": "Austria - Ice Hockey League",
+        "numerical_id": 44,
+        "sport": {
+          "id": "hockey",
+          "name": "Hockey",
+          "numerical_id": 12,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "puck_line",
+              "name": "Puck Line",
+              "numerical_id": 1174
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "AUSTRIA",
+        "region_code": "AUT",
+        "gender": "men"
+      },
+      {
+        "id": "azerbaijan_-_1st_division",
+        "name": "Azerbaijan - 1st Division",
+        "numerical_id": 47,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "AZERBAIJAN",
+        "region_code": "AZE",
+        "gender": "men"
+      },
+      {
+        "id": "azerbaijan_-_premier_league",
+        "name": "Azerbaijan - Premier League",
+        "numerical_id": 49,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "AZERBAIJAN",
+        "region_code": "AZE",
+        "gender": "men"
+      },
+      {
+        "id": "belarus_-_extraliga",
+        "name": "Belarus - Extraliga",
+        "numerical_id": 52,
+        "sport": {
+          "id": "hockey",
+          "name": "Hockey",
+          "numerical_id": 12,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "puck_line",
+              "name": "Puck Line",
+              "numerical_id": 1174
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "BELARUS",
+        "region_code": "BLR",
+        "gender": "men"
+      },
+      {
+        "id": "belgium_-_challenger_pro_league",
+        "name": "Belgium - Challenger Pro League",
+        "numerical_id": 55,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "BELGIUM",
+        "region_code": "BEL",
+        "gender": "men"
+      },
+      {
+        "id": "belgium_-_jupiler_pro_league",
+        "name": "Belgium - Jupiler Pro League",
+        "numerical_id": 57,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "BELGIUM",
+        "region_code": "BEL",
+        "gender": "men"
+      },
+      {
+        "id": "belgium_-_top_division_women",
+        "name": "Belgium - Top Division Women",
+        "numerical_id": 830,
+        "sport": {
+          "id": "basketball",
+          "name": "Basketball",
+          "numerical_id": 4,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "point_spread",
+              "name": "Point Spread",
+              "numerical_id": 1172
+            },
+            {
+              "id": "total_points",
+              "name": "Total Points",
+              "numerical_id": 1358
+            }
+          ]
+        },
+        "region": "BELGIUM",
+        "region_code": "BEL",
+        "gender": "women"
+      },
+      {
+        "id": "bolivia_-_division_professional",
+        "name": "Bolivia - Division Professional",
+        "numerical_id": 770,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "BOLIVIA",
+        "region_code": "BOL",
+        "gender": "men"
+      },
+      {
+        "id": "bosnia_and_herzegovina_-_premier_league",
+        "name": "Bosnia and Herzegovina - Premier League",
+        "numerical_id": 62,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "BOSNIA_AND_HERZEGOVINA",
+        "region_code": "BIH",
+        "gender": "men"
+      },
+      {
+        "id": "bosnia_and_herzegovina_-_prva_liga",
+        "name": "Bosnia and Herzegovina - Prva Liga",
+        "numerical_id": 63,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "BOSNIA_AND_HERZEGOVINA",
+        "region_code": "BIH",
+        "gender": "men"
+      },
+      {
+        "id": "bosnia_and_herzegovina_-_prvenstvo",
+        "name": "Bosnia and Herzegovina - Prvenstvo",
+        "numerical_id": 899,
+        "sport": {
+          "id": "basketball",
+          "name": "Basketball",
+          "numerical_id": 4,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "point_spread",
+              "name": "Point Spread",
+              "numerical_id": 1172
+            },
+            {
+              "id": "total_points",
+              "name": "Total Points",
+              "numerical_id": 1358
+            }
+          ]
+        },
+        "region": "BOSNIA_AND_HERZEGOVINA",
+        "region_code": "BIH",
+        "gender": "men"
+      },
+      {
+        "id": "boxing_matches",
+        "name": "Boxing Matches",
+        "numerical_id": 811,
+        "sport": {
+          "id": "boxing",
+          "name": "Boxing",
+          "numerical_id": 5,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "total_rounds",
+              "name": "Total Rounds",
+              "numerical_id": 1364
+            }
+          ]
+        },
+        "region": "INTERNATIONAL",
+        "region_code": "INT",
+        "gender": "men"
+      },
+      {
+        "id": "brazil_-_copa_do_brasil",
+        "name": "Brazil - Copa do Brasil",
+        "numerical_id": 66,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "BRAZIL",
+        "region_code": "BRA",
+        "gender": "men"
+      },
+      {
+        "id": "brazil_-_nbb",
+        "name": "Brazil - NBB",
+        "numerical_id": 70,
+        "sport": {
+          "id": "basketball",
+          "name": "Basketball",
+          "numerical_id": 4,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "point_spread",
+              "name": "Point Spread",
+              "numerical_id": 1172
+            },
+            {
+              "id": "total_points",
+              "name": "Total Points",
+              "numerical_id": 1358
+            }
+          ]
+        },
+        "region": "BRAZIL",
+        "region_code": "BRA",
+        "gender": "men"
+      },
+      {
+        "id": "brazil_-_serie_a",
+        "name": "Brazil - Serie A",
+        "numerical_id": 71,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "BRAZIL",
+        "region_code": "BRA",
+        "gender": "men"
+      },
+      {
+        "id": "brazil_-_superliga",
+        "name": "Brazil - Superliga",
+        "numerical_id": 75,
+        "sport": {
+          "id": "volleyball",
+          "name": "Volleyball",
+          "numerical_id": 26,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "set_handicap",
+              "name": "Set Handicap",
+              "numerical_id": 1250
+            },
+            {
+              "id": "total_sets",
+              "name": "Total Sets",
+              "numerical_id": 1374
+            }
+          ]
+        },
+        "region": "BRAZIL",
+        "region_code": "BRA",
+        "gender": "men"
+      },
+      {
+        "id": "bulgaria_-_nbl",
+        "name": "Bulgaria - NBL",
+        "numerical_id": 78,
+        "sport": {
+          "id": "basketball",
+          "name": "Basketball",
+          "numerical_id": 4,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "point_spread",
+              "name": "Point Spread",
+              "numerical_id": 1172
+            },
+            {
+              "id": "total_points",
+              "name": "Total Points",
+              "numerical_id": 1358
+            }
+          ]
+        },
+        "region": "BULGARIA",
+        "region_code": "BGR",
+        "gender": "men"
+      },
+      {
+        "id": "bulgaria_-_parva_liga",
+        "name": "Bulgaria - Parva Liga",
+        "numerical_id": 79,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "BULGARIA",
+        "region_code": "BUL",
+        "gender": "men"
+      },
+      {
+        "id": "bulgaria_-_vtora_liga",
+        "name": "Bulgaria - Vtora Liga",
+        "numerical_id": 80,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "BULGARIA",
+        "region_code": "BUL",
+        "gender": "men"
+      },
+      {
+        "id": "canada_-_ohl",
+        "name": "Canada - OHL",
+        "numerical_id": 84,
+        "sport": {
+          "id": "hockey",
+          "name": "Hockey",
+          "numerical_id": 12,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "puck_line",
+              "name": "Puck Line",
+              "numerical_id": 1174
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "CANADA",
+        "region_code": "CAN",
+        "gender": "men"
+      },
+      {
+        "id": "canada_-_whl",
+        "name": "Canada - WHL",
+        "numerical_id": 88,
+        "sport": {
+          "id": "hockey",
+          "name": "Hockey",
+          "numerical_id": 12,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "puck_line",
+              "name": "Puck Line",
+              "numerical_id": 1174
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "CANADA",
+        "region_code": "CAN",
+        "gender": "men"
+      },
+      {
+        "id": "cev_-_champions_league",
+        "name": "CEV - Champions League",
+        "numerical_id": 669,
+        "sport": {
+          "id": "volleyball",
+          "name": "Volleyball",
+          "numerical_id": 26,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "set_handicap",
+              "name": "Set Handicap",
+              "numerical_id": 1250
+            },
+            {
+              "id": "total_sets",
+              "name": "Total Sets",
+              "numerical_id": 1374
+            }
+          ]
+        },
+        "region": "INTERNATIONAL",
+        "region_code": "INT",
+        "gender": "men"
+      },
+      {
+        "id": "cev_-_champions_league_women",
+        "name": "CEV - Champions League Women",
+        "numerical_id": 670,
+        "sport": {
+          "id": "volleyball",
+          "name": "Volleyball",
+          "numerical_id": 26,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "set_handicap",
+              "name": "Set Handicap",
+              "numerical_id": 1250
+            },
+            {
+              "id": "total_sets",
+              "name": "Total Sets",
+              "numerical_id": 1374
+            }
+          ]
+        },
+        "region": "INTERNATIONAL",
+        "region_code": "INT",
+        "gender": "women"
+      },
+      {
+        "id": "champions_hockey_league",
+        "name": "Champions Hockey League",
+        "numerical_id": 90,
+        "sport": {
+          "id": "hockey",
+          "name": "Hockey",
+          "numerical_id": 12,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "puck_line",
+              "name": "Puck Line",
+              "numerical_id": 1174
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "INTERNATIONAL",
+        "region_code": "INT",
+        "gender": "men"
+      },
+      {
+        "id": "champions_tour",
+        "name": "Champions Tour",
+        "numerical_id": 91,
+        "sport": {
+          "id": "golf",
+          "name": "Golf",
+          "numerical_id": 10,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "handicap",
+              "name": "Handicap",
+              "numerical_id": 936
+            }
+          ]
+        },
+        "region": "INTERNATIONAL",
+        "region_code": "INT",
+        "gender": "men"
+      },
+      {
+        "id": "chile_-_primera_b",
+        "name": "Chile - Primera B",
+        "numerical_id": 656,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "CHILE",
+        "region_code": "CHI",
+        "gender": "men"
+      },
+      {
+        "id": "chile_-_primera_division",
+        "name": "Chile - Primera Division",
+        "numerical_id": 94,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "CHILE",
+        "region_code": "CHI",
+        "gender": "men"
+      },
+      {
+        "id": "colombia_-_primera_a",
+        "name": "Colombia - Primera A",
+        "numerical_id": 104,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "COLOMBIA",
+        "region_code": "COL",
+        "gender": "men"
+      },
+      {
+        "id": "concacaf_-_caribbean_cup",
+        "name": "CONCACAF - Caribbean Cup",
+        "numerical_id": 777,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "INTERNATIONAL",
+        "region_code": "INT",
+        "gender": "men"
+      },
+      {
+        "id": "conmebol_-_copa_libertadores",
+        "name": "CONMEBOL - Copa Libertadores",
+        "numerical_id": 107,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "INTERNATIONAL",
+        "region_code": "INT",
+        "gender": "men"
+      },
+      {
+        "id": "costa_rica_-_primera_division",
+        "name": "Costa Rica - Primera Division",
+        "numerical_id": 112,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "COSTA_RICA",
+        "region_code": "CRC",
+        "gender": "men"
+      },
+      {
+        "id": "croatia_-_1_hnl",
+        "name": "Croatia - 1. HNL",
+        "numerical_id": 114,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "CROATIA",
+        "region_code": "CRO",
+        "gender": "men"
+      },
+      {
+        "id": "cs2",
+        "name": "CS2",
+        "numerical_id": 118,
+        "sport": {
+          "id": "esports",
+          "name": "eSports",
+          "numerical_id": 8,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            }
+          ]
+        },
+        "region": "INTERNATIONAL",
+        "region_code": "INT",
+        "gender": "mixed"
+      },
+      {
+        "id": "cyprus_-_first_division",
+        "name": "Cyprus - First Division",
+        "numerical_id": 121,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "CYPRUS",
+        "region_code": "CYP",
+        "gender": "men"
+      },
+      {
+        "id": "czech_republic_-_cfl",
+        "name": "Czech Republic - CFL",
+        "numerical_id": 124,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "CZECH_REPUBLIC",
+        "region_code": "CZE",
+        "gender": "men"
+      },
+      {
+        "id": "czech_republic_-_chance_liga",
+        "name": "Czech Republic - Chance Liga",
+        "numerical_id": 125,
+        "sport": {
+          "id": "hockey",
+          "name": "Hockey",
+          "numerical_id": 12,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "puck_line",
+              "name": "Puck Line",
+              "numerical_id": 1174
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "CZECH_REPUBLIC",
+        "region_code": "CZE",
+        "gender": "men"
+      },
+      {
+        "id": "czech_republic_-_extraliga",
+        "name": "Czech Republic - Extraliga",
+        "numerical_id": 127,
+        "sport": {
+          "id": "hockey",
+          "name": "Hockey",
+          "numerical_id": 12,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "puck_line",
+              "name": "Puck Line",
+              "numerical_id": 1174
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "CZECH_REPUBLIC",
+        "region_code": "CZE",
+        "gender": "men"
+      },
+      {
+        "id": "czech_republic_-_first_league",
+        "name": "Czech Republic - First League",
+        "numerical_id": 128,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "CZECH_REPUBLIC",
+        "region_code": "CZE",
+        "gender": "men"
+      },
+      {
+        "id": "czech_republic_-_hb_extraliga",
+        "name": "Czech Republic - HB Extraliga",
+        "numerical_id": 781,
+        "sport": {
+          "id": "handball",
+          "name": "Handball",
+          "numerical_id": 11,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "goal_spread",
+              "name": "Goal Spread",
+              "numerical_id": 933
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "CZECH_REPUBLIC",
+        "region_code": "CZE",
+        "gender": "men"
+      },
+      {
+        "id": "czech_republic_-_tt_cup_men",
+        "name": "Czech Republic - TT Cup Men",
+        "numerical_id": 638,
+        "sport": {
+          "id": "table_tennis",
+          "name": "Table Tennis",
+          "numerical_id": 24,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "point_spread",
+              "name": "Point Spread",
+              "numerical_id": 1172
+            },
+            {
+              "id": "total_points",
+              "name": "Total Points",
+              "numerical_id": 1358
+            }
+          ]
+        },
+        "region": "CZECH_REPUBLIC",
+        "region_code": "CZE",
+        "gender": "men"
+      },
+      {
+        "id": "czech_republic_-_tt_liga_pro_men",
+        "name": "Czech Republic - TT Liga Pro Men",
+        "numerical_id": 639,
+        "sport": {
+          "id": "table_tennis",
+          "name": "Table Tennis",
+          "numerical_id": 24,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "point_spread",
+              "name": "Point Spread",
+              "numerical_id": 1172
+            },
+            {
+              "id": "total_points",
+              "name": "Total Points",
+              "numerical_id": 1358
+            }
+          ]
+        },
+        "region": "CZECH_REPUBLIC",
+        "region_code": "CZE",
+        "gender": "men"
+      },
+      {
+        "id": "czech_republic_-_vel_women",
+        "name": "Czech Republic - VEL Women",
+        "numerical_id": 132,
+        "sport": {
+          "id": "volleyball",
+          "name": "Volleyball",
+          "numerical_id": 26,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "set_handicap",
+              "name": "Set Handicap",
+              "numerical_id": 1250
+            },
+            {
+              "id": "total_sets",
+              "name": "Total Sets",
+              "numerical_id": 1374
+            }
+          ]
+        },
+        "region": "CZECH_REPUBLIC",
+        "region_code": "CZE",
+        "gender": "women"
+      },
+      {
+        "id": "denmark_-_1st_division",
+        "name": "Denmark - 1st Division",
+        "numerical_id": 133,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "DENMARK",
+        "region_code": "DNK",
+        "gender": "men"
+      },
+      {
+        "id": "denmark_-_handboldligaen",
+        "name": "Denmark - Handboldligaen",
+        "numerical_id": 750,
+        "sport": {
+          "id": "handball",
+          "name": "Handball",
+          "numerical_id": 11,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "goal_spread",
+              "name": "Goal Spread",
+              "numerical_id": 933
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "DENMARK",
+        "region_code": "DNK",
+        "gender": "men"
+      },
+      {
+        "id": "denmark_-_hb_division_1",
+        "name": "Denmark - HB Division 1",
+        "numerical_id": 782,
+        "sport": {
+          "id": "handball",
+          "name": "Handball",
+          "numerical_id": 11,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "goal_spread",
+              "name": "Goal Spread",
+              "numerical_id": 933
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "DENMARK",
+        "region_code": "DNK",
+        "gender": "men"
+      },
+      {
+        "id": "denmark_-_superisligaen",
+        "name": "Denmark - Superisligaen",
+        "numerical_id": 137,
+        "sport": {
+          "id": "hockey",
+          "name": "Hockey",
+          "numerical_id": 12,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "puck_line",
+              "name": "Puck Line",
+              "numerical_id": 1174
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "DENMARK",
+        "region_code": "DNK",
+        "gender": "men"
+      },
+      {
+        "id": "denmark_-_superliga",
+        "name": "Denmark - Superliga",
+        "numerical_id": 138,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "DENMARK",
+        "region_code": "DNK",
+        "gender": "men"
+      },
+      {
+        "id": "dota_2",
+        "name": "Dota 2",
+        "numerical_id": 142,
+        "sport": {
+          "id": "esports",
+          "name": "eSports",
+          "numerical_id": 8,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            }
+          ]
+        },
+        "region": "INTERNATIONAL",
+        "region_code": "INT",
+        "gender": "mixed"
+      },
+      {
+        "id": "dp_world_tour",
+        "name": "DP World Tour",
+        "numerical_id": 143,
+        "sport": {
+          "id": "golf",
+          "name": "Golf",
+          "numerical_id": 10,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "handicap",
+              "name": "Handicap",
+              "numerical_id": 936
+            }
+          ]
+        },
+        "region": "INTERNATIONAL",
+        "region_code": "INT",
+        "gender": "men"
+      },
+      {
+        "id": "ecuador_-_serie_a",
+        "name": "Ecuador - Serie A",
+        "numerical_id": 145,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "ECUADOR",
+        "region_code": "ECU",
+        "gender": "men"
+      },
+      {
+        "id": "egypt_-_premier_league",
+        "name": "Egypt - Premier League",
+        "numerical_id": 148,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "EGYPT",
+        "region_code": "EGY",
+        "gender": "men"
+      },
+      {
+        "id": "ehf_-_champions_league",
+        "name": "EHF - Champions League",
+        "numerical_id": 663,
+        "sport": {
+          "id": "handball",
+          "name": "Handball",
+          "numerical_id": 11,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "goal_spread",
+              "name": "Goal Spread",
+              "numerical_id": 933
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "INTERNATIONAL",
+        "region_code": "INT",
+        "gender": "men"
+      },
+      {
+        "id": "ehf_-_european_league",
+        "name": "EHF - European League",
+        "numerical_id": 665,
+        "sport": {
+          "id": "handball",
+          "name": "Handball",
+          "numerical_id": 11,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "goal_spread",
+              "name": "Goal Spread",
+              "numerical_id": 933
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "INTERNATIONAL",
+        "region_code": "INT",
+        "gender": "men"
+      },
+      {
+        "id": "england_-_championship",
+        "name": "England - Championship",
+        "numerical_id": 152,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "ENGLAND",
+        "region_code": "ENG",
+        "gender": "men"
+      },
+      {
+        "id": "england_-_efl_cup",
+        "name": "England - EFL Cup",
+        "numerical_id": 157,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "ENGLAND",
+        "region_code": "ENG",
+        "gender": "men"
+      },
+      {
+        "id": "england_-_fa_cup",
+        "name": "England - FA Cup",
+        "numerical_id": 160,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "ENGLAND",
+        "region_code": "ENG",
+        "gender": "men"
+      },
+      {
+        "id": "england_-_league_1",
+        "name": "England - League 1",
+        "numerical_id": 162,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "ENGLAND",
+        "region_code": "ENG",
+        "gender": "men"
+      },
+      {
+        "id": "england_-_league_2",
+        "name": "England - League 2",
+        "numerical_id": 163,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "ENGLAND",
+        "region_code": "ENG",
+        "gender": "men"
+      },
+      {
+        "id": "england_-_national_league",
+        "name": "England - National League",
+        "numerical_id": 164,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "ENGLAND",
+        "region_code": "ENG",
+        "gender": "men"
+      },
+      {
+        "id": "england_-_premier_league",
+        "name": "England - Premier League",
+        "numerical_id": 165,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "ENGLAND",
+        "region_code": "ENG",
+        "gender": "men"
+      },
+      {
+        "id": "ethiopia_-_premier_league",
+        "name": "Ethiopia - Premier League",
+        "numerical_id": 176,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "ETHIOPIA",
+        "region_code": "ETH",
+        "gender": "men"
+      },
+      {
+        "id": "eurocup_women",
+        "name": "Eurocup Women",
+        "numerical_id": 178,
+        "sport": {
+          "id": "basketball",
+          "name": "Basketball",
+          "numerical_id": 4,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "point_spread",
+              "name": "Point Spread",
+              "numerical_id": 1172
+            },
+            {
+              "id": "total_points",
+              "name": "Total Points",
+              "numerical_id": 1358
+            }
+          ]
+        },
+        "region": "INTERNATIONAL",
+        "region_code": "INT",
+        "gender": "women"
+      },
+      {
+        "id": "euroleague",
+        "name": "Euroleague",
+        "numerical_id": 179,
+        "sport": {
+          "id": "basketball",
+          "name": "Basketball",
+          "numerical_id": 4,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "point_spread",
+              "name": "Point Spread",
+              "numerical_id": 1172
+            },
+            {
+              "id": "total_points",
+              "name": "Total Points",
+              "numerical_id": 1358
+            }
+          ]
+        },
+        "region": "INTERNATIONAL",
+        "region_code": "INT",
+        "gender": "men"
+      },
+      {
+        "id": "euroleague_women",
+        "name": "Euroleague Women",
+        "numerical_id": 849,
+        "sport": {
+          "id": "basketball",
+          "name": "Basketball",
+          "numerical_id": 4,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "point_spread",
+              "name": "Point Spread",
+              "numerical_id": 1172
+            },
+            {
+              "id": "total_points",
+              "name": "Total Points",
+              "numerical_id": 1358
+            }
+          ]
+        },
+        "region": "INTERNATIONAL",
+        "region_code": "INT",
+        "gender": "women"
+      },
+      {
+        "id": "european_challenge_tour",
+        "name": "European Challenge Tour",
+        "numerical_id": 789,
+        "sport": {
+          "id": "golf",
+          "name": "Golf",
+          "numerical_id": 10,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "handicap",
+              "name": "Handicap",
+              "numerical_id": 936
+            }
+          ]
+        },
+        "region": "INTERNATIONAL",
+        "region_code": "INT",
+        "gender": "men"
+      },
+      {
+        "id": "fiba_-_world_cup_qualifiers",
+        "name": "FIBA - World Cup Qualifiers",
+        "numerical_id": 626,
+        "sport": {
+          "id": "basketball",
+          "name": "Basketball",
+          "numerical_id": 4,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "point_spread",
+              "name": "Point Spread",
+              "numerical_id": 1172
+            },
+            {
+              "id": "total_points",
+              "name": "Total Points",
+              "numerical_id": 1358
+            }
+          ]
+        },
+        "region": "INTERNATIONAL",
+        "region_code": "INT",
+        "gender": "men"
+      },
+      {
+        "id": "finland_-_korisliiga_women",
+        "name": "Finland - Korisliiga Women",
+        "numerical_id": 859,
+        "sport": {
+          "id": "basketball",
+          "name": "Basketball",
+          "numerical_id": 4,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "point_spread",
+              "name": "Point Spread",
+              "numerical_id": 1172
+            },
+            {
+              "id": "total_points",
+              "name": "Total Points",
+              "numerical_id": 1358
+            }
+          ]
+        },
+        "region": "FINLAND",
+        "region_code": "FIN",
+        "gender": "women"
+      },
+      {
+        "id": "finland_-_mestaruusliiga_women",
+        "name": "Finland - Mestaruusliiga Women",
+        "numerical_id": 190,
+        "sport": {
+          "id": "volleyball",
+          "name": "Volleyball",
+          "numerical_id": 26,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "set_handicap",
+              "name": "Set Handicap",
+              "numerical_id": 1250
+            },
+            {
+              "id": "total_sets",
+              "name": "Total Sets",
+              "numerical_id": 1374
+            }
+          ]
+        },
+        "region": "FINLAND",
+        "region_code": "FIN",
+        "gender": "women"
+      },
+      {
+        "id": "finland_-_sm_liiga",
+        "name": "Finland - SM Liiga",
+        "numerical_id": 192,
+        "sport": {
+          "id": "hockey",
+          "name": "Hockey",
+          "numerical_id": 12,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "puck_line",
+              "name": "Puck Line",
+              "numerical_id": 1174
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "FINLAND",
+        "region_code": "FIN",
+        "gender": "men"
+      },
+      {
+        "id": "france_-_coupe_de_france",
+        "name": "France - Coupe de France",
+        "numerical_id": 199,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "FRANCE",
+        "region_code": "FRA",
+        "gender": "men"
+      },
+      {
+        "id": "france_-_ligue_1",
+        "name": "France - Ligue 1",
+        "numerical_id": 200,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "FRANCE",
+        "region_code": "FRA",
+        "gender": "men"
+      },
+      {
+        "id": "france_-_ligue_2",
+        "name": "France - Ligue 2",
+        "numerical_id": 201,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "FRANCE",
+        "region_code": "FRA",
+        "gender": "men"
+      },
+      {
+        "id": "france_-_ligue_magnus",
+        "name": "France - Ligue Magnus",
+        "numerical_id": 204,
+        "sport": {
+          "id": "hockey",
+          "name": "Hockey",
+          "numerical_id": 12,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "puck_line",
+              "name": "Puck Line",
+              "numerical_id": 1174
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "FRANCE",
+        "region_code": "FRA",
+        "gender": "men"
+      },
+      {
+        "id": "france_-_lnh_division_1",
+        "name": "France - LNH Division 1",
+        "numerical_id": 573,
+        "sport": {
+          "id": "handball",
+          "name": "Handball",
+          "numerical_id": 11,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "goal_spread",
+              "name": "Goal Spread",
+              "numerical_id": 933
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "FRANCE",
+        "region_code": "FRA",
+        "gender": "men"
+      },
+      {
+        "id": "france_-_top_14",
+        "name": "France - Top 14",
+        "numerical_id": 591,
+        "sport": {
+          "id": "rugby_union",
+          "name": "Rugby Union",
+          "numerical_id": 19,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "point_spread",
+              "name": "Point Spread",
+              "numerical_id": 1172
+            },
+            {
+              "id": "total_points",
+              "name": "Total Points",
+              "numerical_id": 1358
+            }
+          ]
+        },
+        "region": "FRANCE",
+        "region_code": "FRA",
+        "gender": "men"
+      },
+      {
+        "id": "georgia_-_erovnuli_liga",
+        "name": "Georgia - Erovnuli Liga",
+        "numerical_id": 210,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "GEORGIA",
+        "region_code": "GEO",
+        "gender": "men"
+      },
+      {
+        "id": "georgia_-_erovnuli_liga_2",
+        "name": "Georgia - Erovnuli Liga 2",
+        "numerical_id": 211,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "GEORGIA",
+        "region_code": "GEO",
+        "gender": "men"
+      },
+      {
+        "id": "germany_-_1st_bundesliga",
+        "name": "Germany - 1st Bundesliga",
+        "numerical_id": 212,
+        "sport": {
+          "id": "volleyball",
+          "name": "Volleyball",
+          "numerical_id": 26,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "set_handicap",
+              "name": "Set Handicap",
+              "numerical_id": 1250
+            },
+            {
+              "id": "total_sets",
+              "name": "Total Sets",
+              "numerical_id": 1374
+            }
+          ]
+        },
+        "region": "GERMANY",
+        "region_code": "DEU",
+        "gender": "men"
+      },
+      {
+        "id": "germany_-_bundesliga",
+        "name": "Germany - Bundesliga",
+        "numerical_id": 215,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "GERMANY",
+        "region_code": "GER",
+        "gender": "men"
+      },
+      {
+        "id": "germany_-_bundesliga_2",
+        "name": "Germany - Bundesliga 2",
+        "numerical_id": 216,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "GERMANY",
+        "region_code": "GER",
+        "gender": "men"
+      },
+      {
+        "id": "germany_-_bundesliga_3",
+        "name": "Germany - Bundesliga 3",
+        "numerical_id": 217,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "GERMANY",
+        "region_code": "GER",
+        "gender": "men"
+      },
+      {
+        "id": "germany_-_del",
+        "name": "Germany - DEL",
+        "numerical_id": 219,
+        "sport": {
+          "id": "hockey",
+          "name": "Hockey",
+          "numerical_id": 12,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "puck_line",
+              "name": "Puck Line",
+              "numerical_id": 1174
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "GERMANY",
+        "region_code": "DEU",
+        "gender": "men"
+      },
+      {
+        "id": "germany_-_del_2",
+        "name": "Germany - DEL 2",
+        "numerical_id": 220,
+        "sport": {
+          "id": "hockey",
+          "name": "Hockey",
+          "numerical_id": 12,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "puck_line",
+              "name": "Puck Line",
+              "numerical_id": 1174
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "GERMANY",
+        "region_code": "DEU",
+        "gender": "men"
+      },
+      {
+        "id": "germany_-_dfb_pokal",
+        "name": "Germany - DFB Pokal",
+        "numerical_id": 221,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "GERMANY",
+        "region_code": "GER",
+        "gender": "men"
+      },
+      {
+        "id": "germany_-_hbl",
+        "name": "Germany - HBL",
+        "numerical_id": 574,
+        "sport": {
+          "id": "handball",
+          "name": "Handball",
+          "numerical_id": 11,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "goal_spread",
+              "name": "Goal Spread",
+              "numerical_id": 933
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "GERMANY",
+        "region_code": "DEU",
+        "gender": "men"
+      },
+      {
+        "id": "germany_-_pro_a",
+        "name": "Germany - Pro A",
+        "numerical_id": 914,
+        "sport": {
+          "id": "basketball",
+          "name": "Basketball",
+          "numerical_id": 4,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "point_spread",
+              "name": "Point Spread",
+              "numerical_id": 1172
+            },
+            {
+              "id": "total_points",
+              "name": "Total Points",
+              "numerical_id": 1358
+            }
+          ]
+        },
+        "region": "GERMANY",
+        "region_code": "DEU",
+        "gender": "men"
+      },
+      {
+        "id": "gibraltar_-_football_league",
+        "name": "Gibraltar - Football League",
+        "numerical_id": 223,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "GIBRALTAR",
+        "region_code": "GIB",
+        "gender": "men"
+      },
+      {
+        "id": "greece_-_a1_league",
+        "name": "Greece - A1 League",
+        "numerical_id": 225,
+        "sport": {
+          "id": "basketball",
+          "name": "Basketball",
+          "numerical_id": 4,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "point_spread",
+              "name": "Point Spread",
+              "numerical_id": 1172
+            },
+            {
+              "id": "total_points",
+              "name": "Total Points",
+              "numerical_id": 1358
+            }
+          ]
+        },
+        "region": "GREECE",
+        "region_code": "GRC",
+        "gender": "men"
+      },
+      {
+        "id": "greece_-_cup",
+        "name": "Greece - Cup",
+        "numerical_id": 226,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "GREECE",
+        "region_code": "GRC",
+        "gender": "men"
+      },
+      {
+        "id": "greece_-_super_league",
+        "name": "Greece - Super League",
+        "numerical_id": 228,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "GREECE",
+        "region_code": "GRC",
+        "gender": "men"
+      },
+      {
+        "id": "greece_-_wp_a1_league",
+        "name": "Greece - WP A1 League",
+        "numerical_id": 928,
+        "sport": {
+          "id": "water_polo",
+          "name": "Water Polo",
+          "numerical_id": 27,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "point_spread",
+              "name": "Point Spread",
+              "numerical_id": 1172
+            },
+            {
+              "id": "total_points",
+              "name": "Total Points",
+              "numerical_id": 1358
+            }
+          ]
+        },
+        "region": "GREECE",
+        "region_code": "GRC",
+        "gender": "men"
+      },
+      {
+        "id": "guatemala_-_liga_nacional",
+        "name": "Guatemala - Liga Nacional",
+        "numerical_id": 230,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "GUATEMALA",
+        "region_code": "GTM",
+        "gender": "men"
+      },
+      {
+        "id": "hong_kong_-_premier_league",
+        "name": "Hong Kong - Premier League",
+        "numerical_id": 232,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "HONG_KONG",
+        "region_code": "HKG",
+        "gender": "men"
+      },
+      {
+        "id": "hungary_-_nb1_a",
+        "name": "Hungary - NB1 A",
+        "numerical_id": 234,
+        "sport": {
+          "id": "basketball",
+          "name": "Basketball",
+          "numerical_id": 4,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "point_spread",
+              "name": "Point Spread",
+              "numerical_id": 1172
+            },
+            {
+              "id": "total_points",
+              "name": "Total Points",
+              "numerical_id": 1358
+            }
+          ]
+        },
+        "region": "HUNGARY",
+        "region_code": "HUN",
+        "gender": "men"
+      },
+      {
+        "id": "hungary_-_nb_i",
+        "name": "Hungary - NB I",
+        "numerical_id": 235,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "HUNGARY",
+        "region_code": "HUN",
+        "gender": "men"
+      },
+      {
+        "id": "iceland_-_bpl",
+        "name": "Iceland - BPL",
+        "numerical_id": 247,
+        "sport": {
+          "id": "basketball",
+          "name": "Basketball",
+          "numerical_id": 4,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "point_spread",
+              "name": "Point Spread",
+              "numerical_id": 1172
+            },
+            {
+              "id": "total_points",
+              "name": "Total Points",
+              "numerical_id": 1358
+            }
+          ]
+        },
+        "region": "ICELAND",
+        "region_code": "ISL",
+        "gender": "men"
+      },
+      {
+        "id": "iceland_-_bpl_women",
+        "name": "Iceland - BPL Women",
+        "numerical_id": 861,
+        "sport": {
+          "id": "basketball",
+          "name": "Basketball",
+          "numerical_id": 4,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "point_spread",
+              "name": "Point Spread",
+              "numerical_id": 1172
+            },
+            {
+              "id": "total_points",
+              "name": "Total Points",
+              "numerical_id": 1358
+            }
+          ]
+        },
+        "region": "ICELAND",
+        "region_code": "ISL",
+        "gender": "women"
+      },
+      {
+        "id": "ihf_-_world_championship_women",
+        "name": "IHF - World Championship Women",
+        "numerical_id": 785,
+        "sport": {
+          "id": "handball",
+          "name": "Handball",
+          "numerical_id": 11,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "goal_spread",
+              "name": "Goal Spread",
+              "numerical_id": 933
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "INTERNATIONAL",
+        "region_code": "INT",
+        "gender": "women"
+      },
+      {
+        "id": "indonesia_-_liga_1",
+        "name": "Indonesia - Liga 1",
+        "numerical_id": 260,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "INDONESIA",
+        "region_code": "IDN",
+        "gender": "men"
+      },
+      {
+        "id": "international_-_asia_league",
+        "name": "International - Asia League",
+        "numerical_id": 262,
+        "sport": {
+          "id": "hockey",
+          "name": "Hockey",
+          "numerical_id": 12,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "puck_line",
+              "name": "Puck Line",
+              "numerical_id": 1174
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "INTERNATIONAL",
+        "region_code": "INT",
+        "gender": "men"
+      },
+      {
+        "id": "international_-_erste_liga",
+        "name": "International - Erste Liga",
+        "numerical_id": 266,
+        "sport": {
+          "id": "hockey",
+          "name": "Hockey",
+          "numerical_id": 12,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "puck_line",
+              "name": "Puck Line",
+              "numerical_id": 1174
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "INTERNATIONAL",
+        "region_code": "INT",
+        "gender": "men"
+      },
+      {
+        "id": "international_-_vtb_united_league",
+        "name": "International - VTB United League",
+        "numerical_id": 271,
+        "sport": {
+          "id": "basketball",
+          "name": "Basketball",
+          "numerical_id": 4,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "point_spread",
+              "name": "Point Spread",
+              "numerical_id": 1172
+            },
+            {
+              "id": "total_points",
+              "name": "Total Points",
+              "numerical_id": 1358
+            }
+          ]
+        },
+        "region": "INTERNATIONAL",
+        "region_code": "INT",
+        "gender": "men"
+      },
+      {
+        "id": "international_-_waba",
+        "name": "International - WABA",
+        "numerical_id": 863,
+        "sport": {
+          "id": "basketball",
+          "name": "Basketball",
+          "numerical_id": 4,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "point_spread",
+              "name": "Point Spread",
+              "numerical_id": 1172
+            },
+            {
+              "id": "total_points",
+              "name": "Total Points",
+              "numerical_id": 1358
+            }
+          ]
+        },
+        "region": "INTERNATIONAL",
+        "region_code": "INT",
+        "gender": "women"
+      },
+      {
+        "id": "israel_-_national_league",
+        "name": "Israel - National League",
+        "numerical_id": 279,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "ISRAEL",
+        "region_code": "ISR",
+        "gender": "men"
+      },
+      {
+        "id": "israel_-_nlb",
+        "name": "Israel - NLB",
+        "numerical_id": 280,
+        "sport": {
+          "id": "basketball",
+          "name": "Basketball",
+          "numerical_id": 4,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "point_spread",
+              "name": "Point Spread",
+              "numerical_id": 1172
+            },
+            {
+              "id": "total_points",
+              "name": "Total Points",
+              "numerical_id": 1358
+            }
+          ]
+        },
+        "region": "ISRAEL",
+        "region_code": "ISR",
+        "gender": "men"
+      },
+      {
+        "id": "israel_-_premier_league",
+        "name": "Israel - Premier League",
+        "numerical_id": 281,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "ISRAEL",
+        "region_code": "ISR",
+        "gender": "men"
+      },
+      {
+        "id": "italy_-_bb_serie_b",
+        "name": "Italy - BB Serie B",
+        "numerical_id": 918,
+        "sport": {
+          "id": "basketball",
+          "name": "Basketball",
+          "numerical_id": 4,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "point_spread",
+              "name": "Point Spread",
+              "numerical_id": 1172
+            },
+            {
+              "id": "total_points",
+              "name": "Total Points",
+              "numerical_id": 1358
+            }
+          ]
+        },
+        "region": "ITALY",
+        "region_code": "ITA",
+        "gender": "men"
+      },
+      {
+        "id": "italy_-_coppa_italia",
+        "name": "Italy - Coppa Italia",
+        "numerical_id": 284,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "ITALY",
+        "region_code": "ITA",
+        "gender": "men"
+      },
+      {
+        "id": "italy_-_serie_a",
+        "name": "Italy - Serie A",
+        "numerical_id": 288,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "ITALY",
+        "region_code": "ITA",
+        "gender": "men"
+      },
+      {
+        "id": "italy_-_serie_a2",
+        "name": "Italy - Serie A2",
+        "numerical_id": 831,
+        "sport": {
+          "id": "basketball",
+          "name": "Basketball",
+          "numerical_id": 4,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "point_spread",
+              "name": "Point Spread",
+              "numerical_id": 1172
+            },
+            {
+              "id": "total_points",
+              "name": "Total Points",
+              "numerical_id": 1358
+            }
+          ]
+        },
+        "region": "ITALY",
+        "region_code": "ITA",
+        "gender": "men"
+      },
+      {
+        "id": "italy_-_serie_b",
+        "name": "Italy - Serie B",
+        "numerical_id": 290,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "ITALY",
+        "region_code": "ITA",
+        "gender": "men"
+      },
+      {
+        "id": "italy_-_serie_c",
+        "name": "Italy - Serie C",
+        "numerical_id": 291,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "ITALY",
+        "region_code": "ITA",
+        "gender": "men"
+      },
+      {
+        "id": "italy_-_supercoppa",
+        "name": "Italy - Supercoppa",
+        "numerical_id": 292,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "ITALY",
+        "region_code": "ITA",
+        "gender": "men"
+      },
+      {
+        "id": "itf_men",
+        "name": "ITF Men",
+        "numerical_id": 604,
+        "sport": {
+          "id": "tennis",
+          "name": "Tennis",
+          "numerical_id": 25,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "game_spread",
+              "name": "Game Spread",
+              "numerical_id": 929
+            },
+            {
+              "id": "total_games",
+              "name": "Total Games",
+              "numerical_id": 1339
+            }
+          ]
+        },
+        "region": "INTERNATIONAL",
+        "region_code": "INT",
+        "gender": "men"
+      },
+      {
+        "id": "itf_women",
+        "name": "ITF Women",
+        "numerical_id": 605,
+        "sport": {
+          "id": "tennis",
+          "name": "Tennis",
+          "numerical_id": 25,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "game_spread",
+              "name": "Game Spread",
+              "numerical_id": 929
+            },
+            {
+              "id": "total_games",
+              "name": "Total Games",
+              "numerical_id": 1339
+            }
+          ]
+        },
+        "region": "INTERNATIONAL",
+        "region_code": "INT",
+        "gender": "women"
+      },
+      {
+        "id": "japan_-_j1_league",
+        "name": "Japan - J1 League",
+        "numerical_id": 297,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "JAPAN",
+        "region_code": "JPN",
+        "gender": "men"
+      },
+      {
+        "id": "japan_-_j2_league",
+        "name": "Japan - J2 League",
+        "numerical_id": 298,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "JAPAN",
+        "region_code": "JPN",
+        "gender": "men"
+      },
+      {
+        "id": "japan_-_j3_league",
+        "name": "Japan - J3 League",
+        "numerical_id": 299,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "JAPAN",
+        "region_code": "JPN",
+        "gender": "men"
+      },
+      {
+        "id": "kazakhstan_-_vysshaya_league",
+        "name": "Kazakhstan - Vysshaya League",
+        "numerical_id": 306,
+        "sport": {
+          "id": "hockey",
+          "name": "Hockey",
+          "numerical_id": 12,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "puck_line",
+              "name": "Puck Line",
+              "numerical_id": 1174
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "KAZAKHSTAN",
+        "region_code": "KAZ",
+        "gender": "men"
+      },
+      {
+        "id": "kenya_-_premier_league",
+        "name": "Kenya - Premier League",
+        "numerical_id": 308,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "KENYA",
+        "region_code": "KEN",
+        "gender": "men"
+      },
+      {
+        "id": "korea_-_k1_league",
+        "name": "Korea - K1 League",
+        "numerical_id": 311,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "SOUTH_KOREA",
+        "region_code": "KOR",
+        "gender": "men"
+      },
+      {
+        "id": "korea_-_k2_league",
+        "name": "Korea - K2 League",
+        "numerical_id": 312,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "SOUTH_KOREA",
+        "region_code": "KOR",
+        "gender": "men"
+      },
+      {
+        "id": "korea_-_kbl",
+        "name": "Korea - KBL",
+        "numerical_id": 314,
+        "sport": {
+          "id": "basketball",
+          "name": "Basketball",
+          "numerical_id": 4,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "point_spread",
+              "name": "Point Spread",
+              "numerical_id": 1172
+            },
+            {
+              "id": "total_points",
+              "name": "Total Points",
+              "numerical_id": 1358
+            }
+          ]
+        },
+        "region": "SOUTH_KOREA",
+        "region_code": "KOR",
+        "gender": "men"
+      },
+      {
+        "id": "korea_-_wkbl",
+        "name": "Korea - WKBL",
+        "numerical_id": 316,
+        "sport": {
+          "id": "basketball",
+          "name": "Basketball",
+          "numerical_id": 4,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "point_spread",
+              "name": "Point Spread",
+              "numerical_id": 1172
+            },
+            {
+              "id": "total_points",
+              "name": "Total Points",
+              "numerical_id": 1358
+            }
+          ]
+        },
+        "region": "SOUTH_KOREA",
+        "region_code": "KOR",
+        "gender": "women"
+      },
+      {
+        "id": "korn_ferry",
+        "name": "Korn Ferry",
+        "numerical_id": 317,
+        "sport": {
+          "id": "golf",
+          "name": "Golf",
+          "numerical_id": 10,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "handicap",
+              "name": "Handicap",
+              "numerical_id": 936
+            }
+          ]
+        },
+        "region": "INTERNATIONAL",
+        "region_code": "INT",
+        "gender": "men"
+      },
+      {
+        "id": "latvia_-_hockey_league",
+        "name": "Latvia - Hockey League",
+        "numerical_id": 324,
+        "sport": {
+          "id": "hockey",
+          "name": "Hockey",
+          "numerical_id": 12,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "puck_line",
+              "name": "Puck Line",
+              "numerical_id": 1174
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "LATVIA",
+        "region_code": "LVA",
+        "gender": "men"
+      },
+      {
+        "id": "latvia_-_nbl",
+        "name": "Latvia - NBL",
+        "numerical_id": 864,
+        "sport": {
+          "id": "basketball",
+          "name": "Basketball",
+          "numerical_id": 4,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "point_spread",
+              "name": "Point Spread",
+              "numerical_id": 1172
+            },
+            {
+              "id": "total_points",
+              "name": "Total Points",
+              "numerical_id": 1358
+            }
+          ]
+        },
+        "region": "LATVIA",
+        "region_code": "LVA",
+        "gender": "men"
+      },
+      {
+        "id": "league_of_legends",
+        "name": "League of Legends",
+        "numerical_id": 326,
+        "sport": {
+          "id": "esports",
+          "name": "eSports",
+          "numerical_id": 8,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            }
+          ]
+        },
+        "region": "INTERNATIONAL",
+        "region_code": "INT",
+        "gender": "mixed"
+      },
+      {
+        "id": "lithuania_-_nbl",
+        "name": "Lithuania - NBL",
+        "numerical_id": 854,
+        "sport": {
+          "id": "basketball",
+          "name": "Basketball",
+          "numerical_id": 4,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "point_spread",
+              "name": "Point Spread",
+              "numerical_id": 1172
+            },
+            {
+              "id": "total_points",
+              "name": "Total Points",
+              "numerical_id": 1358
+            }
+          ]
+        },
+        "region": "LITHUANIA",
+        "region_code": "LTU",
+        "gender": "men"
+      },
+      {
+        "id": "liv",
+        "name": "LIV",
+        "numerical_id": 333,
+        "sport": {
+          "id": "golf",
+          "name": "Golf",
+          "numerical_id": 10,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "handicap",
+              "name": "Handicap",
+              "numerical_id": 936
+            }
+          ]
+        },
+        "region": "INTERNATIONAL",
+        "region_code": "INT",
+        "gender": "men"
+      },
+      {
+        "id": "lpga",
+        "name": "LPGA",
+        "numerical_id": 819,
+        "sport": {
+          "id": "golf",
+          "name": "Golf",
+          "numerical_id": 10,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "handicap",
+              "name": "Handicap",
+              "numerical_id": 936
+            }
+          ]
+        },
+        "region": "INTERNATIONAL",
+        "region_code": "INT",
+        "gender": "women"
+      },
+      {
+        "id": "malta_-_premier_league",
+        "name": "Malta - Premier League",
+        "numerical_id": 340,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "MALTA",
+        "region_code": "MLT",
+        "gender": "men"
+      },
+      {
+        "id": "mexico_-_liga_de_expansion_mx",
+        "name": "Mexico - Liga de Expansion MX",
+        "numerical_id": 341,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "MEXICO",
+        "region_code": "MEX",
+        "gender": "men"
+      },
+      {
+        "id": "mexico_-_liga_mx",
+        "name": "Mexico - Liga MX",
+        "numerical_id": 342,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "MEXICO",
+        "region_code": "MEX",
+        "gender": "men"
+      },
+      {
+        "id": "modus_-_super_series",
+        "name": "MODUS - Super Series",
+        "numerical_id": 779,
+        "sport": {
+          "id": "darts",
+          "name": "Darts",
+          "numerical_id": 29,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "leg_handicap",
+              "name": "Leg Handicap",
+              "numerical_id": 1645
+            },
+            {
+              "id": "total_legs",
+              "name": "Total Legs",
+              "numerical_id": 1646
+            }
+          ]
+        },
+        "region": "INTERNATIONAL",
+        "region_code": "INT",
+        "gender": "men"
+      },
+      {
+        "id": "nba",
+        "name": "NBA",
+        "numerical_id": 355,
+        "sport": {
+          "id": "basketball",
+          "name": "Basketball",
+          "numerical_id": 4,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "point_spread",
+              "name": "Point Spread",
+              "numerical_id": 1172
+            },
+            {
+              "id": "total_points",
+              "name": "Total Points",
+              "numerical_id": 1358
+            }
+          ]
+        },
+        "region": "UNITED_STATES",
+        "region_code": "USA",
+        "gender": "men"
+      },
+      {
+        "id": "ncaab",
+        "name": "NCAAB",
+        "numerical_id": 356,
+        "sport": {
+          "id": "basketball",
+          "name": "Basketball",
+          "numerical_id": 4,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "point_spread",
+              "name": "Point Spread",
+              "numerical_id": 1172
+            },
+            {
+              "id": "total_points",
+              "name": "Total Points",
+              "numerical_id": 1358
+            }
+          ]
+        },
+        "region": "UNITED_STATES",
+        "region_code": "USA",
+        "gender": "men"
+      },
+      {
+        "id": "ncaaf",
+        "name": "NCAAF",
+        "numerical_id": 357,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "point_spread",
+              "name": "Point Spread",
+              "numerical_id": 1172
+            },
+            {
+              "id": "total_points",
+              "name": "Total Points",
+              "numerical_id": 1358
+            }
+          ]
+        },
+        "region": "UNITED_STATES",
+        "region_code": "USA",
+        "gender": "men"
+      },
+      {
+        "id": "ncaaw",
+        "name": "NCAAW",
+        "numerical_id": 360,
+        "sport": {
+          "id": "basketball",
+          "name": "Basketball",
+          "numerical_id": 4,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "point_spread",
+              "name": "Point Spread",
+              "numerical_id": 1172
+            },
+            {
+              "id": "total_points",
+              "name": "Total Points",
+              "numerical_id": 1358
+            }
+          ]
+        },
+        "region": "UNITED_STATES",
+        "region_code": "USA",
+        "gender": "women"
+      },
+      {
+        "id": "netherlands_-_eerste_divisie",
+        "name": "Netherlands - Eerste Divisie",
+        "numerical_id": 361,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "NETHERLANDS",
+        "region_code": "NLD",
+        "gender": "men"
+      },
+      {
+        "id": "netherlands_-_eredivisie",
+        "name": "Netherlands - Eredivisie",
+        "numerical_id": 362,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "NETHERLANDS",
+        "region_code": "NLD",
+        "gender": "men"
+      },
+      {
+        "id": "netherlands_-_tweede_divisie",
+        "name": "Netherlands - Tweede Divisie",
+        "numerical_id": 364,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "NETHERLANDS",
+        "region_code": "NLD",
+        "gender": "men"
+      },
+      {
+        "id": "new_zealand_-_plunket_shield",
+        "name": "New Zealand - Plunket Shield",
+        "numerical_id": 634,
+        "sport": {
+          "id": "cricket",
+          "name": "Cricket",
+          "numerical_id": 6,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "total_runs",
+              "name": "Total Runs",
+              "numerical_id": 1367
+            }
+          ]
+        },
+        "region": "NEW_ZEALAND",
+        "region_code": "NZL",
+        "gender": "men"
+      },
+      {
+        "id": "nfl",
+        "name": "NFL",
+        "numerical_id": 367,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "point_spread",
+              "name": "Point Spread",
+              "numerical_id": 1172
+            },
+            {
+              "id": "total_points",
+              "name": "Total Points",
+              "numerical_id": 1358
+            }
+          ]
+        },
+        "region": "UNITED_STATES",
+        "region_code": "USA",
+        "gender": "men"
+      },
+      {
+        "id": "nhl",
+        "name": "NHL",
+        "numerical_id": 368,
+        "sport": {
+          "id": "hockey",
+          "name": "Hockey",
+          "numerical_id": 12,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "puck_line",
+              "name": "Puck Line",
+              "numerical_id": 1174
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "UNITED_STATES",
+        "region_code": "USA",
+        "gender": "men"
+      },
+      {
+        "id": "northern_ireland_-_premiership",
+        "name": "Northern Ireland - Premiership",
+        "numerical_id": 371,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "NORTHERN_IRELAND",
+        "region_code": "NIR",
+        "gender": "men"
+      },
+      {
+        "id": "north_macedonia_-_first_league",
+        "name": "North Macedonia - First League",
+        "numerical_id": 373,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "NORTH_MACEDONIA",
+        "region_code": "MKD",
+        "gender": "men"
+      },
+      {
+        "id": "north_macedonia_-_second_league",
+        "name": "North Macedonia - Second League",
+        "numerical_id": 374,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "NORTH_MACEDONIA",
+        "region_code": "MKD",
+        "gender": "men"
+      },
+      {
+        "id": "norway_-_elitehockeyligaen",
+        "name": "Norway - Elitehockeyligaen",
+        "numerical_id": 378,
+        "sport": {
+          "id": "hockey",
+          "name": "Hockey",
+          "numerical_id": 12,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "puck_line",
+              "name": "Puck Line",
+              "numerical_id": 1174
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "NORWAY",
+        "region_code": "NOR",
+        "gender": "men"
+      },
+      {
+        "id": "norway_-_eliteserien",
+        "name": "Norway - Eliteserien",
+        "numerical_id": 379,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "NORWAY",
+        "region_code": "NOR",
+        "gender": "men"
+      },
+      {
+        "id": "norway_-_hb_1_divisjon",
+        "name": "Norway - HB 1. Divisjon",
+        "numerical_id": 581,
+        "sport": {
+          "id": "handball",
+          "name": "Handball",
+          "numerical_id": 11,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "goal_spread",
+              "name": "Goal Spread",
+              "numerical_id": 933
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "NORWAY",
+        "region_code": "NOR",
+        "gender": "men"
+      },
+      {
+        "id": "norway_-_nm_cup",
+        "name": "Norway - NM Cup",
+        "numerical_id": 380,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "NORWAY",
+        "region_code": "NOR",
+        "gender": "men"
+      },
+      {
+        "id": "overwatch",
+        "name": "Overwatch",
+        "numerical_id": 678,
+        "sport": {
+          "id": "esports",
+          "name": "eSports",
+          "numerical_id": 8,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            }
+          ]
+        },
+        "region": "INTERNATIONAL",
+        "region_code": "INT",
+        "gender": "mixed"
+      },
+      {
+        "id": "paraguay_-_primera_division",
+        "name": "Paraguay - Primera Division",
+        "numerical_id": 662,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "PARAGUAY",
+        "region_code": "PRY",
+        "gender": "men"
+      },
+      {
+        "id": "peru_-_primera_division",
+        "name": "Peru - Primera Division",
+        "numerical_id": 409,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "PERU",
+        "region_code": "PER",
+        "gender": "men"
+      },
+      {
+        "id": "pga",
+        "name": "PGA",
+        "numerical_id": 411,
+        "sport": {
+          "id": "golf",
+          "name": "Golf",
+          "numerical_id": 10,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "handicap",
+              "name": "Handicap",
+              "numerical_id": 936
+            }
+          ]
+        },
+        "region": "INTERNATIONAL",
+        "region_code": "INT",
+        "gender": "men"
+      },
+      {
+        "id": "philippines_-_mpbl",
+        "name": "Philippines - MPBL",
+        "numerical_id": 732,
+        "sport": {
+          "id": "basketball",
+          "name": "Basketball",
+          "numerical_id": 4,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "point_spread",
+              "name": "Point Spread",
+              "numerical_id": 1172
+            },
+            {
+              "id": "total_points",
+              "name": "Total Points",
+              "numerical_id": 1358
+            }
+          ]
+        },
+        "region": "PHILIPPINES",
+        "region_code": "PHL",
+        "gender": "men"
+      },
+      {
+        "id": "poland_-_cup",
+        "name": "Poland - Cup",
+        "numerical_id": 413,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "POLAND",
+        "region_code": "POL",
+        "gender": "men"
+      },
+      {
+        "id": "poland_-_division_1",
+        "name": "Poland - Division 1",
+        "numerical_id": 825,
+        "sport": {
+          "id": "basketball",
+          "name": "Basketball",
+          "numerical_id": 4,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "point_spread",
+              "name": "Point Spread",
+              "numerical_id": 1172
+            },
+            {
+              "id": "total_points",
+              "name": "Total Points",
+              "numerical_id": 1358
+            }
+          ]
+        },
+        "region": "POLAND",
+        "region_code": "POL",
+        "gender": "men"
+      },
+      {
+        "id": "poland_-_ekstraklasa",
+        "name": "Poland - Ekstraklasa",
+        "numerical_id": 414,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "POLAND",
+        "region_code": "POL",
+        "gender": "men"
+      },
+      {
+        "id": "poland_-_ii_liga",
+        "name": "Poland - II Liga",
+        "numerical_id": 415,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "POLAND",
+        "region_code": "POL",
+        "gender": "men"
+      },
+      {
+        "id": "poland_-_i_liga",
+        "name": "Poland - I Liga",
+        "numerical_id": 416,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "POLAND",
+        "region_code": "POL",
+        "gender": "men"
+      },
+      {
+        "id": "poland_-_plusliga",
+        "name": "Poland - PlusLiga",
+        "numerical_id": 418,
+        "sport": {
+          "id": "volleyball",
+          "name": "Volleyball",
+          "numerical_id": 26,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "set_handicap",
+              "name": "Set Handicap",
+              "numerical_id": 1250
+            },
+            {
+              "id": "total_sets",
+              "name": "Total Sets",
+              "numerical_id": 1374
+            }
+          ]
+        },
+        "region": "POLAND",
+        "region_code": "POL",
+        "gender": "men"
+      },
+      {
+        "id": "poland_-_polska_hokej_liga",
+        "name": "Poland - Polska Hokej Liga",
+        "numerical_id": 419,
+        "sport": {
+          "id": "hockey",
+          "name": "Hockey",
+          "numerical_id": 12,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "puck_line",
+              "name": "Puck Line",
+              "numerical_id": 1174
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "POLAND",
+        "region_code": "POL",
+        "gender": "men"
+      },
+      {
+        "id": "poland_-_tt_elite_series_men",
+        "name": "Poland - TT Elite Series Men",
+        "numerical_id": 640,
+        "sport": {
+          "id": "table_tennis",
+          "name": "Table Tennis",
+          "numerical_id": 24,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "point_spread",
+              "name": "Point Spread",
+              "numerical_id": 1172
+            },
+            {
+              "id": "total_points",
+              "name": "Total Points",
+              "numerical_id": 1358
+            }
+          ]
+        },
+        "region": "POLAND",
+        "region_code": "POL",
+        "gender": "men"
+      },
+      {
+        "id": "portugal_-_liga_3",
+        "name": "Portugal - Liga 3",
+        "numerical_id": 422,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "PORTUGAL",
+        "region_code": "PRT",
+        "gender": "men"
+      },
+      {
+        "id": "portugal_-_primeira_liga",
+        "name": "Portugal - Primeira Liga",
+        "numerical_id": 423,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "PORTUGAL",
+        "region_code": "PRT",
+        "gender": "men"
+      },
+      {
+        "id": "portugal_-_segunda_liga",
+        "name": "Portugal - Segunda Liga",
+        "numerical_id": 424,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "PORTUGAL",
+        "region_code": "PRT",
+        "gender": "men"
+      },
+      {
+        "id": "romania_-_liga_i",
+        "name": "Romania - Liga I",
+        "numerical_id": 432,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "ROMANIA",
+        "region_code": "ROU",
+        "gender": "men"
+      },
+      {
+        "id": "romania_-_liga_ii",
+        "name": "Romania - Liga II",
+        "numerical_id": 433,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "ROMANIA",
+        "region_code": "ROU",
+        "gender": "men"
+      },
+      {
+        "id": "romania_-_liga_nationala",
+        "name": "Romania - Liga Nationala",
+        "numerical_id": 934,
+        "sport": {
+          "id": "handball",
+          "name": "Handball",
+          "numerical_id": 11,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "goal_spread",
+              "name": "Goal Spread",
+              "numerical_id": 933
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "ROMANIA",
+        "region_code": "ROU",
+        "gender": "men"
+      },
+      {
+        "id": "russia_-_cup",
+        "name": "Russia - Cup",
+        "numerical_id": 435,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "RUSSIA",
+        "region_code": "RUS",
+        "gender": "men"
+      },
+      {
+        "id": "russia_-_first_league",
+        "name": "Russia - First League",
+        "numerical_id": 436,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "RUSSIA",
+        "region_code": "RUS",
+        "gender": "men"
+      },
+      {
+        "id": "russia_-_khl",
+        "name": "Russia - KHL",
+        "numerical_id": 437,
+        "sport": {
+          "id": "hockey",
+          "name": "Hockey",
+          "numerical_id": 12,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "puck_line",
+              "name": "Puck Line",
+              "numerical_id": 1174
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "RUSSIA",
+        "region_code": "RUS",
+        "gender": "men"
+      },
+      {
+        "id": "russia_-_mhl",
+        "name": "Russia - MHL",
+        "numerical_id": 438,
+        "sport": {
+          "id": "hockey",
+          "name": "Hockey",
+          "numerical_id": 12,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "puck_line",
+              "name": "Puck Line",
+              "numerical_id": 1174
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "RUSSIA",
+        "region_code": "RUS",
+        "gender": "men"
+      },
+      {
+        "id": "russia_-_premier_league",
+        "name": "Russia - Premier League",
+        "numerical_id": 439,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "RUSSIA",
+        "region_code": "RUS",
+        "gender": "men"
+      },
+      {
+        "id": "russia_-_super_league",
+        "name": "Russia - Super League",
+        "numerical_id": 578,
+        "sport": {
+          "id": "handball",
+          "name": "Handball",
+          "numerical_id": 11,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "goal_spread",
+              "name": "Goal Spread",
+              "numerical_id": 933
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "RUSSIA",
+        "region_code": "RUS",
+        "gender": "men"
+      },
+      {
+        "id": "russia_-_superliga",
+        "name": "Russia - Superliga",
+        "numerical_id": 442,
+        "sport": {
+          "id": "volleyball",
+          "name": "Volleyball",
+          "numerical_id": 26,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "set_handicap",
+              "name": "Set Handicap",
+              "numerical_id": 1250
+            },
+            {
+              "id": "total_sets",
+              "name": "Total Sets",
+              "numerical_id": 1374
+            }
+          ]
+        },
+        "region": "RUSSIA",
+        "region_code": "RUS",
+        "gender": "men"
+      },
+      {
+        "id": "russia_-_superliga_women",
+        "name": "Russia - Superliga Women",
+        "numerical_id": 443,
+        "sport": {
+          "id": "volleyball",
+          "name": "Volleyball",
+          "numerical_id": 26,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "set_handicap",
+              "name": "Set Handicap",
+              "numerical_id": 1250
+            },
+            {
+              "id": "total_sets",
+              "name": "Total Sets",
+              "numerical_id": 1374
+            }
+          ]
+        },
+        "region": "RUSSIA",
+        "region_code": "RUS",
+        "gender": "women"
+      },
+      {
+        "id": "russia_-_vhl",
+        "name": "Russia - VHL",
+        "numerical_id": 444,
+        "sport": {
+          "id": "hockey",
+          "name": "Hockey",
+          "numerical_id": 12,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "puck_line",
+              "name": "Puck Line",
+              "numerical_id": 1174
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "RUSSIA",
+        "region_code": "RUS",
+        "gender": "men"
+      },
+      {
+        "id": "scotland_-_championship",
+        "name": "Scotland - Championship",
+        "numerical_id": 451,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "SCOTLAND",
+        "region_code": "SCO",
+        "gender": "men"
+      },
+      {
+        "id": "scotland_-_league_cup",
+        "name": "Scotland - League Cup",
+        "numerical_id": 758,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "SCOTLAND",
+        "region_code": "SCO",
+        "gender": "men"
+      },
+      {
+        "id": "scotland_-_league_one",
+        "name": "Scotland - League One",
+        "numerical_id": 452,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "SCOTLAND",
+        "region_code": "SCO",
+        "gender": "men"
+      },
+      {
+        "id": "scotland_-_league_two",
+        "name": "Scotland - League Two",
+        "numerical_id": 453,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "SCOTLAND",
+        "region_code": "SCO",
+        "gender": "men"
+      },
+      {
+        "id": "scotland_-_premiership",
+        "name": "Scotland - Premiership",
+        "numerical_id": 454,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "SCOTLAND",
+        "region_code": "SCO",
+        "gender": "men"
+      },
+      {
+        "id": "scotland_-_scottish_cup",
+        "name": "Scotland - Scottish Cup",
+        "numerical_id": 455,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "SCOTLAND",
+        "region_code": "SCO",
+        "gender": "men"
+      },
+      {
+        "id": "serbia_-_super_liga",
+        "name": "Serbia - Super Liga",
+        "numerical_id": 460,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "SERBIA",
+        "region_code": "SRB",
+        "gender": "men"
+      },
+      {
+        "id": "slovakia_-_extraliga",
+        "name": "Slovakia - Extraliga",
+        "numerical_id": 464,
+        "sport": {
+          "id": "hockey",
+          "name": "Hockey",
+          "numerical_id": 12,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "puck_line",
+              "name": "Puck Line",
+              "numerical_id": 1174
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "SLOVAKIA",
+        "region_code": "SVK",
+        "gender": "men"
+      },
+      {
+        "id": "slovakia_-_hb_extraliga",
+        "name": "Slovakia - HB Extraliga",
+        "numerical_id": 585,
+        "sport": {
+          "id": "handball",
+          "name": "Handball",
+          "numerical_id": 11,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "goal_spread",
+              "name": "Goal Spread",
+              "numerical_id": 933
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "SLOVAKIA",
+        "region_code": "SVK",
+        "gender": "men"
+      },
+      {
+        "id": "slovakia_-_shl",
+        "name": "Slovakia - SHL",
+        "numerical_id": 465,
+        "sport": {
+          "id": "hockey",
+          "name": "Hockey",
+          "numerical_id": 12,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "puck_line",
+              "name": "Puck Line",
+              "numerical_id": 1174
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "SLOVAKIA",
+        "region_code": "SVK",
+        "gender": "men"
+      },
+      {
+        "id": "slovakia_-_slovensky_pohar",
+        "name": "Slovakia - Slovensky Pohar",
+        "numerical_id": 466,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "SLOVAKIA",
+        "region_code": "SVK",
+        "gender": "men"
+      },
+      {
+        "id": "slovakia_-_superliga",
+        "name": "Slovakia - Superliga",
+        "numerical_id": 467,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "SLOVAKIA",
+        "region_code": "SVK",
+        "gender": "men"
+      },
+      {
+        "id": "slovenia_-_1_liga",
+        "name": "Slovenia - 1. Liga",
+        "numerical_id": 580,
+        "sport": {
+          "id": "handball",
+          "name": "Handball",
+          "numerical_id": 11,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "goal_spread",
+              "name": "Goal Spread",
+              "numerical_id": 933
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "SLOVENIA",
+        "region_code": "SVN",
+        "gender": "men"
+      },
+      {
+        "id": "slovenia_-_prvaliga",
+        "name": "Slovenia - PrvaLiga",
+        "numerical_id": 470,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "SLOVENIA",
+        "region_code": "SVN",
+        "gender": "men"
+      },
+      {
+        "id": "south_africa_-_premier_league",
+        "name": "South Africa - Premier League",
+        "numerical_id": 471,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "SOUTH_AFRICA",
+        "region_code": "ZAF",
+        "gender": "men"
+      },
+      {
+        "id": "south_korea_-_v_league",
+        "name": "South Korea - V League",
+        "numerical_id": 472,
+        "sport": {
+          "id": "volleyball",
+          "name": "Volleyball",
+          "numerical_id": 26,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "set_handicap",
+              "name": "Set Handicap",
+              "numerical_id": 1250
+            },
+            {
+              "id": "total_sets",
+              "name": "Total Sets",
+              "numerical_id": 1374
+            }
+          ]
+        },
+        "region": "SOUTH_KOREA",
+        "region_code": "KOR",
+        "gender": "men"
+      },
+      {
+        "id": "south_korea_-_v_league_women",
+        "name": "South Korea - V League Women",
+        "numerical_id": 473,
+        "sport": {
+          "id": "volleyball",
+          "name": "Volleyball",
+          "numerical_id": 26,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "set_handicap",
+              "name": "Set Handicap",
+              "numerical_id": 1250
+            },
+            {
+              "id": "total_sets",
+              "name": "Total Sets",
+              "numerical_id": 1374
+            }
+          ]
+        },
+        "region": "SOUTH_KOREA",
+        "region_code": "KOR",
+        "gender": "women"
+      },
+      {
+        "id": "spain_-_asobal",
+        "name": "Spain - ASOBAL",
+        "numerical_id": 577,
+        "sport": {
+          "id": "handball",
+          "name": "Handball",
+          "numerical_id": 11,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "goal_spread",
+              "name": "Goal Spread",
+              "numerical_id": 933
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "SPAIN",
+        "region_code": "ESP",
+        "gender": "men"
+      },
+      {
+        "id": "spain_-_copa_del_rey",
+        "name": "Spain - Copa del Rey",
+        "numerical_id": 474,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "SPAIN",
+        "region_code": "ESP",
+        "gender": "men"
+      },
+      {
+        "id": "spain_-_la_liga",
+        "name": "Spain - La Liga",
+        "numerical_id": 475,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "SPAIN",
+        "region_code": "ESP",
+        "gender": "men"
+      },
+      {
+        "id": "spain_-_la_liga_2",
+        "name": "Spain - La Liga 2",
+        "numerical_id": 476,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "SPAIN",
+        "region_code": "ESP",
+        "gender": "men"
+      },
+      {
+        "id": "sweden_-_basketligaen_women",
+        "name": "Sweden - BasketLigaen Women",
+        "numerical_id": 873,
+        "sport": {
+          "id": "basketball",
+          "name": "Basketball",
+          "numerical_id": 4,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "point_spread",
+              "name": "Point Spread",
+              "numerical_id": 1172
+            },
+            {
+              "id": "total_points",
+              "name": "Total Points",
+              "numerical_id": 1358
+            }
+          ]
+        },
+        "region": "SWEDEN",
+        "region_code": "SWE",
+        "gender": "women"
+      },
+      {
+        "id": "sweden_-_handbollsligan",
+        "name": "Sweden - Handbollsligan",
+        "numerical_id": 579,
+        "sport": {
+          "id": "handball",
+          "name": "Handball",
+          "numerical_id": 11,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "goal_spread",
+              "name": "Goal Spread",
+              "numerical_id": 933
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "SWEDEN",
+        "region_code": "SWE",
+        "gender": "men"
+      },
+      {
+        "id": "sweden_-_hockey_allsvenskan",
+        "name": "Sweden - Hockey Allsvenskan",
+        "numerical_id": 488,
+        "sport": {
+          "id": "hockey",
+          "name": "Hockey",
+          "numerical_id": 12,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "puck_line",
+              "name": "Puck Line",
+              "numerical_id": 1174
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "SWEDEN",
+        "region_code": "SWE",
+        "gender": "men"
+      },
+      {
+        "id": "sweden_-_shl",
+        "name": "Sweden - SHL",
+        "numerical_id": 490,
+        "sport": {
+          "id": "hockey",
+          "name": "Hockey",
+          "numerical_id": 12,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "puck_line",
+              "name": "Puck Line",
+              "numerical_id": 1174
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "SWEDEN",
+        "region_code": "SWE",
+        "gender": "men"
+      },
+      {
+        "id": "sweden_-_svenska_cupen",
+        "name": "Sweden - Svenska Cupen",
+        "numerical_id": 492,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "SWEDEN",
+        "region_code": "SWE",
+        "gender": "men"
+      },
+      {
+        "id": "switzerland_-_challenge_league",
+        "name": "Switzerland - Challenge League",
+        "numerical_id": 493,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "SWITZERLAND",
+        "region_code": "CHE",
+        "gender": "men"
+      },
+      {
+        "id": "switzerland_-_national_league",
+        "name": "Switzerland - National League",
+        "numerical_id": 495,
+        "sport": {
+          "id": "hockey",
+          "name": "Hockey",
+          "numerical_id": 12,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "puck_line",
+              "name": "Puck Line",
+              "numerical_id": 1174
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "SWITZERLAND",
+        "region_code": "CHE",
+        "gender": "men"
+      },
+      {
+        "id": "switzerland_-_promotion_league",
+        "name": "Switzerland - Promotion League",
+        "numerical_id": 496,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "SWITZERLAND",
+        "region_code": "CHE",
+        "gender": "men"
+      },
+      {
+        "id": "switzerland_-_super_league",
+        "name": "Switzerland - Super League",
+        "numerical_id": 497,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "SWITZERLAND",
+        "region_code": "CHE",
+        "gender": "men"
+      },
+      {
+        "id": "thailand_-_thai_league_1",
+        "name": "Thailand - Thai League 1",
+        "numerical_id": 499,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "THAILAND",
+        "region_code": "THA",
+        "gender": "men"
+      },
+      {
+        "id": "turkey_-_1_lig",
+        "name": "Turkey - 1. Lig",
+        "numerical_id": 500,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "TURKEY",
+        "region_code": "TUR",
+        "gender": "men"
+      },
+      {
+        "id": "turkey_-_bsl",
+        "name": "Turkey - BSL",
+        "numerical_id": 501,
+        "sport": {
+          "id": "basketball",
+          "name": "Basketball",
+          "numerical_id": 4,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "point_spread",
+              "name": "Point Spread",
+              "numerical_id": 1172
+            },
+            {
+              "id": "total_points",
+              "name": "Total Points",
+              "numerical_id": 1358
+            }
+          ]
+        },
+        "region": "TURKEY",
+        "region_code": "TUR",
+        "gender": "men"
+      },
+      {
+        "id": "turkey_-_super_lig",
+        "name": "Turkey - Super Lig",
+        "numerical_id": 504,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "TURKEY",
+        "region_code": "TUR",
+        "gender": "men"
+      },
+      {
+        "id": "uefa_-_champions_league",
+        "name": "UEFA - Champions League",
+        "numerical_id": 506,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "INTERNATIONAL",
+        "region_code": "INT",
+        "gender": "men"
+      },
+      {
+        "id": "uefa_-_europa_conference_league",
+        "name": "UEFA - Europa Conference League",
+        "numerical_id": 508,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "INTERNATIONAL",
+        "region_code": "INT",
+        "gender": "men"
+      },
+      {
+        "id": "uefa_-_europa_league",
+        "name": "UEFA - Europa League",
+        "numerical_id": 509,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "INTERNATIONAL",
+        "region_code": "INT",
+        "gender": "men"
+      },
+      {
+        "id": "uefa_-_nations_league_women",
+        "name": "UEFA - Nations League Women",
+        "numerical_id": 630,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "INTERNATIONAL",
+        "region_code": "INT",
+        "gender": "women"
+      },
+      {
+        "id": "ufc",
+        "name": "UFC",
+        "numerical_id": 514,
+        "sport": {
+          "id": "mma",
+          "name": "MMA",
+          "numerical_id": 14,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "total_rounds",
+              "name": "Total Rounds",
+              "numerical_id": 1364
+            }
+          ]
+        },
+        "region": "INTERNATIONAL",
+        "region_code": "INT",
+        "gender": "mixed"
+      },
+      {
+        "id": "ukraine_-_premier_league",
+        "name": "Ukraine - Premier League",
+        "numerical_id": 519,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "UKRAINE",
+        "region_code": "UKR",
+        "gender": "men"
+      },
+      {
+        "id": "uruguay_-_primera_division",
+        "name": "Uruguay - Primera Division",
+        "numerical_id": 521,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "URUGUAY",
+        "region_code": "URY",
+        "gender": "men"
+      },
+      {
+        "id": "uruguay_-_segunda_division",
+        "name": "Uruguay - Segunda Division",
+        "numerical_id": 522,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "URUGUAY",
+        "region_code": "URY",
+        "gender": "men"
+      },
+      {
+        "id": "usa_-_ahl",
+        "name": "USA - AHL",
+        "numerical_id": 524,
+        "sport": {
+          "id": "hockey",
+          "name": "Hockey",
+          "numerical_id": 12,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "puck_line",
+              "name": "Puck Line",
+              "numerical_id": 1174
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "UNITED_STATES",
+        "region_code": "USA",
+        "gender": "men"
+      },
+      {
+        "id": "usa_-_national_lacrosse_league",
+        "name": "USA - National Lacrosse League",
+        "numerical_id": 529,
+        "sport": {
+          "id": "lacrosse",
+          "name": "Lacrosse",
+          "numerical_id": 13,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "point_spread",
+              "name": "Point Spread",
+              "numerical_id": 1172
+            },
+            {
+              "id": "total_points",
+              "name": "Total Points",
+              "numerical_id": 1358
+            }
+          ]
+        },
+        "region": "UNITED_STATES",
+        "region_code": "USA",
+        "gender": "men"
+      },
+      {
+        "id": "usa_-_pwhl",
+        "name": "USA - PWHL",
+        "numerical_id": 536,
+        "sport": {
+          "id": "hockey",
+          "name": "Hockey",
+          "numerical_id": 12,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "puck_line",
+              "name": "Puck Line",
+              "numerical_id": 1174
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "UNITED_STATES",
+        "region_code": "USA",
+        "gender": "women"
+      },
+      {
+        "id": "utr_men",
+        "name": "UTR Men",
+        "numerical_id": 606,
+        "sport": {
+          "id": "tennis",
+          "name": "Tennis",
+          "numerical_id": 25,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "game_spread",
+              "name": "Game Spread",
+              "numerical_id": 929
+            },
+            {
+              "id": "total_games",
+              "name": "Total Games",
+              "numerical_id": 1339
+            }
+          ]
+        },
+        "region": "INTERNATIONAL",
+        "region_code": "INT",
+        "gender": "men"
+      },
+      {
+        "id": "utr_women",
+        "name": "UTR Women",
+        "numerical_id": 607,
+        "sport": {
+          "id": "tennis",
+          "name": "Tennis",
+          "numerical_id": 25,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "game_spread",
+              "name": "Game Spread",
+              "numerical_id": 929
+            },
+            {
+              "id": "total_games",
+              "name": "Total Games",
+              "numerical_id": 1339
+            }
+          ]
+        },
+        "region": "INTERNATIONAL",
+        "region_code": "INT",
+        "gender": "women"
+      },
+      {
+        "id": "valorant",
+        "name": "Valorant",
+        "numerical_id": 544,
+        "sport": {
+          "id": "esports",
+          "name": "eSports",
+          "numerical_id": 8,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            }
+          ]
+        },
+        "region": "INTERNATIONAL",
+        "region_code": "INT",
+        "gender": "mixed"
+      },
+      {
+        "id": "venezuela_-_lvbp",
+        "name": "Venezuela - LVBP",
+        "numerical_id": 876,
+        "sport": {
+          "id": "baseball",
+          "name": "Baseball",
+          "numerical_id": 3,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "run_line",
+              "name": "Run Line",
+              "numerical_id": 1245
+            },
+            {
+              "id": "total_runs",
+              "name": "Total Runs",
+              "numerical_id": 1367
+            }
+          ]
+        },
+        "region": "VENEZUELA",
+        "region_code": "VEN",
+        "gender": "men"
+      },
+      {
+        "id": "wales_-_cymru_premier",
+        "name": "Wales - Cymru Premier",
+        "numerical_id": 549,
+        "sport": {
+          "id": "soccer",
+          "name": "Soccer",
+          "numerical_id": 21,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "asian_handicap",
+              "name": "Asian Handicap",
+              "numerical_id": 894
+            },
+            {
+              "id": "total_goals",
+              "name": "Total Goals",
+              "numerical_id": 1342
+            }
+          ]
+        },
+        "region": "WALES",
+        "region_code": "WAL",
+        "gender": "men"
+      },
+      {
+        "id": "wta",
+        "name": "WTA",
+        "numerical_id": 554,
+        "sport": {
+          "id": "tennis",
+          "name": "Tennis",
+          "numerical_id": 25,
+          "main_markets": [
+            {
+              "id": "moneyline",
+              "name": "Moneyline",
+              "numerical_id": 953
+            },
+            {
+              "id": "game_spread",
+              "name": "Game Spread",
+              "numerical_id": 929
+            },
+            {
+              "id": "total_games",
+              "name": "Total Games",
+              "numerical_id": 1339
+            }
+          ]
+        },
+        "region": "INTERNATIONAL",
+        "region_code": "INT",
+        "gender": "women"
+      }
+    ]
+  }

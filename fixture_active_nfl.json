@@ -1,0 +1,4970 @@
+{
+    "data": [
+      {
+        "id": "20251127E5C64DE0",
+        "numerical_id": 258739,
+        "game_id": "21473-16343-25-47",
+        "start_date": "2025-11-27T18:00:00Z",
+        "home_competitors": [
+          {
+            "id": "43412DC9CDCA",
+            "name": "Detroit Lions",
+            "numerical_id": 93,
+            "base_id": 91,
+            "abbreviation": "DET",
+            "logo": "https://cdn.opticodds.com/team-logos/football/91.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "2C6CB429C60C",
+            "name": "Green Bay Packers",
+            "numerical_id": 94,
+            "base_id": 92,
+            "abbreviation": "GB",
+            "logo": "https://cdn.opticodds.com/team-logos/football/92.png"
+          }
+        ],
+        "home_team_display": "Detroit Lions",
+        "away_team_display": "Green Bay Packers",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "13",
+        "venue_name": "Ford Field",
+        "venue_location": "Detroit, MI, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "7-4-0",
+        "home_seed": null,
+        "home_rotation_number": 306,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "7-3-1",
+        "away_seed": null,
+        "away_rotation_number": 305,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "FOX | FOXD",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "20251127C95F3929",
+        "numerical_id": 358279,
+        "game_id": "11434-13602-25-47",
+        "start_date": "2025-11-27T21:30:00Z",
+        "home_competitors": [
+          {
+            "id": "0BDD5205ECCB",
+            "name": "Dallas Cowboys",
+            "numerical_id": 91,
+            "base_id": 89,
+            "abbreviation": "DAL",
+            "logo": "https://cdn.opticodds.com/team-logos/football/89.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "2D71E5BA64A5",
+            "name": "Kansas City Chiefs",
+            "numerical_id": 98,
+            "base_id": 96,
+            "abbreviation": "KC",
+            "logo": "https://cdn.opticodds.com/team-logos/football/96.png"
+          }
+        ],
+        "home_team_display": "Dallas Cowboys",
+        "away_team_display": "Kansas City Chiefs",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "13",
+        "venue_name": "AT&T Stadium",
+        "venue_location": "Arlington, TX, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "5-5-1",
+        "home_seed": null,
+        "home_rotation_number": 308,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "6-5-0",
+        "away_seed": null,
+        "away_rotation_number": 307,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "CBS | PAR+",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "202511287C093769",
+        "numerical_id": 258740,
+        "game_id": "18821-41522-25-47",
+        "start_date": "2025-11-28T01:20:00Z",
+        "home_competitors": [
+          {
+            "id": "766A226BC204",
+            "name": "Baltimore Ravens",
+            "numerical_id": 85,
+            "base_id": 83,
+            "abbreviation": "BAL",
+            "logo": "https://cdn.opticodds.com/team-logos/football/83.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "EB3A43FF026E",
+            "name": "Cincinnati Bengals",
+            "numerical_id": 89,
+            "base_id": 87,
+            "abbreviation": "CIN",
+            "logo": "https://cdn.opticodds.com/team-logos/football/87.png"
+          }
+        ],
+        "home_team_display": "Baltimore Ravens",
+        "away_team_display": "Cincinnati Bengals",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "13",
+        "venue_name": "M&T Bank Stadium",
+        "venue_location": "Baltimore, MD, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "6-5-0",
+        "home_seed": null,
+        "home_rotation_number": 310,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "3-8-0",
+        "away_seed": null,
+        "away_rotation_number": 309,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "NBC | PEAC | TELE | NBCU",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "202511284C63B62B",
+        "numerical_id": 254658,
+        "game_id": "24276-17233-25-47",
+        "start_date": "2025-11-28T20:00:00Z",
+        "home_competitors": [
+          {
+            "id": "EDCC2866B795",
+            "name": "Philadelphia Eagles",
+            "numerical_id": 108,
+            "base_id": 106,
+            "abbreviation": "PHI",
+            "logo": "https://cdn.opticodds.com/team-logos/football/106.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "7108F48884ED",
+            "name": "Chicago Bears",
+            "numerical_id": 88,
+            "base_id": 86,
+            "abbreviation": "CHI",
+            "logo": "https://cdn.opticodds.com/team-logos/football/86.png"
+          }
+        ],
+        "home_team_display": "Philadelphia Eagles",
+        "away_team_display": "Chicago Bears",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "13",
+        "venue_name": "Lincoln Financial Field",
+        "venue_location": "Philadelphia, PA, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "8-3-0",
+        "home_seed": null,
+        "home_rotation_number": 314,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "8-3-0",
+        "away_seed": null,
+        "away_rotation_number": 313,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "Amazon",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "202511300367BA12",
+        "numerical_id": 258743,
+        "game_id": "39341-42288-25-47",
+        "start_date": "2025-11-30T18:00:00Z",
+        "home_competitors": [
+          {
+            "id": "4E7DB4C57393",
+            "name": "Tampa Bay Buccaneers",
+            "numerical_id": 112,
+            "base_id": 110,
+            "abbreviation": "TB",
+            "logo": "https://cdn.opticodds.com/team-logos/football/110.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "AF456B375E7E",
+            "name": "Arizona Cardinals",
+            "numerical_id": 83,
+            "base_id": 81,
+            "abbreviation": "ARI",
+            "logo": "https://cdn.opticodds.com/team-logos/football/81.png"
+          }
+        ],
+        "home_team_display": "Tampa Bay Buccaneers",
+        "away_team_display": "Arizona Cardinals",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "13",
+        "venue_name": "Raymond James Stadium",
+        "venue_location": "Tampa, FL, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "6-5-0",
+        "home_seed": null,
+        "home_rotation_number": 464,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "3-8-0",
+        "away_seed": null,
+        "away_rotation_number": 463,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "FOX",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "202511300F34263E",
+        "numerical_id": 258742,
+        "game_id": "18124-78014-25-47",
+        "start_date": "2025-11-30T18:00:00Z",
+        "home_competitors": [
+          {
+            "id": "EB5E972AB475",
+            "name": "Carolina Panthers",
+            "numerical_id": 87,
+            "base_id": 85,
+            "abbreviation": "CAR",
+            "logo": "https://cdn.opticodds.com/team-logos/football/85.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "13AD4FDBEBA8",
+            "name": "Los Angeles Rams",
+            "numerical_id": 101,
+            "base_id": 99,
+            "abbreviation": "LAR",
+            "logo": "https://cdn.opticodds.com/team-logos/football/99.png"
+          }
+        ],
+        "home_team_display": "Carolina Panthers",
+        "away_team_display": "Los Angeles Rams",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "13",
+        "venue_name": "Bank of America Stadium",
+        "venue_location": "Charlotte, NC, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "6-6-0",
+        "home_seed": null,
+        "home_rotation_number": 468,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "9-2-0",
+        "away_seed": null,
+        "away_rotation_number": 467,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "FOX",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "20251130690AB43A",
+        "numerical_id": 258741,
+        "game_id": "22677-17463-25-47",
+        "start_date": "2025-11-30T18:00:00Z",
+        "home_competitors": [
+          {
+            "id": "8380A12E67FE",
+            "name": "Miami Dolphins",
+            "numerical_id": 102,
+            "base_id": 100,
+            "abbreviation": "MIA",
+            "logo": "https://cdn.opticodds.com/team-logos/football/100.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "E94C20E042D9",
+            "name": "New Orleans Saints",
+            "numerical_id": 105,
+            "base_id": 103,
+            "abbreviation": "NO",
+            "logo": "https://cdn.opticodds.com/team-logos/football/103.png"
+          }
+        ],
+        "home_team_display": "Miami Dolphins",
+        "away_team_display": "New Orleans Saints",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "13",
+        "venue_name": "Hard Rock Stadium",
+        "venue_location": "Miami, FL, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "4-7-0",
+        "home_seed": null,
+        "home_rotation_number": 470,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "2-9-0",
+        "away_seed": null,
+        "away_rotation_number": 469,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "FOX",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "202511307E5C3CAA",
+        "numerical_id": 258745,
+        "game_id": "32889-12806-25-47",
+        "start_date": "2025-11-30T18:00:00Z",
+        "home_competitors": [
+          {
+            "id": "032D4F9C6C55",
+            "name": "New York Jets",
+            "numerical_id": 107,
+            "base_id": 105,
+            "abbreviation": "NYJ",
+            "logo": "https://cdn.opticodds.com/team-logos/football/105.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "348C1EE88C42",
+            "name": "Atlanta Falcons",
+            "numerical_id": 84,
+            "base_id": 82,
+            "abbreviation": "ATL",
+            "logo": "https://cdn.opticodds.com/team-logos/football/82.png"
+          }
+        ],
+        "home_team_display": "New York Jets",
+        "away_team_display": "Atlanta Falcons",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "13",
+        "venue_name": "MetLife Stadium",
+        "venue_location": "East Rutherford, NJ, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "2-9-0",
+        "home_seed": null,
+        "home_rotation_number": 472,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "4-7-0",
+        "away_seed": null,
+        "away_rotation_number": 471,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "FOX",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "202511309B918336",
+        "numerical_id": 258747,
+        "game_id": "28265-17324-25-47",
+        "start_date": "2025-11-30T18:00:00Z",
+        "home_competitors": [
+          {
+            "id": "24988863B4CB",
+            "name": "Tennessee Titans",
+            "numerical_id": 113,
+            "base_id": 111,
+            "abbreviation": "TEN",
+            "logo": "https://cdn.opticodds.com/team-logos/football/111.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "9CCE4CA64CF2",
+            "name": "Jacksonville Jaguars",
+            "numerical_id": 97,
+            "base_id": 95,
+            "abbreviation": "JAX",
+            "logo": "https://cdn.opticodds.com/team-logos/football/95.png"
+          }
+        ],
+        "home_team_display": "Tennessee Titans",
+        "away_team_display": "Jacksonville Jaguars",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "13",
+        "venue_name": "Nissan Stadium",
+        "venue_location": "Nashville, TN, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "1-10-0",
+        "home_seed": null,
+        "home_rotation_number": 466,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "7-4-0",
+        "away_seed": null,
+        "away_rotation_number": 465,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "CBS",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "20251130C48EB9BD",
+        "numerical_id": 258746,
+        "game_id": "31124-40716-25-47",
+        "start_date": "2025-11-30T18:00:00Z",
+        "home_competitors": [
+          {
+            "id": "28ABEAB98C11",
+            "name": "Indianapolis Colts",
+            "numerical_id": 96,
+            "base_id": 94,
+            "abbreviation": "IND",
+            "logo": "https://cdn.opticodds.com/team-logos/football/94.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "4DD082E9EC10",
+            "name": "Houston Texans",
+            "numerical_id": 95,
+            "base_id": 93,
+            "abbreviation": "HOU",
+            "logo": "https://cdn.opticodds.com/team-logos/football/93.png"
+          }
+        ],
+        "home_team_display": "Indianapolis Colts",
+        "away_team_display": "Houston Texans",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "13",
+        "venue_name": "Lucas Oil Stadium",
+        "venue_location": "Indianapolis, IN, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "8-3-0",
+        "home_seed": null,
+        "home_rotation_number": 462,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "6-5-0",
+        "away_seed": null,
+        "away_rotation_number": 461,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "CBS",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "20251130E4A39E03",
+        "numerical_id": 258744,
+        "game_id": "27927-13184-25-47",
+        "start_date": "2025-11-30T18:00:00Z",
+        "home_competitors": [
+          {
+            "id": "81A1B4413577",
+            "name": "Cleveland Browns",
+            "numerical_id": 90,
+            "base_id": 88,
+            "abbreviation": "CLE",
+            "logo": "https://cdn.opticodds.com/team-logos/football/88.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "132B64CEDAC4",
+            "name": "San Francisco 49ers",
+            "numerical_id": 110,
+            "base_id": 108,
+            "abbreviation": "SF",
+            "logo": "https://cdn.opticodds.com/team-logos/football/108.png"
+          }
+        ],
+        "home_team_display": "Cleveland Browns",
+        "away_team_display": "San Francisco 49ers",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "13",
+        "venue_name": "Huntington Bank Field",
+        "venue_location": "Cleveland, OH, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "3-8-0",
+        "home_seed": null,
+        "home_rotation_number": 474,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "8-4-0",
+        "away_seed": null,
+        "away_rotation_number": 473,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "CBS",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "202511300FF69318",
+        "numerical_id": 258748,
+        "game_id": "37797-25327-25-47",
+        "start_date": "2025-11-30T21:05:00Z",
+        "home_competitors": [
+          {
+            "id": "EFED0277C4BD",
+            "name": "Seattle Seahawks",
+            "numerical_id": 111,
+            "base_id": 109,
+            "abbreviation": "SEA",
+            "logo": "https://cdn.opticodds.com/team-logos/football/109.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "24E4EA618C5E",
+            "name": "Minnesota Vikings",
+            "numerical_id": 103,
+            "base_id": 101,
+            "abbreviation": "MIN",
+            "logo": "https://cdn.opticodds.com/team-logos/football/101.png"
+          }
+        ],
+        "home_team_display": "Seattle Seahawks",
+        "away_team_display": "Minnesota Vikings",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "13",
+        "venue_name": "Lumen Field",
+        "venue_location": "Seattle, WA, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "8-3-0",
+        "home_seed": null,
+        "home_rotation_number": 476,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "4-7-0",
+        "away_seed": null,
+        "away_rotation_number": 475,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "FOX",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "2025113019C17AEE",
+        "numerical_id": 258750,
+        "game_id": "16341-82789-25-47",
+        "start_date": "2025-11-30T21:25:00Z",
+        "home_competitors": [
+          {
+            "id": "727B3B3C78E8",
+            "name": "Pittsburgh Steelers",
+            "numerical_id": 109,
+            "base_id": 107,
+            "abbreviation": "PIT",
+            "logo": "https://cdn.opticodds.com/team-logos/football/107.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "0787D09E47B9",
+            "name": "Buffalo Bills",
+            "numerical_id": 86,
+            "base_id": 84,
+            "abbreviation": "BUF",
+            "logo": "https://cdn.opticodds.com/team-logos/football/84.png"
+          }
+        ],
+        "home_team_display": "Pittsburgh Steelers",
+        "away_team_display": "Buffalo Bills",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "13",
+        "venue_name": "Acrisure Stadium",
+        "venue_location": "Pittsburgh, PA, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "6-5-0",
+        "home_seed": null,
+        "home_rotation_number": 478,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "7-4-0",
+        "away_seed": null,
+        "away_rotation_number": 477,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "CBS",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "202511304C15E1B4",
+        "numerical_id": 258749,
+        "game_id": "26757-33128-25-47",
+        "start_date": "2025-11-30T21:25:00Z",
+        "home_competitors": [
+          {
+            "id": "A283836CDF6E",
+            "name": "Los Angeles Chargers",
+            "numerical_id": 100,
+            "base_id": 98,
+            "abbreviation": "LAC",
+            "logo": "https://cdn.opticodds.com/team-logos/football/98.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "A715F8199801",
+            "name": "Las Vegas Raiders",
+            "numerical_id": 99,
+            "base_id": 97,
+            "abbreviation": "LV",
+            "logo": "https://cdn.opticodds.com/team-logos/football/97.png"
+          }
+        ],
+        "home_team_display": "Los Angeles Chargers",
+        "away_team_display": "Las Vegas Raiders",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "13",
+        "venue_name": "SoFi Stadium",
+        "venue_location": "Inglewood, CA, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "7-4-0",
+        "home_seed": null,
+        "home_rotation_number": 480,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "2-9-0",
+        "away_seed": null,
+        "away_rotation_number": 479,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "CBS",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "20251201C694E836",
+        "numerical_id": 258751,
+        "game_id": "74813-33320-25-47",
+        "start_date": "2025-12-01T01:20:00Z",
+        "home_competitors": [
+          {
+            "id": "C921828AB706",
+            "name": "Washington Commanders",
+            "numerical_id": 114,
+            "base_id": 112,
+            "abbreviation": "WSH",
+            "logo": "https://cdn.opticodds.com/team-logos/football/112.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "0DBD3AEC9A84",
+            "name": "Denver Broncos",
+            "numerical_id": 92,
+            "base_id": 90,
+            "abbreviation": "DEN",
+            "logo": "https://cdn.opticodds.com/team-logos/football/90.png"
+          }
+        ],
+        "home_team_display": "Washington Commanders",
+        "away_team_display": "Denver Broncos",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "13",
+        "venue_name": "Northwest Stadium",
+        "venue_location": "Landover, MD, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "3-8-0",
+        "home_seed": null,
+        "home_rotation_number": 482,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "9-2-0",
+        "away_seed": null,
+        "away_rotation_number": 481,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "NBC | PEAC | NBCU",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "202512029BE1BA5B",
+        "numerical_id": 258752,
+        "game_id": "37240-37430-25-48",
+        "start_date": "2025-12-02T01:15:00Z",
+        "home_competitors": [
+          {
+            "id": "04E3F3D69B89",
+            "name": "New England Patriots",
+            "numerical_id": 104,
+            "base_id": 102,
+            "abbreviation": "NE",
+            "logo": "https://cdn.opticodds.com/team-logos/football/102.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "ACC49FC634EE",
+            "name": "New York Giants",
+            "numerical_id": 106,
+            "base_id": 104,
+            "abbreviation": "NYG",
+            "logo": "https://cdn.opticodds.com/team-logos/football/104.png"
+          }
+        ],
+        "home_team_display": "New England Patriots",
+        "away_team_display": "New York Giants",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "13",
+        "venue_name": "Gillette Stadium",
+        "venue_location": "Foxborough, MA, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "10-2-0",
+        "home_seed": null,
+        "home_rotation_number": 484,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "2-10-0",
+        "away_seed": null,
+        "away_rotation_number": 483,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "ESPN | ESPN2 | ESPD",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "202512059E47F404",
+        "numerical_id": 258753,
+        "game_id": "11434-21473-25-48",
+        "start_date": "2025-12-05T01:15:00Z",
+        "home_competitors": [
+          {
+            "id": "43412DC9CDCA",
+            "name": "Detroit Lions",
+            "numerical_id": 93,
+            "base_id": 91,
+            "abbreviation": "DET",
+            "logo": "https://cdn.opticodds.com/team-logos/football/91.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "0BDD5205ECCB",
+            "name": "Dallas Cowboys",
+            "numerical_id": 91,
+            "base_id": 89,
+            "abbreviation": "DAL",
+            "logo": "https://cdn.opticodds.com/team-logos/football/89.png"
+          }
+        ],
+        "home_team_display": "Detroit Lions",
+        "away_team_display": "Dallas Cowboys",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "14",
+        "venue_name": "Ford Field",
+        "venue_location": "Detroit, MI, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "7-4-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "5-5-1",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "Amazon",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "202512072D5FF754",
+        "numerical_id": 258764,
+        "game_id": "16341-41522-25-48",
+        "start_date": "2025-12-07T18:00:00Z",
+        "home_competitors": [
+          {
+            "id": "0787D09E47B9",
+            "name": "Buffalo Bills",
+            "numerical_id": 86,
+            "base_id": 84,
+            "abbreviation": "BUF",
+            "logo": "https://cdn.opticodds.com/team-logos/football/84.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "EB3A43FF026E",
+            "name": "Cincinnati Bengals",
+            "numerical_id": 89,
+            "base_id": 87,
+            "abbreviation": "CIN",
+            "logo": "https://cdn.opticodds.com/team-logos/football/87.png"
+          }
+        ],
+        "home_team_display": "Buffalo Bills",
+        "away_team_display": "Cincinnati Bengals",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "14",
+        "venue_name": "Highmark Stadium",
+        "venue_location": "Orchard Park, NY, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "7-4-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "3-8-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "FOX",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "202512076BF157C8",
+        "numerical_id": 258759,
+        "game_id": "17463-42288-25-48",
+        "start_date": "2025-12-07T18:00:00Z",
+        "home_competitors": [
+          {
+            "id": "4E7DB4C57393",
+            "name": "Tampa Bay Buccaneers",
+            "numerical_id": 112,
+            "base_id": 110,
+            "abbreviation": "TB",
+            "logo": "https://cdn.opticodds.com/team-logos/football/110.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "E94C20E042D9",
+            "name": "New Orleans Saints",
+            "numerical_id": 105,
+            "base_id": 103,
+            "abbreviation": "NO",
+            "logo": "https://cdn.opticodds.com/team-logos/football/103.png"
+          }
+        ],
+        "home_team_display": "Tampa Bay Buccaneers",
+        "away_team_display": "New Orleans Saints",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "14",
+        "venue_name": "Raymond James Stadium",
+        "venue_location": "Tampa, FL, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "6-5-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "2-9-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "CBS",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "2025120779A25CAF",
+        "numerical_id": 258760,
+        "game_id": "18821-82789-25-48",
+        "start_date": "2025-12-07T18:00:00Z",
+        "home_competitors": [
+          {
+            "id": "766A226BC204",
+            "name": "Baltimore Ravens",
+            "numerical_id": 85,
+            "base_id": 83,
+            "abbreviation": "BAL",
+            "logo": "https://cdn.opticodds.com/team-logos/football/83.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "727B3B3C78E8",
+            "name": "Pittsburgh Steelers",
+            "numerical_id": 109,
+            "base_id": 107,
+            "abbreviation": "PIT",
+            "logo": "https://cdn.opticodds.com/team-logos/football/107.png"
+          }
+        ],
+        "home_team_display": "Baltimore Ravens",
+        "away_team_display": "Pittsburgh Steelers",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "14",
+        "venue_name": "M&T Bank Stadium",
+        "venue_location": "Baltimore, MD, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "6-5-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "6-5-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "CBS",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "202512077E3BFBC5",
+        "numerical_id": 258761,
+        "game_id": "22677-12806-25-48",
+        "start_date": "2025-12-07T18:00:00Z",
+        "home_competitors": [
+          {
+            "id": "032D4F9C6C55",
+            "name": "New York Jets",
+            "numerical_id": 107,
+            "base_id": 105,
+            "abbreviation": "NYJ",
+            "logo": "https://cdn.opticodds.com/team-logos/football/105.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "8380A12E67FE",
+            "name": "Miami Dolphins",
+            "numerical_id": 102,
+            "base_id": 100,
+            "abbreviation": "MIA",
+            "logo": "https://cdn.opticodds.com/team-logos/football/100.png"
+          }
+        ],
+        "home_team_display": "New York Jets",
+        "away_team_display": "Miami Dolphins",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "14",
+        "venue_name": "MetLife Stadium",
+        "venue_location": "East Rutherford, NJ, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "2-9-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "4-7-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "CBS",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "20251207814A151D",
+        "numerical_id": 258754,
+        "game_id": "27927-17324-25-48",
+        "start_date": "2025-12-07T18:00:00Z",
+        "home_competitors": [
+          {
+            "id": "81A1B4413577",
+            "name": "Cleveland Browns",
+            "numerical_id": 90,
+            "base_id": 88,
+            "abbreviation": "CLE",
+            "logo": "https://cdn.opticodds.com/team-logos/football/88.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "24988863B4CB",
+            "name": "Tennessee Titans",
+            "numerical_id": 113,
+            "base_id": 111,
+            "abbreviation": "TEN",
+            "logo": "https://cdn.opticodds.com/team-logos/football/111.png"
+          }
+        ],
+        "home_team_display": "Cleveland Browns",
+        "away_team_display": "Tennessee Titans",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "14",
+        "venue_name": "Huntington Bank Field",
+        "venue_location": "Cleveland, OH, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "3-8-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "1-10-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "FOX",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "2025120798447CB9",
+        "numerical_id": 258758,
+        "game_id": "37797-33320-25-48",
+        "start_date": "2025-12-07T18:00:00Z",
+        "home_competitors": [
+          {
+            "id": "24E4EA618C5E",
+            "name": "Minnesota Vikings",
+            "numerical_id": 103,
+            "base_id": 101,
+            "abbreviation": "MIN",
+            "logo": "https://cdn.opticodds.com/team-logos/football/101.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "C921828AB706",
+            "name": "Washington Commanders",
+            "numerical_id": 114,
+            "base_id": 112,
+            "abbreviation": "WSH",
+            "logo": "https://cdn.opticodds.com/team-logos/football/112.png"
+          }
+        ],
+        "home_team_display": "Minnesota Vikings",
+        "away_team_display": "Washington Commanders",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "14",
+        "venue_name": "U.S. Bank Stadium",
+        "venue_location": "Minneapolis, MN, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "4-7-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "3-8-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "FOX",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "20251207DE4E073C",
+        "numerical_id": 258756,
+        "game_id": "32889-25327-25-48",
+        "start_date": "2025-12-07T18:00:00Z",
+        "home_competitors": [
+          {
+            "id": "348C1EE88C42",
+            "name": "Atlanta Falcons",
+            "numerical_id": 84,
+            "base_id": 82,
+            "abbreviation": "ATL",
+            "logo": "https://cdn.opticodds.com/team-logos/football/82.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "EFED0277C4BD",
+            "name": "Seattle Seahawks",
+            "numerical_id": 111,
+            "base_id": 109,
+            "abbreviation": "SEA",
+            "logo": "https://cdn.opticodds.com/team-logos/football/109.png"
+          }
+        ],
+        "home_team_display": "Atlanta Falcons",
+        "away_team_display": "Seattle Seahawks",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "14",
+        "venue_name": "Mercedes-Benz Stadium",
+        "venue_location": "Atlanta, GA, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "4-7-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "8-3-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "FOX",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "20251207FE11C0C2",
+        "numerical_id": 258757,
+        "game_id": "40716-28265-25-48",
+        "start_date": "2025-12-07T18:00:00Z",
+        "home_competitors": [
+          {
+            "id": "9CCE4CA64CF2",
+            "name": "Jacksonville Jaguars",
+            "numerical_id": 97,
+            "base_id": 95,
+            "abbreviation": "JAX",
+            "logo": "https://cdn.opticodds.com/team-logos/football/95.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "28ABEAB98C11",
+            "name": "Indianapolis Colts",
+            "numerical_id": 96,
+            "base_id": 94,
+            "abbreviation": "IND",
+            "logo": "https://cdn.opticodds.com/team-logos/football/94.png"
+          }
+        ],
+        "home_team_display": "Jacksonville Jaguars",
+        "away_team_display": "Indianapolis Colts",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "14",
+        "venue_name": "EverBank Stadium",
+        "venue_location": "Jacksonville, FL, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "7-4-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "8-3-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "CBS",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "20251207C415D7AC",
+        "numerical_id": 258762,
+        "game_id": "74813-26757-25-48",
+        "start_date": "2025-12-07T21:05:00Z",
+        "home_competitors": [
+          {
+            "id": "A715F8199801",
+            "name": "Las Vegas Raiders",
+            "numerical_id": 99,
+            "base_id": 97,
+            "abbreviation": "LV",
+            "logo": "https://cdn.opticodds.com/team-logos/football/97.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "0DBD3AEC9A84",
+            "name": "Denver Broncos",
+            "numerical_id": 92,
+            "base_id": 90,
+            "abbreviation": "DEN",
+            "logo": "https://cdn.opticodds.com/team-logos/football/90.png"
+          }
+        ],
+        "home_team_display": "Las Vegas Raiders",
+        "away_team_display": "Denver Broncos",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "14",
+        "venue_name": "Allegiant Stadium",
+        "venue_location": "Paradise, NV, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "2-9-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "9-2-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "CBS",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "202512073D38BE4C",
+        "numerical_id": 258763,
+        "game_id": "39341-78014-25-48",
+        "start_date": "2025-12-07T21:25:00Z",
+        "home_competitors": [
+          {
+            "id": "AF456B375E7E",
+            "name": "Arizona Cardinals",
+            "numerical_id": 83,
+            "base_id": 81,
+            "abbreviation": "ARI",
+            "logo": "https://cdn.opticodds.com/team-logos/football/81.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "13AD4FDBEBA8",
+            "name": "Los Angeles Rams",
+            "numerical_id": 101,
+            "base_id": 99,
+            "abbreviation": "LAR",
+            "logo": "https://cdn.opticodds.com/team-logos/football/99.png"
+          }
+        ],
+        "home_team_display": "Arizona Cardinals",
+        "away_team_display": "Los Angeles Rams",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "14",
+        "venue_name": "State Farm Stadium",
+        "venue_location": "Glendale, AZ, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "3-8-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "9-2-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "FOX",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "202512076929C85F",
+        "numerical_id": 258755,
+        "game_id": "24276-16343-25-48",
+        "start_date": "2025-12-07T21:25:00Z",
+        "home_competitors": [
+          {
+            "id": "2C6CB429C60C",
+            "name": "Green Bay Packers",
+            "numerical_id": 94,
+            "base_id": 92,
+            "abbreviation": "GB",
+            "logo": "https://cdn.opticodds.com/team-logos/football/92.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "7108F48884ED",
+            "name": "Chicago Bears",
+            "numerical_id": 88,
+            "base_id": 86,
+            "abbreviation": "CHI",
+            "logo": "https://cdn.opticodds.com/team-logos/football/86.png"
+          }
+        ],
+        "home_team_display": "Green Bay Packers",
+        "away_team_display": "Chicago Bears",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "14",
+        "venue_name": "Lambeau Field",
+        "venue_location": "Green Bay, WI, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "7-3-1",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "8-3-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "FOX",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "20251208FE76603B",
+        "numerical_id": 258765,
+        "game_id": "31124-13602-25-48",
+        "start_date": "2025-12-08T01:20:00Z",
+        "home_competitors": [
+          {
+            "id": "2D71E5BA64A5",
+            "name": "Kansas City Chiefs",
+            "numerical_id": 98,
+            "base_id": 96,
+            "abbreviation": "KC",
+            "logo": "https://cdn.opticodds.com/team-logos/football/96.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "4DD082E9EC10",
+            "name": "Houston Texans",
+            "numerical_id": 95,
+            "base_id": 93,
+            "abbreviation": "HOU",
+            "logo": "https://cdn.opticodds.com/team-logos/football/93.png"
+          }
+        ],
+        "home_team_display": "Kansas City Chiefs",
+        "away_team_display": "Houston Texans",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "14",
+        "venue_name": "GEHA Field at Arrowhead Stadium",
+        "venue_location": "Kansas City, MO, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "6-5-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "6-5-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "NBC | PEAC | NBCU",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "202512092E1AD57C",
+        "numerical_id": 258766,
+        "game_id": "33128-17233-25-49",
+        "start_date": "2025-12-09T01:15:00Z",
+        "home_competitors": [
+          {
+            "id": "A283836CDF6E",
+            "name": "Los Angeles Chargers",
+            "numerical_id": 100,
+            "base_id": 98,
+            "abbreviation": "LAC",
+            "logo": "https://cdn.opticodds.com/team-logos/football/98.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "EDCC2866B795",
+            "name": "Philadelphia Eagles",
+            "numerical_id": 108,
+            "base_id": 106,
+            "abbreviation": "PHI",
+            "logo": "https://cdn.opticodds.com/team-logos/football/106.png"
+          }
+        ],
+        "home_team_display": "Los Angeles Chargers",
+        "away_team_display": "Philadelphia Eagles",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "14",
+        "venue_name": "SoFi Stadium",
+        "venue_location": "Inglewood, CA, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "7-4-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "8-3-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "ABC | ESPN | ESPN2 | ESPD",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "20251212B94F3878",
+        "numerical_id": 258767,
+        "game_id": "32889-42288-25-49",
+        "start_date": "2025-12-12T01:15:00Z",
+        "home_competitors": [
+          {
+            "id": "4E7DB4C57393",
+            "name": "Tampa Bay Buccaneers",
+            "numerical_id": 112,
+            "base_id": 110,
+            "abbreviation": "TB",
+            "logo": "https://cdn.opticodds.com/team-logos/football/110.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "348C1EE88C42",
+            "name": "Atlanta Falcons",
+            "numerical_id": 84,
+            "base_id": 82,
+            "abbreviation": "ATL",
+            "logo": "https://cdn.opticodds.com/team-logos/football/82.png"
+          }
+        ],
+        "home_team_display": "Tampa Bay Buccaneers",
+        "away_team_display": "Atlanta Falcons",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "15",
+        "venue_name": "Raymond James Stadium",
+        "venue_location": "Tampa, FL, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "6-5-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "4-7-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "Amazon",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "20251214015D9682",
+        "numerical_id": 258772,
+        "game_id": "18821-41522-25-49",
+        "start_date": "2025-12-14T18:00:00Z",
+        "home_competitors": [
+          {
+            "id": "EB3A43FF026E",
+            "name": "Cincinnati Bengals",
+            "numerical_id": 89,
+            "base_id": 87,
+            "abbreviation": "CIN",
+            "logo": "https://cdn.opticodds.com/team-logos/football/87.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "766A226BC204",
+            "name": "Baltimore Ravens",
+            "numerical_id": 85,
+            "base_id": 83,
+            "abbreviation": "BAL",
+            "logo": "https://cdn.opticodds.com/team-logos/football/83.png"
+          }
+        ],
+        "home_team_display": "Cincinnati Bengals",
+        "away_team_display": "Baltimore Ravens",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "15",
+        "venue_name": "Paycor Stadium",
+        "venue_location": "Cincinnati, OH, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "3-8-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "6-5-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "CBS",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "202512140E06AA66",
+        "numerical_id": 258774,
+        "game_id": "26757-17233-25-49",
+        "start_date": "2025-12-14T18:00:00Z",
+        "home_competitors": [
+          {
+            "id": "EDCC2866B795",
+            "name": "Philadelphia Eagles",
+            "numerical_id": 108,
+            "base_id": 106,
+            "abbreviation": "PHI",
+            "logo": "https://cdn.opticodds.com/team-logos/football/106.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "A715F8199801",
+            "name": "Las Vegas Raiders",
+            "numerical_id": 99,
+            "base_id": 97,
+            "abbreviation": "LV",
+            "logo": "https://cdn.opticodds.com/team-logos/football/97.png"
+          }
+        ],
+        "home_team_display": "Philadelphia Eagles",
+        "away_team_display": "Las Vegas Raiders",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "15",
+        "venue_name": "Lincoln Financial Field",
+        "venue_location": "Philadelphia, PA, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "8-3-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "2-9-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "FOX",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "202512142C2D3FD3",
+        "numerical_id": 258771,
+        "game_id": "37430-33320-25-49",
+        "start_date": "2025-12-14T18:00:00Z",
+        "home_competitors": [
+          {
+            "id": "ACC49FC634EE",
+            "name": "New York Giants",
+            "numerical_id": 106,
+            "base_id": 104,
+            "abbreviation": "NYG",
+            "logo": "https://cdn.opticodds.com/team-logos/football/104.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "C921828AB706",
+            "name": "Washington Commanders",
+            "numerical_id": 114,
+            "base_id": 112,
+            "abbreviation": "WSH",
+            "logo": "https://cdn.opticodds.com/team-logos/football/112.png"
+          }
+        ],
+        "home_team_display": "New York Giants",
+        "away_team_display": "Washington Commanders",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "15",
+        "venue_name": "MetLife Stadium",
+        "venue_location": "East Rutherford, NJ, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "2-10-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "3-8-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "FOX",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "202512144037E9FC",
+        "numerical_id": 258768,
+        "game_id": "28265-12806-25-49",
+        "start_date": "2025-12-14T18:00:00Z",
+        "home_competitors": [
+          {
+            "id": "9CCE4CA64CF2",
+            "name": "Jacksonville Jaguars",
+            "numerical_id": 97,
+            "base_id": 95,
+            "abbreviation": "JAX",
+            "logo": "https://cdn.opticodds.com/team-logos/football/95.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "032D4F9C6C55",
+            "name": "New York Jets",
+            "numerical_id": 107,
+            "base_id": 105,
+            "abbreviation": "NYJ",
+            "logo": "https://cdn.opticodds.com/team-logos/football/105.png"
+          }
+        ],
+        "home_team_display": "Jacksonville Jaguars",
+        "away_team_display": "New York Jets",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "15",
+        "venue_name": "EverBank Stadium",
+        "venue_location": "Jacksonville, FL, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "7-4-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "2-9-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "CBS",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "202512145C99035E",
+        "numerical_id": 258775,
+        "game_id": "16341-37240-25-49",
+        "start_date": "2025-12-14T18:00:00Z",
+        "home_competitors": [
+          {
+            "id": "04E3F3D69B89",
+            "name": "New England Patriots",
+            "numerical_id": 104,
+            "base_id": 102,
+            "abbreviation": "NE",
+            "logo": "https://cdn.opticodds.com/team-logos/football/102.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "0787D09E47B9",
+            "name": "Buffalo Bills",
+            "numerical_id": 86,
+            "base_id": 84,
+            "abbreviation": "BUF",
+            "logo": "https://cdn.opticodds.com/team-logos/football/84.png"
+          }
+        ],
+        "home_team_display": "New England Patriots",
+        "away_team_display": "Buffalo Bills",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "15",
+        "venue_name": "Gillette Stadium",
+        "venue_location": "Foxborough, MA, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "10-2-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "7-4-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "CBS",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "202512145F369875",
+        "numerical_id": 258770,
+        "game_id": "24276-27927-25-49",
+        "start_date": "2025-12-14T18:00:00Z",
+        "home_competitors": [
+          {
+            "id": "7108F48884ED",
+            "name": "Chicago Bears",
+            "numerical_id": 88,
+            "base_id": 86,
+            "abbreviation": "CHI",
+            "logo": "https://cdn.opticodds.com/team-logos/football/86.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "81A1B4413577",
+            "name": "Cleveland Browns",
+            "numerical_id": 90,
+            "base_id": 88,
+            "abbreviation": "CLE",
+            "logo": "https://cdn.opticodds.com/team-logos/football/88.png"
+          }
+        ],
+        "home_team_display": "Chicago Bears",
+        "away_team_display": "Cleveland Browns",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "15",
+        "venue_name": "Soldier Field",
+        "venue_location": "Chicago, IL, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "8-3-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "3-8-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "FOX",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "20251214C54D20C8",
+        "numerical_id": 258769,
+        "game_id": "39341-31124-25-49",
+        "start_date": "2025-12-14T18:00:00Z",
+        "home_competitors": [
+          {
+            "id": "4DD082E9EC10",
+            "name": "Houston Texans",
+            "numerical_id": 95,
+            "base_id": 93,
+            "abbreviation": "HOU",
+            "logo": "https://cdn.opticodds.com/team-logos/football/93.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "AF456B375E7E",
+            "name": "Arizona Cardinals",
+            "numerical_id": 83,
+            "base_id": 81,
+            "abbreviation": "ARI",
+            "logo": "https://cdn.opticodds.com/team-logos/football/81.png"
+          }
+        ],
+        "home_team_display": "Houston Texans",
+        "away_team_display": "Arizona Cardinals",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "15",
+        "venue_name": "NRG Stadium",
+        "venue_location": "Houston, TX, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "6-5-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "3-8-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "FOX",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "20251214D8CA7E72",
+        "numerical_id": 258773,
+        "game_id": "13602-33128-25-49",
+        "start_date": "2025-12-14T18:00:00Z",
+        "home_competitors": [
+          {
+            "id": "2D71E5BA64A5",
+            "name": "Kansas City Chiefs",
+            "numerical_id": 98,
+            "base_id": 96,
+            "abbreviation": "KC",
+            "logo": "https://cdn.opticodds.com/team-logos/football/96.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "A283836CDF6E",
+            "name": "Los Angeles Chargers",
+            "numerical_id": 100,
+            "base_id": 98,
+            "abbreviation": "LAC",
+            "logo": "https://cdn.opticodds.com/team-logos/football/98.png"
+          }
+        ],
+        "home_team_display": "Kansas City Chiefs",
+        "away_team_display": "Los Angeles Chargers",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "15",
+        "venue_name": "GEHA Field at Arrowhead Stadium",
+        "venue_location": "Kansas City, MO, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "6-5-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "7-4-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "CBS",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "2025121435005E2A",
+        "numerical_id": 258777,
+        "game_id": "74813-16343-25-49",
+        "start_date": "2025-12-14T21:25:00Z",
+        "home_competitors": [
+          {
+            "id": "0DBD3AEC9A84",
+            "name": "Denver Broncos",
+            "numerical_id": 92,
+            "base_id": 90,
+            "abbreviation": "DEN",
+            "logo": "https://cdn.opticodds.com/team-logos/football/90.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "2C6CB429C60C",
+            "name": "Green Bay Packers",
+            "numerical_id": 94,
+            "base_id": 92,
+            "abbreviation": "GB",
+            "logo": "https://cdn.opticodds.com/team-logos/football/92.png"
+          }
+        ],
+        "home_team_display": "Denver Broncos",
+        "away_team_display": "Green Bay Packers",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "15",
+        "venue_name": "Empower Field at Mile High",
+        "venue_location": "Denver, CO, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "9-2-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "7-3-1",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "CBS",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "202512144BBA44A8",
+        "numerical_id": 258776,
+        "game_id": "40716-25327-25-49",
+        "start_date": "2025-12-14T21:25:00Z",
+        "home_competitors": [
+          {
+            "id": "EFED0277C4BD",
+            "name": "Seattle Seahawks",
+            "numerical_id": 111,
+            "base_id": 109,
+            "abbreviation": "SEA",
+            "logo": "https://cdn.opticodds.com/team-logos/football/109.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "28ABEAB98C11",
+            "name": "Indianapolis Colts",
+            "numerical_id": 96,
+            "base_id": 94,
+            "abbreviation": "IND",
+            "logo": "https://cdn.opticodds.com/team-logos/football/94.png"
+          }
+        ],
+        "home_team_display": "Seattle Seahawks",
+        "away_team_display": "Indianapolis Colts",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "15",
+        "venue_name": "Lumen Field",
+        "venue_location": "Seattle, WA, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "8-3-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "8-3-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "CBS",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "20251214681DE07C",
+        "numerical_id": 258778,
+        "game_id": "18124-17463-25-49",
+        "start_date": "2025-12-14T21:25:00Z",
+        "home_competitors": [
+          {
+            "id": "E94C20E042D9",
+            "name": "New Orleans Saints",
+            "numerical_id": 105,
+            "base_id": 103,
+            "abbreviation": "NO",
+            "logo": "https://cdn.opticodds.com/team-logos/football/103.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "EB5E972AB475",
+            "name": "Carolina Panthers",
+            "numerical_id": 87,
+            "base_id": 85,
+            "abbreviation": "CAR",
+            "logo": "https://cdn.opticodds.com/team-logos/football/85.png"
+          }
+        ],
+        "home_team_display": "New Orleans Saints",
+        "away_team_display": "Carolina Panthers",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "15",
+        "venue_name": "Caesars Superdome",
+        "venue_location": "New Orleans, LA, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "2-9-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "6-6-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "FOX",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "202512147226155F",
+        "numerical_id": 258780,
+        "game_id": "21473-78014-25-49",
+        "start_date": "2025-12-14T21:25:00Z",
+        "home_competitors": [
+          {
+            "id": "13AD4FDBEBA8",
+            "name": "Los Angeles Rams",
+            "numerical_id": 101,
+            "base_id": 99,
+            "abbreviation": "LAR",
+            "logo": "https://cdn.opticodds.com/team-logos/football/99.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "43412DC9CDCA",
+            "name": "Detroit Lions",
+            "numerical_id": 93,
+            "base_id": 91,
+            "abbreviation": "DET",
+            "logo": "https://cdn.opticodds.com/team-logos/football/91.png"
+          }
+        ],
+        "home_team_display": "Los Angeles Rams",
+        "away_team_display": "Detroit Lions",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "15",
+        "venue_name": "SoFi Stadium",
+        "venue_location": "Inglewood, CA, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "9-2-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "7-4-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "FOX",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "202512149AB269BB",
+        "numerical_id": 258779,
+        "game_id": "13184-17324-25-49",
+        "start_date": "2025-12-14T21:25:00Z",
+        "home_competitors": [
+          {
+            "id": "132B64CEDAC4",
+            "name": "San Francisco 49ers",
+            "numerical_id": 110,
+            "base_id": 108,
+            "abbreviation": "SF",
+            "logo": "https://cdn.opticodds.com/team-logos/football/108.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "24988863B4CB",
+            "name": "Tennessee Titans",
+            "numerical_id": 113,
+            "base_id": 111,
+            "abbreviation": "TEN",
+            "logo": "https://cdn.opticodds.com/team-logos/football/111.png"
+          }
+        ],
+        "home_team_display": "San Francisco 49ers",
+        "away_team_display": "Tennessee Titans",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "15",
+        "venue_name": "Levi's Stadium",
+        "venue_location": "Santa Clara, CA, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "8-4-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "1-10-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "FOX",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "202512152E677740",
+        "numerical_id": 258781,
+        "game_id": "11434-37797-25-49",
+        "start_date": "2025-12-15T01:20:00Z",
+        "home_competitors": [
+          {
+            "id": "0BDD5205ECCB",
+            "name": "Dallas Cowboys",
+            "numerical_id": 91,
+            "base_id": 89,
+            "abbreviation": "DAL",
+            "logo": "https://cdn.opticodds.com/team-logos/football/89.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "24E4EA618C5E",
+            "name": "Minnesota Vikings",
+            "numerical_id": 103,
+            "base_id": 101,
+            "abbreviation": "MIN",
+            "logo": "https://cdn.opticodds.com/team-logos/football/101.png"
+          }
+        ],
+        "home_team_display": "Dallas Cowboys",
+        "away_team_display": "Minnesota Vikings",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "15",
+        "venue_name": "AT&T Stadium",
+        "venue_location": "Arlington, TX, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "5-5-1",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "4-7-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "NBC | PEAC | NBCU",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "202512169E09F6EC",
+        "numerical_id": 258782,
+        "game_id": "22677-82789-25-50",
+        "start_date": "2025-12-16T01:15:00Z",
+        "home_competitors": [
+          {
+            "id": "727B3B3C78E8",
+            "name": "Pittsburgh Steelers",
+            "numerical_id": 109,
+            "base_id": 107,
+            "abbreviation": "PIT",
+            "logo": "https://cdn.opticodds.com/team-logos/football/107.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "8380A12E67FE",
+            "name": "Miami Dolphins",
+            "numerical_id": 102,
+            "base_id": 100,
+            "abbreviation": "MIA",
+            "logo": "https://cdn.opticodds.com/team-logos/football/100.png"
+          }
+        ],
+        "home_team_display": "Pittsburgh Steelers",
+        "away_team_display": "Miami Dolphins",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "15",
+        "venue_name": "Acrisure Stadium",
+        "venue_location": "Pittsburgh, PA, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "6-5-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "4-7-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "ESPN | ESPD",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "20251219352852AC",
+        "numerical_id": 258783,
+        "game_id": "78014-25327-25-50",
+        "start_date": "2025-12-19T01:15:00Z",
+        "home_competitors": [
+          {
+            "id": "EFED0277C4BD",
+            "name": "Seattle Seahawks",
+            "numerical_id": 111,
+            "base_id": 109,
+            "abbreviation": "SEA",
+            "logo": "https://cdn.opticodds.com/team-logos/football/109.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "13AD4FDBEBA8",
+            "name": "Los Angeles Rams",
+            "numerical_id": 101,
+            "base_id": 99,
+            "abbreviation": "LAR",
+            "logo": "https://cdn.opticodds.com/team-logos/football/99.png"
+          }
+        ],
+        "home_team_display": "Seattle Seahawks",
+        "away_team_display": "Los Angeles Rams",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "16",
+        "venue_name": "Lumen Field",
+        "venue_location": "Seattle, WA, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "8-3-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "9-2-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "Amazon",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "202512201938099B",
+        "numerical_id": 258610,
+        "game_id": "17233-33320-25-50",
+        "start_date": "2025-12-20T21:00:00Z",
+        "home_competitors": [
+          {
+            "id": "C921828AB706",
+            "name": "Washington Commanders",
+            "numerical_id": 114,
+            "base_id": 112,
+            "abbreviation": "WSH",
+            "logo": "https://cdn.opticodds.com/team-logos/football/112.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "EDCC2866B795",
+            "name": "Philadelphia Eagles",
+            "numerical_id": 108,
+            "base_id": 106,
+            "abbreviation": "PHI",
+            "logo": "https://cdn.opticodds.com/team-logos/football/106.png"
+          }
+        ],
+        "home_team_display": "Washington Commanders",
+        "away_team_display": "Philadelphia Eagles",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "16",
+        "venue_name": "Northwest Stadium",
+        "venue_location": "Landover, MD, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "3-8-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "8-3-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "FOX | FOXD | NFL+",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "202512208A3F6A64",
+        "numerical_id": 258609,
+        "game_id": "24276-16343-25-50",
+        "start_date": "2025-12-20T21:00:00Z",
+        "home_competitors": [
+          {
+            "id": "7108F48884ED",
+            "name": "Chicago Bears",
+            "numerical_id": 88,
+            "base_id": 86,
+            "abbreviation": "CHI",
+            "logo": "https://cdn.opticodds.com/team-logos/football/86.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "2C6CB429C60C",
+            "name": "Green Bay Packers",
+            "numerical_id": 94,
+            "base_id": 92,
+            "abbreviation": "GB",
+            "logo": "https://cdn.opticodds.com/team-logos/football/92.png"
+          }
+        ],
+        "home_team_display": "Chicago Bears",
+        "away_team_display": "Green Bay Packers",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "16",
+        "venue_name": "Soldier Field",
+        "venue_location": "Chicago, IL, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "8-3-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "7-3-1",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "FOX | FOXD | NFL+",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "202512212D50BED0",
+        "numerical_id": 258784,
+        "game_id": "18821-37240-25-50",
+        "start_date": "2025-12-21T18:00:00Z",
+        "home_competitors": [
+          {
+            "id": "766A226BC204",
+            "name": "Baltimore Ravens",
+            "numerical_id": 85,
+            "base_id": 83,
+            "abbreviation": "BAL",
+            "logo": "https://cdn.opticodds.com/team-logos/football/83.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "04E3F3D69B89",
+            "name": "New England Patriots",
+            "numerical_id": 104,
+            "base_id": 102,
+            "abbreviation": "NE",
+            "logo": "https://cdn.opticodds.com/team-logos/football/102.png"
+          }
+        ],
+        "home_team_display": "Baltimore Ravens",
+        "away_team_display": "New England Patriots",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "16",
+        "venue_name": "M&T Bank Stadium",
+        "venue_location": "Baltimore, MD, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "6-5-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "10-2-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "CBS",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "202512212E17B4D4",
+        "numerical_id": 258786,
+        "game_id": "16341-27927-25-50",
+        "start_date": "2025-12-21T18:00:00Z",
+        "home_competitors": [
+          {
+            "id": "81A1B4413577",
+            "name": "Cleveland Browns",
+            "numerical_id": 90,
+            "base_id": 88,
+            "abbreviation": "CLE",
+            "logo": "https://cdn.opticodds.com/team-logos/football/88.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "0787D09E47B9",
+            "name": "Buffalo Bills",
+            "numerical_id": 86,
+            "base_id": 84,
+            "abbreviation": "BUF",
+            "logo": "https://cdn.opticodds.com/team-logos/football/84.png"
+          }
+        ],
+        "home_team_display": "Cleveland Browns",
+        "away_team_display": "Buffalo Bills",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "16",
+        "venue_name": "Huntington Bank Field",
+        "venue_location": "Cleveland, OH, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "3-8-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "7-4-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "CBS",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "2025122198FE11BB",
+        "numerical_id": 258789,
+        "game_id": "13602-17324-25-50",
+        "start_date": "2025-12-21T18:00:00Z",
+        "home_competitors": [
+          {
+            "id": "24988863B4CB",
+            "name": "Tennessee Titans",
+            "numerical_id": 113,
+            "base_id": 111,
+            "abbreviation": "TEN",
+            "logo": "https://cdn.opticodds.com/team-logos/football/111.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "2D71E5BA64A5",
+            "name": "Kansas City Chiefs",
+            "numerical_id": 98,
+            "base_id": 96,
+            "abbreviation": "KC",
+            "logo": "https://cdn.opticodds.com/team-logos/football/96.png"
+          }
+        ],
+        "home_team_display": "Tennessee Titans",
+        "away_team_display": "Kansas City Chiefs",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "16",
+        "venue_name": "Nissan Stadium",
+        "venue_location": "Nashville, TN, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "1-10-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "6-5-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "CBS",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "20251221B5A52881",
+        "numerical_id": 258785,
+        "game_id": "17463-12806-25-50",
+        "start_date": "2025-12-21T18:00:00Z",
+        "home_competitors": [
+          {
+            "id": "E94C20E042D9",
+            "name": "New Orleans Saints",
+            "numerical_id": 105,
+            "base_id": 103,
+            "abbreviation": "NO",
+            "logo": "https://cdn.opticodds.com/team-logos/football/103.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "032D4F9C6C55",
+            "name": "New York Jets",
+            "numerical_id": 107,
+            "base_id": 105,
+            "abbreviation": "NYJ",
+            "logo": "https://cdn.opticodds.com/team-logos/football/105.png"
+          }
+        ],
+        "home_team_display": "New Orleans Saints",
+        "away_team_display": "New York Jets",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "16",
+        "venue_name": "Caesars Superdome",
+        "venue_location": "New Orleans, LA, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "2-9-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "2-9-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "CBS",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "20251221CCAAF8F3",
+        "numerical_id": 258788,
+        "game_id": "18124-42288-25-50",
+        "start_date": "2025-12-21T18:00:00Z",
+        "home_competitors": [
+          {
+            "id": "EB5E972AB475",
+            "name": "Carolina Panthers",
+            "numerical_id": 87,
+            "base_id": 85,
+            "abbreviation": "CAR",
+            "logo": "https://cdn.opticodds.com/team-logos/football/85.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "4E7DB4C57393",
+            "name": "Tampa Bay Buccaneers",
+            "numerical_id": 112,
+            "base_id": 110,
+            "abbreviation": "TB",
+            "logo": "https://cdn.opticodds.com/team-logos/football/110.png"
+          }
+        ],
+        "home_team_display": "Carolina Panthers",
+        "away_team_display": "Tampa Bay Buccaneers",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "16",
+        "venue_name": "Bank of America Stadium",
+        "venue_location": "Charlotte, NC, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "6-6-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "6-5-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "FOX",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "20251221D0C649EF",
+        "numerical_id": 258787,
+        "game_id": "11434-33128-25-50",
+        "start_date": "2025-12-21T18:00:00Z",
+        "home_competitors": [
+          {
+            "id": "0BDD5205ECCB",
+            "name": "Dallas Cowboys",
+            "numerical_id": 91,
+            "base_id": 89,
+            "abbreviation": "DAL",
+            "logo": "https://cdn.opticodds.com/team-logos/football/89.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "A283836CDF6E",
+            "name": "Los Angeles Chargers",
+            "numerical_id": 100,
+            "base_id": 98,
+            "abbreviation": "LAC",
+            "logo": "https://cdn.opticodds.com/team-logos/football/98.png"
+          }
+        ],
+        "home_team_display": "Dallas Cowboys",
+        "away_team_display": "Los Angeles Chargers",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "16",
+        "venue_name": "AT&T Stadium",
+        "venue_location": "Arlington, TX, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "5-5-1",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "7-4-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "FOX",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "20251221DA80FD9D",
+        "numerical_id": 258790,
+        "game_id": "37797-37430-25-50",
+        "start_date": "2025-12-21T18:00:00Z",
+        "home_competitors": [
+          {
+            "id": "ACC49FC634EE",
+            "name": "New York Giants",
+            "numerical_id": 106,
+            "base_id": 104,
+            "abbreviation": "NYG",
+            "logo": "https://cdn.opticodds.com/team-logos/football/104.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "24E4EA618C5E",
+            "name": "Minnesota Vikings",
+            "numerical_id": 103,
+            "base_id": 101,
+            "abbreviation": "MIN",
+            "logo": "https://cdn.opticodds.com/team-logos/football/101.png"
+          }
+        ],
+        "home_team_display": "New York Giants",
+        "away_team_display": "Minnesota Vikings",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "16",
+        "venue_name": "MetLife Stadium",
+        "venue_location": "East Rutherford, NJ, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "2-10-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "4-7-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "FOX",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "202512214BD01825",
+        "numerical_id": 258791,
+        "game_id": "74813-28265-25-50",
+        "start_date": "2025-12-21T21:05:00Z",
+        "home_competitors": [
+          {
+            "id": "0DBD3AEC9A84",
+            "name": "Denver Broncos",
+            "numerical_id": 92,
+            "base_id": 90,
+            "abbreviation": "DEN",
+            "logo": "https://cdn.opticodds.com/team-logos/football/90.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "9CCE4CA64CF2",
+            "name": "Jacksonville Jaguars",
+            "numerical_id": 97,
+            "base_id": 95,
+            "abbreviation": "JAX",
+            "logo": "https://cdn.opticodds.com/team-logos/football/95.png"
+          }
+        ],
+        "home_team_display": "Denver Broncos",
+        "away_team_display": "Jacksonville Jaguars",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "16",
+        "venue_name": "Empower Field at Mile High",
+        "venue_location": "Denver, CO, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "9-2-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "7-4-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "FOX",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "2025122188E838DA",
+        "numerical_id": 258792,
+        "game_id": "39341-32889-25-50",
+        "start_date": "2025-12-21T21:05:00Z",
+        "home_competitors": [
+          {
+            "id": "AF456B375E7E",
+            "name": "Arizona Cardinals",
+            "numerical_id": 83,
+            "base_id": 81,
+            "abbreviation": "ARI",
+            "logo": "https://cdn.opticodds.com/team-logos/football/81.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "348C1EE88C42",
+            "name": "Atlanta Falcons",
+            "numerical_id": 84,
+            "base_id": 82,
+            "abbreviation": "ATL",
+            "logo": "https://cdn.opticodds.com/team-logos/football/82.png"
+          }
+        ],
+        "home_team_display": "Arizona Cardinals",
+        "away_team_display": "Atlanta Falcons",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "16",
+        "venue_name": "State Farm Stadium",
+        "venue_location": "Glendale, AZ, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "3-8-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "4-7-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "FOX",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "202512212C9F8616",
+        "numerical_id": 258793,
+        "game_id": "31124-26757-25-50",
+        "start_date": "2025-12-21T21:25:00Z",
+        "home_competitors": [
+          {
+            "id": "4DD082E9EC10",
+            "name": "Houston Texans",
+            "numerical_id": 95,
+            "base_id": 93,
+            "abbreviation": "HOU",
+            "logo": "https://cdn.opticodds.com/team-logos/football/93.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "A715F8199801",
+            "name": "Las Vegas Raiders",
+            "numerical_id": 99,
+            "base_id": 97,
+            "abbreviation": "LV",
+            "logo": "https://cdn.opticodds.com/team-logos/football/97.png"
+          }
+        ],
+        "home_team_display": "Houston Texans",
+        "away_team_display": "Las Vegas Raiders",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "16",
+        "venue_name": "NRG Stadium",
+        "venue_location": "Houston, TX, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "6-5-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "2-9-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "CBS",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "20251221EC4BBEE6",
+        "numerical_id": 258794,
+        "game_id": "21473-82789-25-50",
+        "start_date": "2025-12-21T21:25:00Z",
+        "home_competitors": [
+          {
+            "id": "43412DC9CDCA",
+            "name": "Detroit Lions",
+            "numerical_id": 93,
+            "base_id": 91,
+            "abbreviation": "DET",
+            "logo": "https://cdn.opticodds.com/team-logos/football/91.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "727B3B3C78E8",
+            "name": "Pittsburgh Steelers",
+            "numerical_id": 109,
+            "base_id": 107,
+            "abbreviation": "PIT",
+            "logo": "https://cdn.opticodds.com/team-logos/football/107.png"
+          }
+        ],
+        "home_team_display": "Detroit Lions",
+        "away_team_display": "Pittsburgh Steelers",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "16",
+        "venue_name": "Ford Field",
+        "venue_location": "Detroit, MI, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "7-4-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "6-5-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "CBS",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "202512229757665C",
+        "numerical_id": 258795,
+        "game_id": "41522-22677-25-50",
+        "start_date": "2025-12-22T01:20:00Z",
+        "home_competitors": [
+          {
+            "id": "8380A12E67FE",
+            "name": "Miami Dolphins",
+            "numerical_id": 102,
+            "base_id": 100,
+            "abbreviation": "MIA",
+            "logo": "https://cdn.opticodds.com/team-logos/football/100.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "EB3A43FF026E",
+            "name": "Cincinnati Bengals",
+            "numerical_id": 89,
+            "base_id": 87,
+            "abbreviation": "CIN",
+            "logo": "https://cdn.opticodds.com/team-logos/football/87.png"
+          }
+        ],
+        "home_team_display": "Miami Dolphins",
+        "away_team_display": "Cincinnati Bengals",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "16",
+        "venue_name": "Hard Rock Stadium",
+        "venue_location": "Miami, FL, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "4-7-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "3-8-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "NBC | PEAC | NBCU",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "2025122388396EF7",
+        "numerical_id": 258796,
+        "game_id": "40716-13184-25-51",
+        "start_date": "2025-12-23T01:15:00Z",
+        "home_competitors": [
+          {
+            "id": "28ABEAB98C11",
+            "name": "Indianapolis Colts",
+            "numerical_id": 96,
+            "base_id": 94,
+            "abbreviation": "IND",
+            "logo": "https://cdn.opticodds.com/team-logos/football/94.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "132B64CEDAC4",
+            "name": "San Francisco 49ers",
+            "numerical_id": 110,
+            "base_id": 108,
+            "abbreviation": "SF",
+            "logo": "https://cdn.opticodds.com/team-logos/football/108.png"
+          }
+        ],
+        "home_team_display": "Indianapolis Colts",
+        "away_team_display": "San Francisco 49ers",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "16",
+        "venue_name": "Lucas Oil Stadium",
+        "venue_location": "Indianapolis, IN, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "8-3-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "8-4-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "ESPN | ESPN2 | ESPD",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "20251225B0C134B3",
+        "numerical_id": 257889,
+        "game_id": "11434-33320-25-51",
+        "start_date": "2025-12-25T18:00:00Z",
+        "home_competitors": [
+          {
+            "id": "C921828AB706",
+            "name": "Washington Commanders",
+            "numerical_id": 114,
+            "base_id": 112,
+            "abbreviation": "WSH",
+            "logo": "https://cdn.opticodds.com/team-logos/football/112.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "0BDD5205ECCB",
+            "name": "Dallas Cowboys",
+            "numerical_id": 91,
+            "base_id": 89,
+            "abbreviation": "DAL",
+            "logo": "https://cdn.opticodds.com/team-logos/football/89.png"
+          }
+        ],
+        "home_team_display": "Washington Commanders",
+        "away_team_display": "Dallas Cowboys",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "52",
+        "venue_name": "Northwest Stadium",
+        "venue_location": "Landover, MD, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "3-8-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "5-5-1",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "NFLX",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "20251225D10B7EEF",
+        "numerical_id": 257890,
+        "game_id": "21473-37797-25-51",
+        "start_date": "2025-12-25T21:30:00Z",
+        "home_competitors": [
+          {
+            "id": "24E4EA618C5E",
+            "name": "Minnesota Vikings",
+            "numerical_id": 103,
+            "base_id": 101,
+            "abbreviation": "MIN",
+            "logo": "https://cdn.opticodds.com/team-logos/football/101.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "43412DC9CDCA",
+            "name": "Detroit Lions",
+            "numerical_id": 93,
+            "base_id": 91,
+            "abbreviation": "DET",
+            "logo": "https://cdn.opticodds.com/team-logos/football/91.png"
+          }
+        ],
+        "home_team_display": "Minnesota Vikings",
+        "away_team_display": "Detroit Lions",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "52",
+        "venue_name": "U.S. Bank Stadium",
+        "venue_location": "Minneapolis, MN, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "4-7-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "7-4-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "NFLX",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "2025122623496A37",
+        "numerical_id": 254659,
+        "game_id": "74813-13602-25-51",
+        "start_date": "2025-12-26T01:15:00Z",
+        "home_competitors": [
+          {
+            "id": "2D71E5BA64A5",
+            "name": "Kansas City Chiefs",
+            "numerical_id": 98,
+            "base_id": 96,
+            "abbreviation": "KC",
+            "logo": "https://cdn.opticodds.com/team-logos/football/96.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "0DBD3AEC9A84",
+            "name": "Denver Broncos",
+            "numerical_id": 92,
+            "base_id": 90,
+            "abbreviation": "DEN",
+            "logo": "https://cdn.opticodds.com/team-logos/football/90.png"
+          }
+        ],
+        "home_team_display": "Kansas City Chiefs",
+        "away_team_display": "Denver Broncos",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "17",
+        "venue_name": "GEHA Field at Arrowhead Stadium",
+        "venue_location": "Kansas City, MO, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "6-5-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "9-2-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "Amazon",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "2025122831918526",
+        "numerical_id": 258801,
+        "game_id": "22677-42288-25-51",
+        "start_date": "2025-12-28T18:00:00Z",
+        "home_competitors": [
+          {
+            "id": "8380A12E67FE",
+            "name": "Miami Dolphins",
+            "numerical_id": 102,
+            "base_id": 100,
+            "abbreviation": "MIA",
+            "logo": "https://cdn.opticodds.com/team-logos/football/100.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "4E7DB4C57393",
+            "name": "Tampa Bay Buccaneers",
+            "numerical_id": 112,
+            "base_id": 110,
+            "abbreviation": "TB",
+            "logo": "https://cdn.opticodds.com/team-logos/football/110.png"
+          }
+        ],
+        "home_team_display": "Miami Dolphins",
+        "away_team_display": "Tampa Bay Buccaneers",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "17",
+        "venue_name": "Hard Rock Stadium",
+        "venue_location": "Miami, FL, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "4-7-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "6-5-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "FOX",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "202512285206401A",
+        "numerical_id": 258800,
+        "game_id": "27927-82789-25-51",
+        "start_date": "2025-12-28T18:00:00Z",
+        "home_competitors": [
+          {
+            "id": "81A1B4413577",
+            "name": "Cleveland Browns",
+            "numerical_id": 90,
+            "base_id": 88,
+            "abbreviation": "CLE",
+            "logo": "https://cdn.opticodds.com/team-logos/football/88.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "727B3B3C78E8",
+            "name": "Pittsburgh Steelers",
+            "numerical_id": 109,
+            "base_id": 107,
+            "abbreviation": "PIT",
+            "logo": "https://cdn.opticodds.com/team-logos/football/107.png"
+          }
+        ],
+        "home_team_display": "Cleveland Browns",
+        "away_team_display": "Pittsburgh Steelers",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "17",
+        "venue_name": "Huntington Bank Field",
+        "venue_location": "Cleveland, OH, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "3-8-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "6-5-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "CBS",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "202512285E3B31D8",
+        "numerical_id": 258798,
+        "game_id": "37240-12806-25-51",
+        "start_date": "2025-12-28T18:00:00Z",
+        "home_competitors": [
+          {
+            "id": "032D4F9C6C55",
+            "name": "New York Jets",
+            "numerical_id": 107,
+            "base_id": 105,
+            "abbreviation": "NYJ",
+            "logo": "https://cdn.opticodds.com/team-logos/football/105.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "04E3F3D69B89",
+            "name": "New England Patriots",
+            "numerical_id": 104,
+            "base_id": 102,
+            "abbreviation": "NE",
+            "logo": "https://cdn.opticodds.com/team-logos/football/102.png"
+          }
+        ],
+        "home_team_display": "New York Jets",
+        "away_team_display": "New England Patriots",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "17",
+        "venue_name": "MetLife Stadium",
+        "venue_location": "East Rutherford, NJ, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "2-9-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "10-2-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "CBS",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "20251228EB4C5119",
+        "numerical_id": 258799,
+        "game_id": "17463-17324-25-51",
+        "start_date": "2025-12-28T18:00:00Z",
+        "home_competitors": [
+          {
+            "id": "24988863B4CB",
+            "name": "Tennessee Titans",
+            "numerical_id": 113,
+            "base_id": 111,
+            "abbreviation": "TEN",
+            "logo": "https://cdn.opticodds.com/team-logos/football/111.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "E94C20E042D9",
+            "name": "New Orleans Saints",
+            "numerical_id": 105,
+            "base_id": 103,
+            "abbreviation": "NO",
+            "logo": "https://cdn.opticodds.com/team-logos/football/103.png"
+          }
+        ],
+        "home_team_display": "Tennessee Titans",
+        "away_team_display": "New Orleans Saints",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "17",
+        "venue_name": "Nissan Stadium",
+        "venue_location": "Nashville, TN, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "1-10-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "2-9-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "CBS",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "20251228F59C1755",
+        "numerical_id": 258797,
+        "game_id": "40716-28265-25-51",
+        "start_date": "2025-12-28T18:00:00Z",
+        "home_competitors": [
+          {
+            "id": "28ABEAB98C11",
+            "name": "Indianapolis Colts",
+            "numerical_id": 96,
+            "base_id": 94,
+            "abbreviation": "IND",
+            "logo": "https://cdn.opticodds.com/team-logos/football/94.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "9CCE4CA64CF2",
+            "name": "Jacksonville Jaguars",
+            "numerical_id": 97,
+            "base_id": 95,
+            "abbreviation": "JAX",
+            "logo": "https://cdn.opticodds.com/team-logos/football/95.png"
+          }
+        ],
+        "home_team_display": "Indianapolis Colts",
+        "away_team_display": "Jacksonville Jaguars",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "17",
+        "venue_name": "Lucas Oil Stadium",
+        "venue_location": "Indianapolis, IN, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "8-3-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "7-4-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "FOX",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "202512280058C941",
+        "numerical_id": 258802,
+        "game_id": "16341-17233-25-51",
+        "start_date": "2025-12-28T21:25:00Z",
+        "home_competitors": [
+          {
+            "id": "0787D09E47B9",
+            "name": "Buffalo Bills",
+            "numerical_id": 86,
+            "base_id": 84,
+            "abbreviation": "BUF",
+            "logo": "https://cdn.opticodds.com/team-logos/football/84.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "EDCC2866B795",
+            "name": "Philadelphia Eagles",
+            "numerical_id": 108,
+            "base_id": 106,
+            "abbreviation": "PHI",
+            "logo": "https://cdn.opticodds.com/team-logos/football/106.png"
+          }
+        ],
+        "home_team_display": "Buffalo Bills",
+        "away_team_display": "Philadelphia Eagles",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "17",
+        "venue_name": "Highmark Stadium",
+        "venue_location": "Orchard Park, NY, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "7-4-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "8-3-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "FOX",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "20251229B6C1491E",
+        "numerical_id": 258803,
+        "game_id": "32889-78014-25-51",
+        "start_date": "2025-12-29T01:15:00Z",
+        "home_competitors": [
+          {
+            "id": "348C1EE88C42",
+            "name": "Atlanta Falcons",
+            "numerical_id": 84,
+            "base_id": 82,
+            "abbreviation": "ATL",
+            "logo": "https://cdn.opticodds.com/team-logos/football/82.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "13AD4FDBEBA8",
+            "name": "Los Angeles Rams",
+            "numerical_id": 101,
+            "base_id": 99,
+            "abbreviation": "LAR",
+            "logo": "https://cdn.opticodds.com/team-logos/football/99.png"
+          }
+        ],
+        "home_team_display": "Atlanta Falcons",
+        "away_team_display": "Los Angeles Rams",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "17",
+        "venue_name": "Mercedes-Benz Stadium",
+        "venue_location": "Atlanta, GA, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": null,
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": null,
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": null,
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      },
+      {
+        "id": "20251229B783BDDB",
+        "numerical_id": 258804,
+        "game_id": "24276-13184-25-51",
+        "start_date": "2025-12-29T01:20:00Z",
+        "home_competitors": [
+          {
+            "id": "132B64CEDAC4",
+            "name": "San Francisco 49ers",
+            "numerical_id": 110,
+            "base_id": 108,
+            "abbreviation": "SF",
+            "logo": "https://cdn.opticodds.com/team-logos/football/108.png"
+          }
+        ],
+        "away_competitors": [
+          {
+            "id": "7108F48884ED",
+            "name": "Chicago Bears",
+            "numerical_id": 88,
+            "base_id": 86,
+            "abbreviation": "CHI",
+            "logo": "https://cdn.opticodds.com/team-logos/football/86.png"
+          }
+        ],
+        "home_team_display": "San Francisco 49ers",
+        "away_team_display": "Chicago Bears",
+        "status": "unplayed",
+        "is_live": false,
+        "season_type": "Regular Season",
+        "season_year": "2025",
+        "season_week": "17",
+        "venue_name": "Levi's Stadium",
+        "venue_location": "Santa Clara, CA, USA",
+        "venue_neutral": false,
+        "sport": {
+          "id": "football",
+          "name": "Football",
+          "numerical_id": 9
+        },
+        "league": {
+          "id": "nfl",
+          "name": "NFL",
+          "numerical_id": 367
+        },
+        "home_starter": null,
+        "home_starter_id": null,
+        "home_record": "8-4-0",
+        "home_seed": null,
+        "home_rotation_number": null,
+        "away_starter": null,
+        "away_starter_id": null,
+        "away_record": "8-3-0",
+        "away_seed": null,
+        "away_rotation_number": null,
+        "tournament": null,
+        "tournament_stage": null,
+        "has_odds": true,
+        "broadcast": "NBC | PEAC | NBCU",
+        "result": null,
+        "lineups": {
+          "home": [],
+          "away": []
+        },
+        "weather": null,
+        "weather_temp": null,
+        "source_ids": {}
+      }
+    ],
+    "page": 1,
+    "total_pages": 1
+  }

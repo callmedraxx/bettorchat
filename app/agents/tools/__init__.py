@@ -23,6 +23,7 @@ from app.agents.tools.betting_tools import (
     fetch_available_sportsbooks,
 )
 from app.agents.tools.web_tools import internet_search
+from app.agents.tools.python_tools import python_repl
 
 __all__ = [
     "fetch_live_odds",
@@ -45,5 +46,6 @@ __all__ = [
     "fetch_available_markets",
     "fetch_available_sportsbooks",
     "internet_search",
+    "python_repl",
 ]
 

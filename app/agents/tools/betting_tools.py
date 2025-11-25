@@ -218,6 +218,8 @@ Your timezone preference has been set to {tz_abbr}. All times will now be displa
 @tool
 def fetch_live_odds(
     fixture_id: Optional[str] = None,
+    fixture: Optional[str] = None,
+    fixtures: Optional[str] = None,
     league_id: Optional[str] = None,
     sport_id: Optional[str] = None,
     sportsbook_ids: Optional[str] = None,
@@ -226,8 +228,12 @@ def fetch_live_odds(
     """Fetch live betting odds for fixtures using OpticOdds /fixtures/odds endpoint.
     
     Args:
-        fixture_id: Specific fixture ID to get odds for
-        league_id: Filter by league ID
+        fixture_id: Specific fixture ID to get odds for (string ID)
+        fixture: Full fixture object as JSON string (alternative to fixture_id). 
+                 If provided, fixture_id will be extracted from it.
+        fixtures: JSON string containing multiple full fixture objects (array).
+                 If provided, odds will be fetched for all fixtures. Can be used for bet slip building.
+        league_id: Filter by league ID. Can also be extracted from fixture object if provided.
         sport_id: Filter by sport ID (e.g., 'NBA' = 1)
         sportsbook_ids: Comma-separated list of sportsbook IDs
         market_types: Comma-separated list of market types (e.g., 'moneyline,spread,total')
@@ -238,12 +244,59 @@ def fetch_live_odds(
     try:
         client = get_client()
         
+        # Handle multiple fixtures (for bet slip building)
+        if fixtures:
+            fixture_ids = extract_fixture_ids_from_objects(fixtures)
+            if fixture_ids:
+                # Fetch odds for all fixtures and combine results
+                all_results = []
+                for fid in fixture_ids:
+                    try:
+                        result = client.get_fixture_odds(
+                            fixture_id=fid,
+                            sport_id=sport_id if sport_id else None,
+                            league_id=league_id if league_id else None,
+                            sportsbook=sportsbook_ids if sportsbook_ids else None,
+                            market_types=market_types if market_types else None,
+                        )
+                        if result and result.get("data"):
+                            all_results.extend(result.get("data", []))
+                    except Exception:
+                        continue
+                
+                if all_results:
+                    # Combine results
+                    combined_result = {"data": all_results}
+                    formatted = format_odds_response(combined_result)
+                    return formatted
+                else:
+                    return "No odds data found for the provided fixtures"
+        
+        # Handle single fixture object or fixture_id
+        resolved_fixture_id = None
+        resolved_league_id = league_id
+        
+        if fixture:
+            fixture_obj = json.loads(fixture) if isinstance(fixture, str) else fixture
+            if isinstance(fixture_obj, dict):
+                # Extract fixture_id
+                resolved_fixture_id = extract_fixture_id(fixture if isinstance(fixture, str) else json.dumps(fixture_obj))
+                # Extract league_id if not provided
+                if not resolved_league_id:
+                    league_info = fixture_obj.get("league") or fixture_obj.get("full_fixture", {}).get("league", {})
+                    if isinstance(league_info, dict):
+                        resolved_league_id = league_info.get("id") or league_info.get("numerical_id")
+        
+        # Use provided fixture_id if fixture object not provided
+        if not resolved_fixture_id:
+            resolved_fixture_id = extract_fixture_id(fixture_id)
+        
         # Convert to correct parameter format
         # Pass sport_id and league_id directly to the client method
         result = client.get_fixture_odds(
-            fixture_id=fixture_id,
+            fixture_id=resolved_fixture_id,
             sport_id=sport_id if sport_id else None,
-            league_id=league_id if league_id else None,
+            league_id=resolved_league_id if resolved_league_id else None,
             sportsbook=sportsbook_ids if sportsbook_ids else None,
             market_types=market_types if market_types else None,
         )
@@ -293,15 +346,18 @@ def fetch_upcoming_games(
 @tool
 def fetch_player_props(
     fixture_id: Optional[str] = None,
+    fixture: Optional[str] = None,
     player_id: Optional[str] = None,
     league_id: Optional[str] = None,
 ) -> str:
     """Fetch player proposition odds using OpticOdds /fixtures/player-results and player markets.
     
     Args:
-        fixture_id: Specific fixture ID
+        fixture_id: Specific fixture ID (string ID)
+        fixture: Full fixture object as JSON string (alternative to fixture_id).
+                 If provided, fixture_id will be extracted from it.
         player_id: Specific player ID
-        league_id: Filter by league ID
+        league_id: Filter by league ID. Can also be extracted from fixture object if provided.
     
     Returns:
         Formatted string with player prop odds from multiple sportsbooks
@@ -309,10 +365,32 @@ def fetch_player_props(
     try:
         client = get_client()
         
+        # Extract fixture_id from fixture object if provided
+        resolved_fixture_id = None
+        resolved_league_id = league_id
+        
+        if fixture:
+            fixture_obj = json.loads(fixture) if isinstance(fixture, str) else fixture
+            if isinstance(fixture_obj, dict):
+                # Extract fixture_id
+                resolved_fixture_id = extract_fixture_id(fixture if isinstance(fixture, str) else json.dumps(fixture_obj))
+                # Extract league_id if not provided
+                if not resolved_league_id:
+                    league_info = fixture_obj.get("league") or fixture_obj.get("full_fixture", {}).get("league", {})
+                    if isinstance(league_info, dict):
+                        resolved_league_id = league_info.get("id") or league_info.get("numerical_id")
+        
+        # Use provided fixture_id if fixture object not provided
+        if not resolved_fixture_id:
+            resolved_fixture_id = extract_fixture_id(fixture_id)
+        
         # Get player results/markets
         params = {}
-        if fixture_id:
-            params["fixture_id"] = int(fixture_id)
+        if resolved_fixture_id:
+            try:
+                params["fixture_id"] = int(resolved_fixture_id)
+            except (ValueError, TypeError):
+                pass
         if player_id:
             params["player_id"] = int(player_id)
         
@@ -320,8 +398,8 @@ def fetch_player_props(
         
         # Also get odds for player markets
         odds = client.get_fixture_odds(
-            fixture_id=fixture_id if fixture_id else None,
-            league=league_id if league_id else None,
+            fixture_id=resolved_fixture_id if resolved_fixture_id else None,
+            league=resolved_league_id if resolved_league_id else None,
             market_types="player_props",
         )
         
@@ -334,13 +412,16 @@ def fetch_player_props(
 
 @tool
 def fetch_live_game_stats(
-    fixture_id: str,
+    fixture_id: Optional[str] = None,
+    fixture: Optional[str] = None,
     player_id: Optional[str] = None,
 ) -> str:
     """Fetch live in-game statistics using OpticOdds /fixtures/results and /fixtures/player-results.
     
     Args:
-        fixture_id: Fixture ID for the game
+        fixture_id: Fixture ID for the game (string ID)
+        fixture: Full fixture object as JSON string (alternative to fixture_id).
+                 If provided, fixture_id will be extracted from it.
         player_id: Optional player ID for specific player stats
     
     Returns:
@@ -349,8 +430,24 @@ def fetch_live_game_stats(
     try:
         client = get_client()
         
+        # Extract fixture_id from fixture object if provided
+        resolved_fixture_id = None
+        
+        if fixture:
+            resolved_fixture_id = extract_fixture_id(fixture)
+        
+        # Use provided fixture_id if fixture object not provided
+        if not resolved_fixture_id:
+            resolved_fixture_id = extract_fixture_id(fixture_id)
+        
+        if not resolved_fixture_id:
+            return "Error: fixture_id or fixture object is required"
+        
         # Get fixture results
-        results = client.get_fixture_results(fixture_id=int(fixture_id))
+        try:
+            results = client.get_fixture_results(fixture_id=int(resolved_fixture_id))
+        except (ValueError, TypeError):
+            return f"Error: Invalid fixture_id: {resolved_fixture_id}"
         
         # Get player results if player_id provided
         player_stats = None
@@ -558,15 +655,18 @@ def image_to_bet_analysis(image_data: str) -> str:
 @tool
 def generate_bet_deep_link(
     sportsbook: str,
-    fixture_id: str,
-    market_id: str,
-    selection_id: str,
+    fixture_id: Optional[str] = None,
+    fixture: Optional[str] = None,
+    market_id: str = None,
+    selection_id: str = None,
 ) -> str:
     """Generate deep links to sportsbook bet pages with pre-filled bet slips using OpticOdds data.
     
     Args:
         sportsbook: Sportsbook name (e.g., 'fanduel', 'draftkings', 'betmgm')
-        fixture_id: Fixture ID from OpticOdds
+        fixture_id: Fixture ID from OpticOdds (string ID)
+        fixture: Full fixture object as JSON string (alternative to fixture_id).
+                 If provided, fixture_id will be extracted from it.
         market_id: Market ID from OpticOdds
         selection_id: Selection ID from OpticOdds
     
@@ -598,19 +698,35 @@ def generate_bet_deep_link(
 
 @tool
 def calculate_parlay_odds(
-    legs: str,
+    legs: Optional[str] = None,
+    fixtures: Optional[str] = None,
 ) -> str:
     """Calculate parlay odds for multiple bet legs using OpticOdds /parlay/odds endpoint.
     
+    This tool can accept either pre-formatted legs or full fixture objects. If fixtures are provided,
+    you'll need to specify market_id, selection_id, and optionally sportsbook_id for each fixture.
+    
     Args:
         legs: JSON string of parlay legs. Each leg should be a dict with:
-            - fixture_id: Fixture ID
+            - fixture_id: Fixture ID (string or extracted from full fixture object)
             - market_id: Market ID
             - selection_id: Selection ID
             - sportsbook_id: Sportsbook ID (optional)
+        
+            Legs can contain full fixture objects - fixture_id will be automatically extracted.
+        
+        fixtures: JSON string containing one or more full fixture objects (alternative to legs).
+                  If provided, you must also provide market_ids, selection_ids, and optionally
+                  sportsbook_ids as separate arrays or in the fixture objects.
     
-    Example legs format:
-        '[{"fixture_id": 123, "market_id": 456, "selection_id": 789}, {"fixture_id": 124, "market_id": 457, "selection_id": 790}]'
+    Example legs format with fixture_id strings:
+        '[{"fixture_id": "123", "market_id": 456, "selection_id": 789}, {"fixture_id": "124", "market_id": 457, "selection_id": 790}]'
+    
+    Example legs format with full fixture objects:
+        '[{"fixture": {"id": "123", ...full object...}, "market_id": 456, "selection_id": 789}]'
+    
+    Example fixtures format:
+        '[{"id": "123", "home_team_display": "Team A", ...}, {"id": "124", "home_team_display": "Team B", ...}]'
     
     Returns:
         Formatted string with parlay odds from multiple sportsbooks
@@ -618,12 +734,77 @@ def calculate_parlay_odds(
     try:
         client = get_client()
         
-        # Parse legs JSON string
-        import json
-        legs_list = json.loads(legs) if isinstance(legs, str) else legs
+        legs_list = []
         
-        if not isinstance(legs_list, list) or len(legs_list) == 0:
-            return "Error: legs must be a non-empty list of bet legs"
+        # If fixtures provided, extract fixture_ids
+        if fixtures:
+            try:
+                fixtures_data = json.loads(fixtures) if isinstance(fixtures, str) else fixtures
+                
+                # Handle array of fixtures
+                if isinstance(fixtures_data, list):
+                    for fixture_obj in fixtures_data:
+                        fixture_id = extract_fixture_id(json.dumps(fixture_obj) if isinstance(fixture_obj, dict) else str(fixture_obj))
+                        if fixture_id:
+                            # Create a leg with just fixture_id - user needs to provide market/selection IDs
+                            legs_list.append({"fixture_id": fixture_id})
+                # Handle single fixture
+                elif isinstance(fixtures_data, dict):
+                    fixture_id = extract_fixture_id(json.dumps(fixtures_data))
+                    if fixture_id:
+                        legs_list.append({"fixture_id": fixture_id})
+            except (json.JSONDecodeError, ValueError, TypeError) as e:
+                return f"Error parsing fixtures: {str(e)}. Please provide valid JSON."
+        
+        # If legs provided, parse and extract fixture_ids from any full fixture objects
+        if legs:
+            try:
+                legs_data = json.loads(legs) if isinstance(legs, str) else legs
+                
+                if not isinstance(legs_data, list):
+                    return "Error: legs must be a list of bet legs"
+                
+                # Process each leg - extract fixture_id if it's a full fixture object
+                for leg in legs_data:
+                    if not isinstance(leg, dict):
+                        return f"Error: Each leg must be a dict, got {type(leg)}"
+                    
+                    processed_leg = leg.copy()
+                    
+                    # If leg has a 'fixture' key with a full object, extract fixture_id
+                    if "fixture" in leg:
+                        fixture_id = extract_fixture_id(
+                            json.dumps(leg["fixture"]) if isinstance(leg["fixture"], dict) else str(leg["fixture"])
+                        )
+                        if fixture_id:
+                            processed_leg["fixture_id"] = fixture_id
+                            # Remove the fixture object to keep leg clean
+                            processed_leg.pop("fixture", None)
+                    
+                    # If fixture_id is a full object, extract the ID
+                    if "fixture_id" in processed_leg and isinstance(processed_leg["fixture_id"], (dict, str)):
+                        extracted_id = extract_fixture_id(
+                            json.dumps(processed_leg["fixture_id"]) if isinstance(processed_leg["fixture_id"], dict) else str(processed_leg["fixture_id"])
+                        )
+                        if extracted_id:
+                            processed_leg["fixture_id"] = extracted_id
+                    
+                    legs_list.append(processed_leg)
+                    
+            except json.JSONDecodeError as e:
+                return f"Error parsing legs JSON: {str(e)}"
+        
+        if len(legs_list) == 0:
+            return "Error: Must provide either 'legs' or 'fixtures' parameter with at least one fixture"
+        
+        # Validate legs have required fields
+        for i, leg in enumerate(legs_list):
+            if "fixture_id" not in leg:
+                return f"Error: Leg {i+1} is missing fixture_id"
+            if "market_id" not in leg:
+                return f"Error: Leg {i+1} is missing market_id"
+            if "selection_id" not in leg:
+                return f"Error: Leg {i+1} is missing selection_id"
         
         # Calculate parlay odds
         result = client.calculate_parlay_odds(legs=legs_list)
@@ -631,8 +812,6 @@ def calculate_parlay_odds(
         # Format response for frontend
         formatted = format_parlay_response(result, legs_list)
         return formatted
-    except json.JSONDecodeError as e:
-        return f"Error parsing legs JSON: {str(e)}"
     except Exception as e:
         return f"Error calculating parlay odds: {str(e)}"
 
@@ -747,6 +926,99 @@ def fetch_available_sportsbooks(sport: Optional[str] = None) -> str:
 
 
 # Helper functions for formatting responses
+
+def extract_fixture_id(fixture_input: Optional[str]) -> Optional[str]:
+    """Extract fixture_id from either a string ID or a full fixture object (JSON string).
+    
+    Args:
+        fixture_input: Either a fixture_id string, or a JSON string containing a full fixture object
+        
+    Returns:
+        The fixture_id string, or None if not found
+    """
+    if not fixture_input:
+        return None
+    
+    # Try to parse as JSON first (in case it's a full fixture object)
+    try:
+        fixture_obj = json.loads(fixture_input)
+        
+        # If it's a dict, try to get the fixture_id
+        if isinstance(fixture_obj, dict):
+            # Check for fixture_id at top level
+            if "fixture_id" in fixture_obj:
+                return str(fixture_obj["fixture_id"])
+            # Check for id at top level
+            if "id" in fixture_obj:
+                return str(fixture_obj["id"])
+            # Check for full_fixture nested object
+            if "full_fixture" in fixture_obj and isinstance(fixture_obj["full_fixture"], dict):
+                full_fixture = fixture_obj["full_fixture"]
+                if "id" in full_fixture:
+                    return str(full_fixture["id"])
+    except (json.JSONDecodeError, ValueError, TypeError):
+        # If parsing fails, assume it's just a fixture_id string
+        pass
+    
+    # If it's not JSON or doesn't contain an ID, return as-is (assume it's a fixture_id string)
+    return fixture_input
+
+
+def extract_fixture_ids_from_objects(fixtures_input: Optional[str]) -> List[str]:
+    """Extract fixture_ids from multiple fixture objects (array) or single object.
+    
+    Args:
+        fixtures_input: JSON string containing either:
+            - A single fixture object
+            - An array of fixture objects
+            - A single fixture_id string
+            - An array of fixture_id strings
+            - A mix of fixture objects and fixture_id strings
+        
+    Returns:
+        List of fixture_id strings
+    """
+    if not fixtures_input:
+        return []
+    
+    fixture_ids = []
+    
+    try:
+        parsed = json.loads(fixtures_input) if isinstance(fixtures_input, str) else fixtures_input
+        
+        # Handle array of fixtures
+        if isinstance(parsed, list):
+            for item in parsed:
+                if isinstance(item, str):
+                    # Try to extract from string (could be JSON or plain ID)
+                    extracted = extract_fixture_id(item)
+                    if extracted:
+                        fixture_ids.append(extracted)
+                elif isinstance(item, dict):
+                    # Extract from dict object
+                    fixture_id = item.get("fixture_id") or item.get("id")
+                    if fixture_id:
+                        fixture_ids.append(str(fixture_id))
+                    elif "full_fixture" in item and isinstance(item["full_fixture"], dict):
+                        full_id = item["full_fixture"].get("id")
+                        if full_id:
+                            fixture_ids.append(str(full_id))
+        # Handle single fixture object
+        elif isinstance(parsed, dict):
+            extracted = extract_fixture_id(fixtures_input if isinstance(fixtures_input, str) else json.dumps(parsed))
+            if extracted:
+                fixture_ids.append(extracted)
+        # Handle plain string (single fixture_id)
+        elif isinstance(parsed, str):
+            fixture_ids.append(parsed)
+            
+    except (json.JSONDecodeError, ValueError, TypeError):
+        # If parsing fails, try as single fixture_id string
+        if isinstance(fixtures_input, str):
+            fixture_ids.append(fixtures_input)
+    
+    return fixture_ids
+
 
 def format_odds_response(data: Dict[str, Any]) -> str:
     """Format odds response for display with structured data for frontend parsing."""
@@ -1168,25 +1440,76 @@ def format_fixtures_response(data: Dict[str, Any]) -> str:
             continue
         
         fixture_id = fixture.get("id")
-        home_team_info = fixture.get("home_team", {})
-        away_team_info = fixture.get("away_team", {})
         
-        home_team = home_team_info.get("name", "Unknown") if isinstance(home_team_info, dict) else str(home_team_info)
-        away_team = away_team_info.get("name", "Unknown") if isinstance(away_team_info, dict) else str(away_team_info)
+        # Extract team names - check home_team_display/away_team_display first, then fall back to competitors arrays
+        home_team = fixture.get("home_team_display")
+        away_team = fixture.get("away_team_display")
         
-        # Get date/time information
-        start_time = fixture.get("start_time")
-        date = fixture.get("date")
+        if not home_team:
+            home_competitors = fixture.get("home_competitors", [])
+            if home_competitors and isinstance(home_competitors, list) and len(home_competitors) > 0:
+                home_team = home_competitors[0].get("name") if isinstance(home_competitors[0], dict) else str(home_competitors[0])
+        
+        if not away_team:
+            away_competitors = fixture.get("away_competitors", [])
+            if away_competitors and isinstance(away_competitors, list) and len(away_competitors) > 0:
+                away_team = away_competitors[0].get("name") if isinstance(away_competitors[0], dict) else str(away_competitors[0])
+        
+        # Fallback to Unknown if still not found
+        home_team = home_team or "Unknown"
+        away_team = away_team or "Unknown"
+        
+        # Parse start_date (ISO format: "2025-11-27T18:00:00Z")
+        start_date_str = fixture.get("start_date")
+        date_display = None
+        time_display = None
+        
+        if start_date_str:
+            try:
+                # Parse ISO format datetime - handle 'Z' timezone indicator
+                if start_date_str.endswith('Z'):
+                    # Replace Z with +00:00 for UTC
+                    iso_str = start_date_str.replace('Z', '+00:00')
+                else:
+                    iso_str = start_date_str
+                
+                dt = datetime.fromisoformat(iso_str)
+                date_display = dt.strftime('%B %d, %Y')
+                # Format time with timezone if available
+                if dt.tzinfo:
+                    time_display = dt.strftime('%I:%M %p %Z')
+                else:
+                    time_display = dt.strftime('%I:%M %p')
+            except (ValueError, AttributeError, TypeError) as e:
+                # If parsing fails, use the string as-is
+                date_display = start_date_str
+                time_display = None
+        
         status = fixture.get("status", "Scheduled")
+        
+        # Extract league information
         league_info = fixture.get("league", {})
         league_name = league_info.get("name", "") if isinstance(league_info, dict) else ""
+        league_id = league_info.get("id", "") if isinstance(league_info, dict) else ""
         
-        # Format game information
+        # Extract additional useful fields
+        venue_name = fixture.get("venue_name")
+        venue_location = fixture.get("venue_location")
+        broadcast = fixture.get("broadcast")
+        home_record = fixture.get("home_record")
+        away_record = fixture.get("away_record")
+        season_type = fixture.get("season_type")
+        season_year = fixture.get("season_year")
+        season_week = fixture.get("season_week")
+        is_live = fixture.get("is_live", False)
+        has_odds = fixture.get("has_odds", False)
+        
+        # Format game information for display
         game_line = f"{away_team} @ {home_team}"
-        if date:
-            game_line += f" | {date}"
-        if start_time:
-            game_line += f" | {start_time}"
+        if date_display:
+            game_line += f" | {date_display}"
+        if time_display:
+            game_line += f" | {time_display}"
         if status:
             game_line += f" | Status: {status}"
         
@@ -1195,16 +1518,54 @@ def format_fixtures_response(data: Dict[str, Any]) -> str:
             formatted_lines.append(f"Fixture ID: {fixture_id}")
         if league_name:
             formatted_lines.append(f"League: {league_name}")
+        if venue_name:
+            venue_info = venue_name
+            if venue_location:
+                venue_info += f" ({venue_location})"
+            formatted_lines.append(f"Venue: {venue_info}")
+        if broadcast:
+            formatted_lines.append(f"Broadcast: {broadcast}")
+        if home_record or away_record:
+            record_info = []
+            if away_record:
+                record_info.append(f"Away: {away_record}")
+            if home_record:
+                record_info.append(f"Home: {home_record}")
+            if record_info:
+                formatted_lines.append(f"Records: {', '.join(record_info)}")
+        if season_type and season_year:
+            season_info = f"{season_type} {season_year}"
+            if season_week:
+                season_info += f" - Week {season_week}"
+            formatted_lines.append(f"Season: {season_info}")
+        if is_live:
+            formatted_lines.append("🔴 LIVE")
+        if has_odds:
+            formatted_lines.append("Odds Available")
         
-        # Add to structured data
+        # Add to structured data - include full fixture object for frontend reference
         structured_fixtures.append({
             "fixture_id": fixture_id,
             "home_team": home_team,
             "away_team": away_team,
-            "date": date,
-            "start_time": start_time,
+            "date": date_display,
+            "start_time": time_display,
+            "start_date": start_date_str,
             "status": status,
             "league": league_name,
+            "league_id": league_id,
+            "venue_name": venue_name,
+            "venue_location": venue_location,
+            "broadcast": broadcast,
+            "home_record": home_record,
+            "away_record": away_record,
+            "season_type": season_type,
+            "season_year": season_year,
+            "season_week": season_week,
+            "is_live": is_live,
+            "has_odds": has_odds,
+            # Include the full fixture object for frontend reference
+            "full_fixture": fixture,
         })
     
     # Add structured JSON block for frontend parsing

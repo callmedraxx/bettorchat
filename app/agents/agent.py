@@ -29,6 +29,7 @@ from app.agents.tools import (
     fetch_available_markets,
     fetch_available_sportsbooks,
     internet_search,
+    python_repl,
 )
 from app.agents.prompts import SPORTS_BETTING_INSTRUCTIONS
 from app.agents.subagents import ALL_SUBAGENTS
@@ -101,6 +102,7 @@ def create_betting_agent(
         fetch_available_markets,  # Reference data: available market types
         fetch_available_sportsbooks,  # Reference data: available sportsbooks
         internet_search,  # Keep web search as fallback
+        python_repl,  # Python REPL for data extraction and filtering from betting tool results
     ]
     
     # Format system prompt with user information
