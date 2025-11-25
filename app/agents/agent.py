@@ -1,6 +1,7 @@
 """
 Agent creation and management for sports betting assistant.
 """
+import os
 from langchain.chat_models import init_chat_model
 from langgraph.checkpoint.memory import MemorySaver
 from deepagents import create_deep_agent
@@ -40,10 +41,18 @@ def create_betting_agent(
     Returns:
         Configured deep agent
     """
+    # Get API key with proper error handling
+    api_key = settings.ANTHROPIC_API_KEY or os.environ.get("ANTHROPIC_API_KEY")
+    if not api_key:
+        raise ValueError(
+            "ANTHROPIC_API_KEY must be set in environment variables or config. "
+            "Please set it in LangSmith deployment settings."
+        )
+    
     # Initialize model
     model = init_chat_model(
         model_name,
-        api_key=settings.ANTHROPIC_API_KEY,
+        api_key=api_key,
     )
     
     # Create checkpointer for conversation persistence
@@ -110,5 +119,21 @@ def create_research_agent():
 
 
 # Export the agent graph for LangGraph CLI
-# Default to betting agent
-agent = create_betting_agent()
+# LangGraph requires the agent to be created at module level
+# Make sure ANTHROPIC_API_KEY is set in LangSmith environment variables
+try:
+    agent = create_betting_agent()
+except (ValueError, TypeError) as e:
+    # Provide clear error message for missing API key
+    error_msg = str(e)
+    if "ANTHROPIC_API_KEY" in error_msg or "api_key" in error_msg.lower():
+        raise ValueError(
+            "ANTHROPIC_API_KEY is required but not set.\n\n"
+            "To fix this:\n"
+            "1. Go to your LangSmith/LangGraph deployment settings\n"
+            "2. Add environment variable: ANTHROPIC_API_KEY=your-key-here\n"
+            "3. Get your API key from: https://console.anthropic.com/\n"
+            "4. Redeploy your agent\n\n"
+            f"Original error: {error_msg}"
+        ) from e
+    raise

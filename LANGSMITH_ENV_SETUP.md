@@ -60,18 +60,39 @@ But make sure `.env` is in `.gitignore` and the variables are set in LangSmith's
 
 Based on your codebase, these are the environment variables needed:
 
-1. **OPTICODDS_API_KEY** (Required)
-   - Default is set in config, but can be overridden
-   - Current default: `f8a621e8-2583-4e97-a769-e70c99acdb85`
-
-2. **ANTHROPIC_API_KEY** (Required)
+1. **ANTHROPIC_API_KEY** (REQUIRED - Deployment will fail without this)
    - Needed for Claude model access
    - Get from: https://console.anthropic.com/
+   - **MUST be set in LangSmith environment variables**
+   - Without this, you'll get: "ANTHROPIC_API_KEY is required but not set"
+
+2. **OPTICODDS_API_KEY** (Has default, but can be overridden)
+   - Default is set in config: `f8a621e8-2583-4e97-a769-e70c99acdb85`
+   - Can be overridden in LangSmith if needed
 
 3. **TAVILY_API_KEY** (Optional)
    - Only needed if you want web search functionality
    - Get from: https://tavily.com/
    - The agent will work without it, but web search won't be available
+
+## Quick Fix for Current Error
+
+Your deployment is failing because `ANTHROPIC_API_KEY` is not set. To fix:
+
+1. **Get your Anthropic API key:**
+   - Go to https://console.anthropic.com/
+   - Navigate to API Keys section
+   - Create or copy your API key
+
+2. **Add it to LangSmith:**
+   - Go to your LangGraph deployment in LangSmith
+   - Find "Environment Variables" or "Secrets" section
+   - Add: `ANTHROPIC_API_KEY=sk-ant-api03-...` (your actual key)
+   - Save and redeploy
+
+3. **Verify it's set:**
+   - After redeploying, check the logs
+   - The error should be gone and the agent should load successfully
 
 ## Important Notes
 
