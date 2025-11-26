@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     
     # CORS
     BACKEND_CORS_ORIGINS: Union[List[str], str] = Field(
-        default=["http://localhost:3000", "http://localhost:8000"]
+        default=["http://localhost:3000", "http://localhost:8000", "https://lovable.dev"]
     )
     
     @field_validator("BACKEND_CORS_ORIGINS", mode="before")

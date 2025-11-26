@@ -4,6 +4,8 @@ MCP-compatible betting tools wrapping OpticOdds API.
 import json
 import base64
 import re
+import logging
+from contextvars import ContextVar
 from datetime import datetime, timedelta
 from typing import Optional, List, Dict, Any
 from langchain.tools import tool
@@ -17,6 +19,14 @@ except ImportError:
 from app.core.opticodds_client import OpticOddsClient
 from app.core.fixture_stream import fixture_stream_manager
 from app.core.odds_stream import odds_stream_manager
+from app.core.tool_result_storage import store_tool_result
+from app.core.tool_result_db import save_tool_result_to_db
+
+# Logger for betting tools
+logger = logging.getLogger(__name__)
+
+# Context variable to store current session_id (thread_id) for tools
+_current_session_id: ContextVar[Optional[str]] = ContextVar('current_session_id', default=None)
 
 
 # Initialize OpticOdds client (singleton pattern)
@@ -466,6 +476,31 @@ def fetch_live_odds(
         
         # Format response for frontend
         formatted = format_odds_response(result)
+        
+        # Store full result in database for retrieval if LangGraph truncates it
+        # We'll use a temporary key that can be matched when we see the tool_call_id
+        session = session_id or _current_session_id.get() or "default"
+        
+        # Create a temporary tool_call_id placeholder that will be replaced when we see the actual tool_call_id
+        # We'll store it with a temporary ID that includes session and timestamp
+        import time
+        temp_tool_call_id = f"temp_{session}_{int(time.time() * 1000)}"
+        
+        try:
+            # Store in database with temporary ID (will be updated when we get the real tool_call_id)
+            save_tool_result_to_db(
+                tool_call_id=temp_tool_call_id,
+                session_id=session,
+                tool_name="fetch_live_odds",
+                full_result=formatted
+            )
+            logger.debug(f"[fetch_live_odds] Stored full result in database with temp_id={temp_tool_call_id}, size={len(formatted)}")
+            
+            # Also store in in-memory cache as backup
+            store_tool_result(temp_tool_call_id, formatted)
+        except Exception as store_error:
+            logger.warning(f"[fetch_live_odds] Failed to store full result: {store_error}")
+        
         return formatted
     except Exception as e:
         return f"Error fetching live odds: {str(e)}"
@@ -482,6 +517,7 @@ def fetch_upcoming_games(
     start_date_before: Optional[str] = None,
     paginate: bool = True,
     stream_output: bool = True,
+    session_id: Optional[str] = None,
 ) -> str:
     """Fetch upcoming game schedules/fixtures using OpticOdds /fixtures endpoint.
     
@@ -507,6 +543,8 @@ def fetch_upcoming_games(
         paginate: Whether to fetch all pages of results (default: True to get complete data)
         stream_output: Whether to emit fixture data to SSE stream. Set to False when calling as intermediate step.
                       Defaults to True. Only set to True for the final tool call that directly answers user's request.
+        session_id: Optional session identifier (user_id or thread_id). If not provided, uses "default".
+                    Frontend should connect to /api/v1/fixtures/fixtures/stream?session_id=<same_id> to receive data.
     
     Returns:
         Formatted string with upcoming game schedules including teams, dates, times, and fixture IDs.
@@ -560,6 +598,28 @@ def fetch_upcoming_games(
         # Format response
         formatted = format_fixtures_response(result)
         
+        # Store full result in database for retrieval if LangGraph truncates it
+        session = session_id or _current_session_id.get() or "default"
+        
+        # Create a temporary tool_call_id placeholder that will be replaced when we see the actual tool_call_id
+        import time
+        temp_tool_call_id = f"temp_{session}_{int(time.time() * 1000)}"
+        
+        try:
+            # Store in database with temporary ID (will be updated when we get the real tool_call_id)
+            save_tool_result_to_db(
+                tool_call_id=temp_tool_call_id,
+                session_id=session,
+                tool_name="fetch_upcoming_games",
+                full_result=formatted
+            )
+            logger.debug(f"[fetch_upcoming_games] Stored full result in database with temp_id={temp_tool_call_id}, size={len(formatted)}")
+            
+            # Also store in in-memory cache as backup
+            store_tool_result(temp_tool_call_id, formatted)
+        except Exception as store_error:
+            logger.warning(f"[fetch_upcoming_games] Failed to store full result: {store_error}")
+        
         # Automatically extract and emit fixture objects to frontend
         # Extract fixtures from the formatted response (from <!-- FIXTURES_DATA_START --> block)
         try:
@@ -573,12 +633,36 @@ def fetch_upcoming_games(
                 
                 if fixtures_list and stream_output:
                     # Automatically emit fixture objects to SSE stream (only if stream_output=True)
-                    # Use default session_id (can be overridden by user context if needed)
-                    fixture_stream_manager.push_fixtures_sync("default", fixtures_list)
+                    # Use provided session_id, context session_id, or fall back to "default"
+                    effective_session_id = (
+                        session_id 
+                        or _current_session_id.get() 
+                        or "default"
+                    )
+                    
+                    # Save fixtures to database
+                    try:
+                        from app.core.fixture_storage import save_fixtures_to_db
+                        save_fixtures_to_db(effective_session_id, fixtures_list)
+                        logger.info(f"[fetch_upcoming_games] Saved {len(fixtures_list)} fixtures to database for session_id: {effective_session_id}")
+                    except Exception as db_error:
+                        logger.error(f"[fetch_upcoming_games] Error saving fixtures to database: {db_error}", exc_info=True)
+                    
+                    # Push notification to SSE stream (instructs frontend to fetch from API)
+                    print(f"[DEBUG fetch_upcoming_games] Sending notification for {len(fixtures_list)} fixtures to stream with session_id: {effective_session_id}")
+                    logger.info(f"[fetch_upcoming_games] Sending notification for {len(fixtures_list)} fixtures to stream with session_id: {effective_session_id}")
+                    result = fixture_stream_manager.push_fixtures_sync(effective_session_id, fixtures_list)
+                    print(f"[DEBUG fetch_upcoming_games] Notification sent result: {result}")
+                    logger.info(f"[fetch_upcoming_games] Notification sent result: {result}")
+                elif not fixtures_list:
+                    logger.warning(f"[fetch_upcoming_games] No fixtures found in extracted data")
+                elif not stream_output:
+                    logger.info(f"[fetch_upcoming_games] stream_output=False, skipping push")
+            else:
+                logger.warning(f"[fetch_upcoming_games] No FIXTURES_DATA markers found in formatted response")
         except Exception as emit_error:
-            # Don't fail the whole request if emit fails, just log it
-            # The formatted response will still be returned
-            pass
+            # Don't fail the whole request if emit fails, but log the error for debugging
+            logger.error(f"[fetch_upcoming_games] Error emitting fixtures to stream: {emit_error}", exc_info=True)
         
         return formatted
     except Exception as e:
