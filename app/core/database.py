@@ -13,17 +13,26 @@ from app.core.config import settings
 if settings.ENVIRONMENT == "development" or not settings.DATABASE_URL:
     # Use SQLite in-memory for development
     SQLALCHEMY_DATABASE_URL = "sqlite:///:memory:"
+    is_sqlite = True
 else:
     # Use PostgreSQL for production
     SQLALCHEMY_DATABASE_URL = settings.DATABASE_URL
+    is_sqlite = SQLALCHEMY_DATABASE_URL.startswith("sqlite")
 
-engine = create_engine(
-    SQLALCHEMY_DATABASE_URL,
-    pool_pre_ping=True,
-    pool_size=settings.DB_POOL_SIZE,
-    max_overflow=settings.DB_MAX_OVERFLOW,
-    echo=settings.DEBUG,
-)
+# SQLite doesn't support pool_size and max_overflow parameters
+if is_sqlite:
+    engine = create_engine(
+        SQLALCHEMY_DATABASE_URL,
+        echo=settings.DEBUG,
+    )
+else:
+    engine = create_engine(
+        SQLALCHEMY_DATABASE_URL,
+        pool_pre_ping=True,
+        pool_size=settings.DB_POOL_SIZE,
+        max_overflow=settings.DB_MAX_OVERFLOW,
+        echo=settings.DEBUG,
+    )
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
