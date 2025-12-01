@@ -108,13 +108,90 @@ async def chat(request: ChatRequest):
         # Use invoke (non-streaming) for faster, synchronous response
         result = agent.invoke({"messages": messages}, config=config)
         
-        # Use LangChain's built-in message serialization
-        formatted_messages = [
-            msg.model_dump() if hasattr(msg, "model_dump") else msg
-            for msg in result["messages"]
-        ]
+        # Extract only the final AI response and URL
+        all_messages = result["messages"]
         
-        logger.info(f"[chat] Successfully processed chat request for thread_id: {thread_id}, response_messages: {len(formatted_messages)}")
+        # Find the final AI message (last AI message with no tool_calls or with "Sent." content)
+        final_ai_message = None
+        extracted_url = None
+        tool_name = None
+        
+        # Process messages in reverse to find the final response
+        for msg in reversed(all_messages):
+            msg_dict = msg.model_dump() if hasattr(msg, "model_dump") else msg
+            msg_type = msg_dict.get("type") or msg_dict.get("type_")
+            
+            # Find final AI message (no tool_calls, or has "Sent." content)
+            if msg_type == "ai" and not final_ai_message:
+                tool_calls = msg_dict.get("tool_calls", [])
+                content = msg_dict.get("content", "")
+                
+                # This is the final AI message if it has no tool_calls or says "Sent."
+                if not tool_calls or (isinstance(content, str) and "Sent." in content):
+                    final_ai_message = msg_dict
+                    break
+        
+        # Extract URL from build_opticodds_url tool results
+        for msg in all_messages:
+            msg_dict = msg.model_dump() if hasattr(msg, "model_dump") else msg
+            msg_type = msg_dict.get("type") or msg_dict.get("type_")
+            
+            # Look for build_opticodds_url tool results
+            if msg_type == "tool":
+                tool_name_from_msg = msg_dict.get("name", "")
+                if tool_name_from_msg == "build_opticodds_url":
+                    tool_content = msg_dict.get("content", "")
+                    if isinstance(tool_content, str) and "URL: " in tool_content:
+                        # Extract URL from tool result
+                        for line in tool_content.split('\n'):
+                            if line.strip().startswith("URL: "):
+                                extracted_url = line.strip()[5:].strip()  # Remove "URL: " prefix
+                                
+                                # Try to infer tool_name from URL pattern
+                                if "/nfl/odds" in extracted_url or "/opticodds/proxy/fixtures/odds" in extracted_url:
+                                    tool_name = "fetch_live_odds"
+                                elif "/nfl/fixtures" in extracted_url or "/opticodds/proxy/fixtures" in extracted_url:
+                                    tool_name = "fetch_upcoming_games"
+                                elif "/player" in extracted_url.lower():
+                                    tool_name = "fetch_players"
+                                
+                                # Try to get tool_name from the tool call args
+                                tool_call_id = msg_dict.get("tool_call_id")
+                                if tool_call_id:
+                                    for prev_msg in all_messages:
+                                        prev_dict = prev_msg.model_dump() if hasattr(prev_msg, "model_dump") else prev_msg
+                                        prev_type = prev_dict.get("type") or prev_dict.get("type_")
+                                        if prev_type == "ai":
+                                            tool_calls = prev_dict.get("tool_calls", [])
+                                            for tc in tool_calls:
+                                                tc_id = tc.get("id") if isinstance(tc, dict) else getattr(tc, "id", None)
+                                                if tc_id == tool_call_id:
+                                                    tc_name = tc.get("name") if isinstance(tc, dict) else getattr(tc, "name", None)
+                                                    if tc_name == "build_opticodds_url":
+                                                        tc_args = tc.get("args", {}) if isinstance(tc, dict) else getattr(tc, "args", {})
+                                                        tool_name = tc_args.get("tool_name") or tool_name
+                                                        break
+                                break
+        
+        # Build clean response with only final AI message
+        if final_ai_message:
+            # Add extracted URL to the response if found
+            if extracted_url:
+                # Add URL metadata to the final message
+                if "additional_kwargs" not in final_ai_message:
+                    final_ai_message["additional_kwargs"] = {}
+                final_ai_message["additional_kwargs"]["extracted_url"] = extracted_url
+                final_ai_message["additional_kwargs"]["tool_name"] = tool_name
+                logger.info(f"[chat] Extracted URL from build_opticodds_url: {extracted_url[:100]}...")
+            
+            formatted_messages = [final_ai_message]
+        else:
+            # Fallback: return last message if no final AI message found
+            last_msg = all_messages[-1]
+            formatted_messages = [last_msg.model_dump() if hasattr(last_msg, "model_dump") else last_msg]
+            logger.warning(f"[chat] No final AI message found, returning last message")
+        
+        logger.info(f"[chat] Successfully processed chat request for thread_id: {thread_id}, returning final AI response only")
         
         response = ChatResponse(messages=formatted_messages)
         
@@ -387,8 +464,8 @@ async def chat_stream(request: ChatRequest):
             tool_call_map = {}
             # Track URLs sent to avoid duplicates (using URL as key)
             sent_urls = set()
-            # Track tool_call_ids we've already processed for URL generation
-            processed_tool_call_ids = set()
+            # Track tool_call_ids we've already extracted URLs from (to prevent duplicate extraction during streaming)
+            processed_url_tool_call_ids = set()
             # Track previous message count to detect new messages
             previous_message_count = 0
             last_message_content = ""
@@ -486,101 +563,13 @@ async def chat_stream(request: ChatRequest):
                                         tool_call_map[tool_call_id] = tool_name
                                         logger.debug(f"[chat_stream] Mapped tool_call_id {tool_call_id} -> {tool_name}")
                                         
-                                        # Skip if we've already processed this tool_call_id for URL generation
-                                        if tool_call_id in processed_tool_call_ids:
-                                            logger.debug(f"[chat_stream] Already processed tool_call_id {tool_call_id} for URL generation, skipping")
-                                            continue
-                                        
                                         # Skip build_opticodds_url - we'll extract URL from its ToolMessage result instead
                                         if tool_name == "build_opticodds_url":
                                             logger.info(f"[chat_stream] ✅ AI called build_opticodds_url tool - will extract URL from ToolMessage result")
                                             continue
                                         
-                                        # Warn if AI calls data-fetching tools without calling build_opticodds_url first
-                                        data_fetching_tools = {"fetch_live_odds", "fetch_upcoming_games", "fetch_player_props", "fetch_live_game_stats", "fetch_injury_reports", "fetch_futures", "fetch_historical_odds"}
-                                        if tool_name in data_fetching_tools:
-                                            # Check if build_opticodds_url was called recently for this tool
-                                            build_url_called = False
-                                            for prev_msg in state:
-                                                if isinstance(prev_msg, (AIMessage, ToolMessage)):
-                                                    if isinstance(prev_msg, AIMessage) and hasattr(prev_msg, "tool_calls"):
-                                                        for tc in prev_msg.tool_calls:
-                                                            tc_name = tc.get("name") if isinstance(tc, dict) else getattr(tc, "name", None)
-                                                            if tc_name == "build_opticodds_url":
-                                                                tc_args = tc.get("args", {}) if isinstance(tc, dict) else getattr(tc, "args", {})
-                                                                if tc_args.get("tool_name") == tool_name:
-                                                                    build_url_called = True
-                                                                    break
-                                                    elif isinstance(prev_msg, ToolMessage):
-                                                        prev_tool_name = tool_call_map.get(prev_msg.name if hasattr(prev_msg, "name") else None)
-                                                        if prev_tool_name == "build_opticodds_url":
-                                                            build_url_called = True
-                                                            break
-                                                    if build_url_called:
-                                                        break
-                                            
-                                            if not build_url_called:
-                                                logger.warning(f"[chat_stream] ⚠️ AI called {tool_name} WITHOUT calling build_opticodds_url first! This violates the mandatory workflow.")
-                                        
-                                        # Only send URLs for "final" tools that directly answer user's request
-                                        # Skip intermediate tools used to gather data
-                                        is_final_tool = _is_final_tool_call(tool_name, tool_args)
-                                        logger.debug(f"[chat_stream] Tool {tool_name} is_final_tool: {is_final_tool}")
-                                        
-                                        if is_final_tool:
-                                            # Mark as processed before building URL to avoid duplicates
-                                            processed_tool_call_ids.add(tool_call_id)
-                                            
-                                            # Build and send OpticOdds URL early if this is an OpticOdds tool
-                                            try:
-                                                from app.core.url_builder import build_opticodds_url_from_tool_call
-                                                logger.debug(f"[chat_stream] Building URL for tool {tool_name} with args: {list(tool_args.keys())}")
-                                                url = build_opticodds_url_from_tool_call(tool_name, tool_args)
-                                                logger.debug(f"[chat_stream] URL builder returned: {url[:100] if url else 'None'}...")
-                                                if url:
-                                                    # Prevent duplicate URLs (same URL sent multiple times)
-                                                    if url not in sent_urls:
-                                                        sent_urls.add(url)
-                                                        
-                                                        # Create tool-specific type identifier (e.g., 'fetch_live_odds_url')
-                                                        url_type = f"{tool_name}_url"
-                                                        
-                                                        # Include metadata for frontend
-                                                        url_data = {
-                                                            'type': url_type,
-                                                            'url': url,
-                                                            'tool_name': tool_name,
-                                                            'session_id': thread_id,
-                                                            'timestamp': datetime.now().isoformat()
-                                                        }
-                                                        
-                                                        # Send URL as separate JSON event with tool-specific type
-                                                        yield f"data: {json.dumps(url_data)}\n\n"
-                                                        logger.info(f"[chat_stream] Sent final OpticOdds URL ({url_type}): {url[:100]}...")
-                                                    else:
-                                                        logger.debug(f"[chat_stream] Skipping duplicate URL for tool {tool_name}")
-                                                else:
-                                                    # Provide more detailed error about missing parameters
-                                                    missing_details = []
-                                                    if tool_name == "fetch_live_odds":
-                                                        if "sportsbook" not in tool_args or not tool_args.get("sportsbook"):
-                                                            missing_details.append("sportsbook (required)")
-                                                        if not any(key in tool_args and tool_args.get(key) for key in ["fixture_id", "team_id", "player_id"]):
-                                                            missing_details.append("at least one of: fixture_id, team_id, or player_id (required)")
-                                                    elif tool_name == "fetch_player_props":
-                                                        if "sportsbook" not in tool_args or not tool_args.get("sportsbook"):
-                                                            missing_details.append("sportsbook (required)")
-                                                        if not any(key in tool_args and tool_args.get(key) for key in ["fixture_id", "player_id"]):
-                                                            missing_details.append("at least one of: fixture_id or player_id (required)")
-                                                    
-                                                    if missing_details:
-                                                        logger.warning(f"[chat_stream] Could not build valid URL for tool {tool_name} - missing: {', '.join(missing_details)}. Args provided: {list(tool_args.keys())}")
-                                                    else:
-                                                        logger.warning(f"[chat_stream] Could not build valid URL for tool {tool_name} - missing required parameters. Args: {list(tool_args.keys())}")
-                                            except Exception as url_error:
-                                                logger.error(f"[chat_stream] Error building URL for tool {tool_name}: {url_error}", exc_info=True)
-                                        else:
-                                            logger.debug(f"[chat_stream] Skipping intermediate tool URL: {tool_name}")
+                                        # Tools can be called without build_opticodds_url - URLs are only built when they directly serve the user's answer
+                                        # No warnings needed - tools are allowed to be called for data gathering
                                     else:
                                         logger.debug(f"[chat_stream] Skipping tool call - missing id or name. id: {tool_call_id}, name: {tool_name}")
                         
@@ -618,6 +607,11 @@ async def chat_stream(request: ChatRequest):
                             # Special handling for build_opticodds_url tool - extract URL from tool result
                             # ToolMessage means the tool has completed (got 200 response or error)
                             if tool_name == "build_opticodds_url":
+                                # Skip if we've already processed this tool_call_id (prevent duplicate extraction during streaming)
+                                if actual_tool_call_id and actual_tool_call_id in processed_url_tool_call_ids:
+                                    logger.debug(f"[chat_stream] Skipping already processed build_opticodds_url tool_call_id: {actual_tool_call_id}")
+                                    continue
+                                
                                 logger.info(f"[chat_stream] 🔍 Found build_opticodds_url ToolMessage - extracting URL from result")
                                 try:
                                     # Extract URL from tool result (format: "URL: /api/v1/opticodds/proxy/...")
@@ -651,6 +645,10 @@ async def chat_stream(request: ChatRequest):
                                         
                                         # Only send URL if it's valid and tool completed successfully
                                         if url_match and url_match not in sent_urls:
+                                            # Mark this tool_call_id as processed to prevent duplicate extraction
+                                            if actual_tool_call_id:
+                                                processed_url_tool_call_ids.add(actual_tool_call_id)
+                                            
                                             logger.info(f"[chat_stream] ✅ Extracted URL from build_opticodds_url: {url_match[:100]}...")
                                             sent_urls.add(url_match)
                                             
@@ -671,6 +669,16 @@ async def chat_stream(request: ChatRequest):
                                                                     break
                                                     if actual_tool_name:
                                                         break
+                                            
+                                            # Fallback: If we couldn't extract tool_name from args, infer it from URL pattern
+                                            if not actual_tool_name and url_match:
+                                                if "/nfl/odds" in url_match or "/opticodds/proxy/fixtures/odds" in url_match:
+                                                    actual_tool_name = "fetch_live_odds"
+                                                elif "/nfl/fixtures" in url_match or "/opticodds/proxy/fixtures" in url_match:
+                                                    actual_tool_name = "fetch_upcoming_games"
+                                                elif "/player" in url_match.lower():
+                                                    actual_tool_name = "fetch_players"
+                                                logger.debug(f"[chat_stream] Inferred actual_tool_name from URL pattern: {actual_tool_name}")
                                             
                                             # Use actual tool name for type identifier if available
                                             # Special case: fetch_players for player info should use player_info_url
@@ -700,63 +708,9 @@ async def chat_stream(request: ChatRequest):
                                 except Exception as url_extract_error:
                                     logger.error(f"[chat_stream] ❌ Error extracting URL from build_opticodds_url result: {url_extract_error}", exc_info=True)
                             
-                            # Also check if we haven't sent a URL yet for other tools, try to extract parameters from stored tool results
-                            elif tool_name and actual_tool_call_id and actual_tool_call_id not in processed_tool_call_ids:
-                                # Try to get tool result and extract parameters from structured_data
-                                try:
-                                    from app.core.tool_result_db import get_tool_result_from_db
-                                    tool_result_str = get_tool_result_from_db(actual_tool_call_id)
-                                    if tool_result_str:
-                                        try:
-                                            tool_result = json.loads(tool_result_str) if isinstance(tool_result_str, str) else tool_result_str
-                                            # Extract common fields (fixture_id, team_id, etc.) from structured_data
-                                            structured_data = tool_result.get("structured_data") if isinstance(tool_result, dict) else None
-                                            if structured_data:
-                                                # Build tool_args from extracted fields
-                                                extracted_args = {}
-                                                if isinstance(structured_data, dict):
-                                                    if "id" in structured_data:
-                                                        extracted_args["fixture_id"] = str(structured_data["id"])
-                                                    if "fixture_id" in structured_data:
-                                                        extracted_args["fixture_id"] = str(structured_data["fixture_id"])
-                                                    if "team_id" in structured_data:
-                                                        extracted_args["team_id"] = str(structured_data["team_id"])
-                                                    if "player_id" in structured_data:
-                                                        extracted_args["player_id"] = str(structured_data["player_id"])
-                                                elif isinstance(structured_data, list) and structured_data:
-                                                    # Extract from first item
-                                                    first_item = structured_data[0]
-                                                    if isinstance(first_item, dict):
-                                                        if "id" in first_item:
-                                                            extracted_args["fixture_id"] = str(first_item["id"])
-                                                        if "fixture_id" in first_item:
-                                                            extracted_args["fixture_id"] = str(first_item["fixture_id"])
-                                                
-                                                # For fetch_live_odds, we need sportsbook - use defaults
-                                                if tool_name == "fetch_live_odds":
-                                                    extracted_args["sportsbook"] = "draftkings,fanduel,betmgm"
-                                                
-                                                logger.debug(f"[chat_stream] Extracted args from tool result for {actual_tool_call_id}: {list(extracted_args.keys())}")
-                                                is_final_tool = _is_final_tool_call(tool_name, extracted_args)
-                                                if is_final_tool:
-                                                    from app.core.url_builder import build_opticodds_url_from_tool_call
-                                                    url = build_opticodds_url_from_tool_call(tool_name, extracted_args)
-                                                    if url and url not in sent_urls:
-                                                        processed_tool_call_ids.add(actual_tool_call_id)
-                                                        sent_urls.add(url)
-                                                        url_type = f"{tool_name}_url"
-                                                        url_data = {
-                                                            'type': url_type,
-                                                            'url': url,
-                                                            'tool_name': tool_name,
-                                                            'session_id': thread_id,
-                                                            'timestamp': datetime.now().isoformat()
-                                                        }
-                                                        yield f"data: {json.dumps(url_data)}\n\n"
-                                                        logger.info(f"[chat_stream] Sent OpticOdds URL from ToolMessage ({url_type}): {url[:100]}...")
-                                        except (json.JSONDecodeError, AttributeError) as parse_error:
-                                            logger.debug(f"[chat_stream] Could not parse tool result for {actual_tool_call_id}: {parse_error}")
-                                except Exception as tool_msg_error:
+                            # URLs are ONLY extracted from build_opticodds_url tool results
+                            # Other tools (fetch_live_odds, fetch_upcoming_games, etc.) do NOT automatically build URLs
+                            # They can be called for data gathering without building URLs
                                     logger.debug(f"[chat_stream] Could not extract URL from ToolMessage for {actual_tool_call_id}: {tool_msg_error}")
                             # Tool responses are not streamed to frontend - they use dedicated SSE streams
                     

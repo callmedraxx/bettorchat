@@ -88,13 +88,12 @@ def build_opticodds_url_from_tool_call(tool_name: str, tool_args: Dict[str, Any]
             else:
                 resolved_sportsbook = [str(sb).strip().lower() for sb in (list(sportsbook)[:5] if isinstance(sportsbook, (list, tuple)) else [sportsbook])]
         else:
-            # User didn't specify - use comprehensive list of popular sportsbooks (API limit is 5 per request)
-            # Use top 5 most popular to show all odds from major sportsbooks
-            resolved_sportsbook = ["draftkings", "fanduel", "betmgm", "caesars", "betrivers"]
+            # User didn't specify - use default 4 sportsbooks: draftkings, caesars, betmgm, fanduel
+            resolved_sportsbook = ["draftkings", "caesars", "betmgm", "fanduel"]
         
         if not resolved_sportsbook:
-            # Fallback to comprehensive list
-            resolved_sportsbook = ["draftkings", "fanduel", "betmgm", "caesars", "betrivers"]
+            # Fallback to default 4 sportsbooks
+            resolved_sportsbook = ["draftkings", "caesars", "betmgm", "fanduel"]
         
         # OpticOdds API requirement: sportsbook is REQUIRED, max 5, lowercase
         params["sportsbook"] = resolved_sportsbook
@@ -385,19 +384,28 @@ def build_opticodds_url_from_tool_call(tool_name: str, tool_args: Dict[str, Any]
         # OpticOdds API requirements for /fixtures/odds:
         # 1. sportsbook is REQUIRED (at least 1, max 5)
         # 2. At least one of: fixture_id, team_id, or player_id is REQUIRED
+        
+        # Add default sportsbooks if not provided by user
         if "sportsbook" not in params or not params["sportsbook"]:
-            return None  # Sportsbook is required per OpticOdds API
+            # Default to 4 sportsbooks: draftkings, caesars, betmgm, fanduel
+            params["sportsbook"] = ["draftkings", "caesars", "betmgm", "fanduel"]
+        
         # Validate sportsbook count (max 5)
         sportsbook_list = params["sportsbook"]
         if isinstance(sportsbook_list, list) and len(sportsbook_list) > 5:
             params["sportsbook"] = sportsbook_list[:5]  # Enforce max 5 limit
+        
         if "fixture_id" not in params and "team_id" not in params and "player_id" not in params:
             return None  # Need at least one identifier per OpticOdds API requirement
     
     elif tool_name == "fetch_player_props":
-        # Requires: sportsbook (already set) AND at least one of: fixture_id or player_id
+        # Requires: sportsbook AND at least one of: fixture_id or player_id
+        
+        # Add default sportsbooks if not provided by user
         if "sportsbook" not in params or not params["sportsbook"]:
-            return None
+            # Default to 4 sportsbooks: draftkings, caesars, betmgm, fanduel
+            params["sportsbook"] = ["draftkings", "caesars", "betmgm", "fanduel"]
+        
         if "fixture_id" not in params and "player_id" not in params:
             return None  # Need at least fixture_id or player_id
     
@@ -417,50 +425,13 @@ def build_opticodds_url_from_tool_call(tool_name: str, tool_args: Dict[str, Any]
         if "league" not in params and "id" not in params:
             return None  # Need at least league or team_id
     
-    # Check if this is for NFL fixtures - if so, use local endpoint instead of OpticOdds proxy
-    is_nfl_fixtures = (
-        tool_name == "fetch_upcoming_games" and 
-        ("league" in params and str(params["league"]).lower() == "nfl") or
-        ("league" in tool_args and str(tool_args.get("league", "")).lower() == "nfl") or
-        ("league_id" in tool_args and str(tool_args.get("league_id", "")).lower() in ["nfl", "367"])
-    )
+    # Since all queries are for NFL, always use local endpoints for NFL data
+    # Check if this is for NFL fixtures - use local endpoint instead of OpticOdds proxy
+    is_nfl_fixtures = tool_name == "fetch_upcoming_games"
     
-    # Check if this is for NFL odds - if so, use local endpoint instead of OpticOdds proxy
-    # For NFL, we can detect by checking if fixture_id exists and is NFL, or if player_id is provided and league is NFL
-    is_nfl_odds = False
-    if tool_name == "fetch_live_odds" or tool_name == "fetch_player_props":
-        # Check if fixture_id is provided and if it's an NFL fixture
-        fixture_ids_to_check = []
-        if "fixture_id" in params:
-            if isinstance(params["fixture_id"], list):
-                fixture_ids_to_check = params["fixture_id"]
-            else:
-                fixture_ids_to_check = [params["fixture_id"]]
-        elif "fixture_id" in tool_args:
-            fixture_id = tool_args["fixture_id"]
-            if isinstance(fixture_id, str) and ',' in fixture_id:
-                fixture_ids_to_check = [fid.strip() for fid in fixture_id.split(',') if fid.strip()]
-            else:
-                fixture_ids_to_check = [str(fixture_id)]
-        
-        # If we have fixture_ids, check if they're NFL fixtures
-        if fixture_ids_to_check:
-            try:
-                from app.core.database import SessionLocal
-                from app.models.nfl_fixture import NFLFixture
-                db = SessionLocal()
-                try:
-                    nfl_fixture = db.query(NFLFixture).filter(NFLFixture.id.in_(fixture_ids_to_check[:1])).first()
-                    if nfl_fixture:
-                        is_nfl_odds = True
-                finally:
-                    db.close()
-            except Exception:
-                # If check fails, assume not NFL (fallback to API)
-                pass
-        # If no fixture_id but player_id is provided and it's fetch_player_props, we can't easily check
-        # In this case, we'll let it go to the API (or we could check league parameter if provided)
-        # For now, if fixture_id is not provided, we won't use the database
+    # Check if this is for NFL odds - use local endpoint instead of OpticOdds proxy
+    # Since all queries are NFL, always use local endpoint for odds queries
+    is_nfl_odds = tool_name == "fetch_live_odds" or tool_name == "fetch_player_props"
     
     # Build the proxy URL instead of direct OpticOdds URL
     # This allows the frontend to call through the backend to avoid CORS issues

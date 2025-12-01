@@ -153,7 +153,65 @@ async def get_nfl_odds(
                 # Only player props or single category - filter by player_id normally
                 query = query.filter(NFLOdds.player_id.in_(player_ids_list))
         if team_id:
-            query = query.filter(NFLOdds.team_id == team_id)
+            # Check if team_id looks like a team name (not a UUID/hex ID)
+            # Team IDs from OpticOdds are typically hex strings like "ACC49FC634EE" (12 chars, all hex)
+            # Team names are typically lowercase strings like "giants", "lions", etc.
+            original_team_id = team_id
+            is_team_name = len(team_id) < 20 and not all(c in '0123456789ABCDEFabcdef' for c in team_id.replace('-', '').replace('_', ''))
+            
+            if is_team_name:
+                # Look up team ID from NFL fixtures by team name
+                from sqlalchemy import or_
+                team_name_lower = team_id.lower()
+                resolved_team_id = None
+                
+                # Try to find team ID by searching fixtures for matching team names
+                team_fixtures = db.query(NFLFixture).filter(
+                    or_(
+                        NFLFixture.home_team_display.ilike(f"%{team_id}%"),
+                        NFLFixture.away_team_display.ilike(f"%{team_id}%")
+                    )
+                ).all()
+                
+                if team_fixtures:
+                    # Extract team ID from first fixture's fixture_data JSONB
+                    fixture_dict = team_fixtures[0].to_dict()
+                    if fixture_dict:
+                        # Check home_competitors
+                        home_competitors = fixture_dict.get("home_competitors", [])
+                        away_competitors = fixture_dict.get("away_competitors", [])
+                        
+                        # Check if team name matches home team
+                        for competitor in home_competitors:
+                            if isinstance(competitor, dict):
+                                comp_name = competitor.get("name", "").lower()
+                                if team_name_lower in comp_name or comp_name in team_name_lower:
+                                    resolved_team_id = competitor.get("id")
+                                    break
+                        
+                        # If not found in home, check away
+                        if not resolved_team_id:
+                            for competitor in away_competitors:
+                                if isinstance(competitor, dict):
+                                    comp_name = competitor.get("name", "").lower()
+                                    if team_name_lower in comp_name or comp_name in team_name_lower:
+                                        resolved_team_id = competitor.get("id")
+                                        break
+                
+                if resolved_team_id:
+                    # Use the resolved team_id
+                    query = query.filter(NFLOdds.team_id == resolved_team_id)
+                elif team_fixtures:
+                    # Fallback: If we found fixtures but couldn't extract team_id, query by fixture_ids
+                    # This will get all odds for games involving this team
+                    fixture_ids = [f.id for f in team_fixtures]
+                    query = query.filter(NFLOdds.fixture_id.in_(fixture_ids))
+                else:
+                    # Last resort: Search by selection name in odds table (team name might be in selection field)
+                    query = query.filter(NFLOdds.selection.ilike(f"%{original_team_id}%"))
+            else:
+                # It's already a team ID, use it directly
+                query = query.filter(NFLOdds.team_id == team_id)
         if selection:
             query = query.filter(NFLOdds.selection.ilike(f"%{selection}%"))
         if normalized_selection:

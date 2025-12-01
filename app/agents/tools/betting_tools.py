@@ -241,11 +241,11 @@ def build_opticodds_url(
                     args_dict[key] = value
         
         # Validate required parameters based on tool_name before building URL
+        # Note: sportsbook defaults are handled by URL builder, so we don't require it here
         missing_params = []
         if tool_name == "fetch_live_odds":
-            # Requires: sportsbook AND at least one of (fixture_id, team_id, player_id)
-            if "sportsbook" not in args_dict or not args_dict.get("sportsbook"):
-                missing_params.append("sportsbook (required)")
+            # Requires: at least one of (fixture_id, team_id, player_id)
+            # sportsbook is optional - URL builder will add defaults (draftkings, caesars, betmgm, fanduel)
             if not any(key in args_dict and args_dict.get(key) for key in ["fixture_id", "team_id", "player_id"]):
                 missing_params.append("at least one of: fixture_id, team_id, or player_id (required)")
             
@@ -277,9 +277,8 @@ def build_opticodds_url(
                             "to get player_id, then include it here. If the user wants ALL player props, this is correct."
                         )
         elif tool_name == "fetch_player_props":
-            # Requires: sportsbook AND at least one of (fixture_id, player_id)
-            if "sportsbook" not in args_dict or not args_dict.get("sportsbook"):
-                missing_params.append("sportsbook (required)")
+            # Requires: at least one of (fixture_id, player_id)
+            # sportsbook is optional - URL builder will add defaults (draftkings, caesars, betmgm, fanduel)
             if not any(key in args_dict and args_dict.get(key) for key in ["fixture_id", "player_id"]):
                 missing_params.append("at least one of: fixture_id or player_id (required)")
         elif tool_name == "fetch_upcoming_games":
@@ -300,13 +299,11 @@ def build_opticodds_url(
         else:
             # URL builder returned None - provide more detailed error
             if tool_name == "fetch_live_odds":
-                has_sportsbook = "sportsbook" in args_dict and args_dict.get("sportsbook")
                 has_fixture = "fixture_id" in args_dict and args_dict.get("fixture_id")
                 has_team = "team_id" in args_dict and args_dict.get("team_id")
                 has_player = "player_id" in args_dict and args_dict.get("player_id")
                 details = []
-                if not has_sportsbook:
-                    details.append("sportsbook is missing or empty")
+                # Note: sportsbook is optional - URL builder adds defaults
                 if not (has_fixture or has_team or has_player):
                     details.append("no valid identifier (fixture_id, team_id, or player_id)")
                 
