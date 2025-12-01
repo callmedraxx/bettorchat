@@ -6,10 +6,11 @@ import asyncio
 import logging
 import json
 from datetime import datetime
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Tuple
 import httpx
 from sqlalchemy.orm import Session
 from sqlalchemy import and_
+from sqlalchemy.exc import IntegrityError
 
 from app.core.database import SessionLocal
 from app.core.config import settings
@@ -120,16 +121,16 @@ class NFLFixturePollingService:
             "broadcast": fixture_data.get("broadcast"),
         }
     
-    def store_fixture(self, db: Session, fixture_data: Dict[str, Any]) -> NFLFixture:
+    def store_fixture(self, db: Session, fixture_data: Dict[str, Any]) -> Tuple[NFLFixture, bool]:
         """
-        Store or update a fixture in the database.
+        Store or update a fixture in the database using upsert pattern.
         
         Args:
             db: Database session
             fixture_data: Complete fixture data from OpticOdds API
             
         Returns:
-            NFLFixture instance
+            Tuple of (NFLFixture instance, is_new: bool)
         """
         fixture_id = fixture_data.get("id")
         if not fixture_id:
@@ -138,11 +139,11 @@ class NFLFixturePollingService:
         # Extract fields for indexing
         fields = self.extract_fixture_fields(fixture_data)
         
-        # Check if fixture already exists
-        existing = db.query(NFLFixture).filter(NFLFixture.id == fixture_id).first()
-        
         # SQLAlchemy's JSON/JSONB types handle dict serialization automatically
         stored_data = fixture_data
+        
+        # Try to find existing fixture first
+        existing = db.query(NFLFixture).filter(NFLFixture.id == fixture_id).first()
         
         if existing:
             # Update existing fixture
@@ -150,17 +151,33 @@ class NFLFixturePollingService:
                 setattr(existing, key, value)
             existing.fixture_data = stored_data
             existing.updated_at = datetime.utcnow()
-            db.flush()
-            return existing
+            return existing, False
         else:
-            # Create new fixture
-            new_fixture = NFLFixture(
-                fixture_data=stored_data,
-                **fields
-            )
-            db.add(new_fixture)
-            db.flush()
-            return new_fixture
+            # Try to create new fixture
+            # If it fails due to duplicate key (race condition), fetch and update
+            try:
+                new_fixture = NFLFixture(
+                    fixture_data=stored_data,
+                    **fields
+                )
+                db.add(new_fixture)
+                db.flush()  # Flush to trigger any IntegrityError immediately
+                return new_fixture, True
+            except IntegrityError:
+                # Race condition: fixture was inserted by another process/thread
+                # Rollback the failed insert and fetch the existing one
+                db.rollback()
+                existing = db.query(NFLFixture).filter(NFLFixture.id == fixture_id).first()
+                if existing:
+                    # Update the existing fixture
+                    for key, value in fields.items():
+                        setattr(existing, key, value)
+                    existing.fixture_data = stored_data
+                    existing.updated_at = datetime.utcnow()
+                    return existing, False
+                else:
+                    # This shouldn't happen, but handle it
+                    raise ValueError(f"Fixture {fixture_id} not found after IntegrityError")
     
     async def poll_and_store(self) -> Dict[str, Any]:
         """
@@ -192,24 +209,63 @@ class NFLFixturePollingService:
             error_count = 0
             
             for fixture_data in fixtures:
+                fixture_id = fixture_data.get("id")
+                if not fixture_id:
+                    error_count += 1
+                    logger.warning(f"Skipping fixture with missing ID: {fixture_data}")
+                    continue
+                
                 try:
-                    existing = db.query(NFLFixture).filter(
-                        NFLFixture.id == fixture_data.get("id")
-                    ).first()
+                    # Store or update the fixture (handles upsert internally)
+                    fixture, is_new = self.store_fixture(db, fixture_data)
                     
-                    self.store_fixture(db, fixture_data)
-                    
-                    if existing:
-                        updated_count += 1
-                    else:
+                    # Track counts
+                    if is_new:
                         stored_count += 1
+                    else:
+                        updated_count += 1
+                        
+                except IntegrityError as e:
+                    # This should be rare now since store_fixture handles it, but keep as safety net
+                    error_count += 1
+                    db.rollback()
+                    logger.warning(f"Duplicate key violation for fixture {fixture_id}, attempting to update instead")
+                    
+                    # Try to update the existing fixture
+                    try:
+                        existing = db.query(NFLFixture).filter(
+                            NFLFixture.id == fixture_id
+                        ).first()
+                        if existing:
+                            # Update existing fixture
+                            fields = self.extract_fixture_fields(fixture_data)
+                            for key, value in fields.items():
+                                setattr(existing, key, value)
+                            existing.fixture_data = fixture_data
+                            existing.updated_at = datetime.utcnow()
+                            updated_count += 1
+                            error_count -= 1  # Not really an error, just a race condition
+                        else:
+                            logger.error(f"Fixture {fixture_id} not found after duplicate key error")
+                    except Exception as update_error:
+                        logger.error(f"Error updating fixture {fixture_id} after duplicate key error: {update_error}")
+                        db.rollback()
                         
                 except Exception as e:
                     error_count += 1
-                    logger.error(f"Error storing fixture {fixture_data.get('id')}: {e}", exc_info=True)
+                    # Rollback the current transaction to allow processing of remaining fixtures
+                    db.rollback()
+                    logger.error(f"Error storing fixture {fixture_id}: {e}", exc_info=True)
+                    # Continue processing other fixtures
+                    continue
             
             # Commit all changes
-            db.commit()
+            try:
+                db.commit()
+            except Exception as e:
+                db.rollback()
+                logger.error(f"Error committing fixture changes: {e}", exc_info=True)
+                raise
             
             # Remove fixtures that are no longer in the API response (optional - you may want to keep historical data)
             # For now, we'll keep all fixtures and just update them
