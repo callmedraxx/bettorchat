@@ -521,6 +521,110 @@ def fetch_live_odds(
         if not fixture_ids_list and not team_id and not player_id:
             return "Error: Must provide at least one of: fixture_id, fixtures, fixture, team_id, or player_id"
         
+        # Check if this is for NFL - if so, use database instead of API
+        is_nfl = False
+        if fixture_ids_list:
+            # Check if fixtures are NFL by querying database
+            try:
+                from app.core.database import SessionLocal
+                from app.models.nfl_fixture import NFLFixture
+                db = SessionLocal()
+                try:
+                    # Check if any fixture_id exists in NFL fixtures table
+                    nfl_fixture = db.query(NFLFixture).filter(NFLFixture.id.in_(fixture_ids_list[:1])).first()
+                    if nfl_fixture:
+                        is_nfl = True
+                        logger.info(f"[fetch_live_odds] Detected NFL fixture(s), using database instead of API")
+                finally:
+                    db.close()
+            except Exception as e:
+                logger.warning(f"[fetch_live_odds] Error checking if NFL: {e}, falling back to API")
+        
+        # For NFL, use database query instead of API
+        if is_nfl and fixture_ids_list:
+            try:
+                from app.core.odds_db_query import query_odds_from_db
+                from app.core.market_names import resolve_market_names
+                
+                # Resolve market names to market_ids if needed
+                resolved_market_ids = None
+                resolved_market_category = None
+                if resolved_market:
+                    # Try to map market names to market_category
+                    market_lower = " ".join(resolved_market).lower() if isinstance(resolved_market, list) else resolved_market.lower()
+                    if "moneyline" in market_lower or "ml" in market_lower:
+                        resolved_market_category = "moneyline"
+                    elif "spread" in market_lower or "point spread" in market_lower:
+                        resolved_market_category = "spread"
+                    elif "total" in market_lower and "team total" not in market_lower:
+                        resolved_market_category = "total"
+                    elif "team total" in market_lower:
+                        resolved_market_category = "team_total"
+                    elif "player" in market_lower:
+                        resolved_market_category = "player_prop"
+                
+                # Query database
+                result = query_odds_from_db(
+                    fixture_id=fixture_ids_list,
+                    sportsbook=resolved_sportsbook[0] if resolved_sportsbook and len(resolved_sportsbook) == 1 else None,  # For now, handle single sportsbook
+                    market=resolved_market[0] if resolved_market and len(resolved_market) == 1 else None,
+                    market_category=resolved_market_category,
+                    player_id=str(player_id) if player_id else None,
+                    team_id=str(team_id) if team_id else None,
+                    limit=1000,
+                )
+                
+                # Check if response has data
+                response_data = result.get("data", [])
+                if not response_data:
+                    return f"No odds data found in database for the specified criteria.\n\nRequest parameters:\n  - fixture_id: {fixture_ids_list}\n  - sportsbook: {resolved_sportsbook}\n  - market: {resolved_market}\n  - player_id: {player_id}\n  - team_id: {team_id}\n\nPossible reasons:\n- The fixture(s) may not have odds stored yet (odds are updated every 24 hours)\n- The sportsbook(s) may not have odds for this fixture\n- Try different sportsbooks or check if the fixture exists"
+                
+                # Automatically emit odds data to SSE stream (only if stream_output=True)
+                if stream_output:
+                    session = session_id or "default"
+                    try:
+                        if result and result.get("data"):
+                            odds_stream_manager.push_odds_sync(session, result)
+                    except Exception as emit_error:
+                        # Don't fail the whole request if emit fails
+                        pass
+                
+                # Create summary
+                fixture_count = len(response_data)
+                summary_parts = [f"Found odds for {fixture_count} fixture(s) from database."]
+                
+                if response_data and len(response_data) > 0:
+                    first_fixture = response_data[0]
+                    if isinstance(first_fixture, dict):
+                        home_team = first_fixture.get("home_team_display", "Home")
+                        away_team = first_fixture.get("away_team_display", "Away")
+                        summary_parts.append(f"Match: {away_team} vs {home_team}.")
+                
+                json_response = " ".join(summary_parts)
+                
+                # Store in database for retrieval
+                session = session_id or _current_session_id.get() or "default"
+                import time
+                temp_tool_call_id = f"temp_{session}_{int(time.time() * 1000)}"
+                try:
+                    save_tool_result_async(
+                        tool_call_id=temp_tool_call_id,
+                        session_id=session,
+                        tool_name="fetch_live_odds",
+                        full_result=json_response,
+                        structured_data=result
+                    )
+                    store_tool_result(temp_tool_call_id, json_response)
+                except Exception as store_error:
+                    logger.warning(f"[fetch_live_odds] Failed to queue tool result save: {store_error}")
+                
+                return json_response
+                
+            except Exception as db_error:
+                logger.error(f"[fetch_live_odds] Error querying database: {db_error}", exc_info=True)
+                # Fall through to API call as fallback
+                logger.info(f"[fetch_live_odds] Falling back to OpticOdds API due to database error")
+        
         # If no market is specified and we have fixture_ids and sportsbooks, fetch available markets and choose one
         if not resolved_market and fixture_ids_list and resolved_sportsbook:
             try:
@@ -977,7 +1081,7 @@ def fetch_player_props(
     player_id: Optional[str] = None,
     league_id: Optional[str] = None,
 ) -> str:
-    """Fetch player proposition odds using OpticOdds /fixtures/player-results and player markets.
+    """Fetch player proposition odds using database (for NFL) or OpticOdds API (for other leagues).
     
     Args:
         fixture_id: Specific fixture ID (string ID)
@@ -990,8 +1094,6 @@ def fetch_player_props(
         Formatted string with player prop odds from multiple sportsbooks
     """
     try:
-        client = get_client()
-        
         # Extract fixture_id from fixture object if provided
         resolved_fixture_id = None
         resolved_league_id = league_id
@@ -1010,6 +1112,88 @@ def fetch_player_props(
         # Use provided fixture_id if fixture object not provided
         if not resolved_fixture_id:
             resolved_fixture_id = extract_fixture_id(fixture_id)
+        
+        # Check if this is for NFL - if so, use database
+        is_nfl = False
+        if resolved_fixture_id:
+            try:
+                from app.core.database import SessionLocal
+                from app.models.nfl_fixture import NFLFixture
+                db = SessionLocal()
+                try:
+                    nfl_fixture = db.query(NFLFixture).filter(NFLFixture.id == resolved_fixture_id).first()
+                    if nfl_fixture:
+                        is_nfl = True
+                        logger.info(f"[fetch_player_props] Detected NFL fixture, using database")
+                finally:
+                    db.close()
+            except Exception as e:
+                logger.warning(f"[fetch_player_props] Error checking if NFL: {e}, falling back to API")
+        
+        # For NFL, use database query
+        if is_nfl and resolved_fixture_id:
+            try:
+                from app.core.odds_db_query import query_odds_from_db
+                
+                # Query database for player props
+                result = query_odds_from_db(
+                    fixture_id=[resolved_fixture_id],
+                    market_category="player_prop",
+                    player_id=str(player_id) if player_id else None,
+                    limit=1000,
+                )
+                
+                # Format response similar to OpticOdds API format
+                response_data = result.get("data", [])
+                if not response_data:
+                    return f"No player prop odds found in database for fixture {resolved_fixture_id}."
+                
+                # Format player props from database result
+                formatted_lines = []
+                formatted_lines.append("\nPlayer Prop Odds from Database:")
+                
+                for fixture_data in response_data:
+                    odds_list = fixture_data.get("odds", [])
+                    if not odds_list:
+                        continue
+                    
+                    # Group by player
+                    players_dict = {}
+                    for odds_entry in odds_list:
+                        player_id = odds_entry.get("player_id")
+                        if not player_id:
+                            continue
+                        
+                        if player_id not in players_dict:
+                            players_dict[player_id] = {
+                                "player_name": odds_entry.get("selection", "Unknown"),
+                                "props": []
+                            }
+                        
+                        players_dict[player_id]["props"].append({
+                            "market": odds_entry.get("market", ""),
+                            "name": odds_entry.get("name", ""),
+                            "sportsbook": odds_entry.get("sportsbook", ""),
+                            "price": odds_entry.get("price"),
+                            "points": odds_entry.get("points"),
+                            "selection_line": odds_entry.get("selection_line"),
+                        })
+                    
+                    # Format output
+                    for player_id, player_data in players_dict.items():
+                        formatted_lines.append(f"\n{player_data['player_name']}:")
+                        for prop in player_data["props"]:
+                            price_str = f"{prop['price']:+d}" if prop.get("price") else "N/A"
+                            line_str = f" ({prop['selection_line']})" if prop.get("selection_line") else ""
+                            formatted_lines.append(f"• {prop['market']} - {prop['name']}{line_str}: {price_str} ({prop['sportsbook']})")
+                
+                return "\n".join(formatted_lines) if formatted_lines else "No player prop odds found in database."
+            except Exception as db_error:
+                logger.error(f"[fetch_player_props] Error querying database: {db_error}", exc_info=True)
+                # Fall through to API call
+        
+        # For non-NFL or if database query failed, use API
+        client = get_client()
         
         # Get player results/markets
         params = {}

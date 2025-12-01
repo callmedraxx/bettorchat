@@ -1,0 +1,266 @@
+"""
+NFL Odds API endpoints.
+Provides endpoints for fetching NFL odds stored in the database.
+Returns data in the same format as OpticOdds API.
+"""
+import logging
+from datetime import datetime
+from typing import Optional, List, Dict, Any
+from fastapi import APIRouter, HTTPException, Query
+from sqlalchemy.orm import Session
+from sqlalchemy import or_, and_
+
+from app.core.database import SessionLocal
+from app.models.nfl_odds import NFLOdds
+from app.models.nfl_fixture import NFLFixture
+
+logger = logging.getLogger(__name__)
+
+router = APIRouter()
+
+
+@router.get(
+    "/nfl/odds",
+    summary="Get NFL Odds",
+    description="""
+    Get NFL odds from the database in the same format as OpticOdds API.
+    
+    This endpoint returns odds that are stored locally, allowing fast queries
+    with various filters. The response format matches the OpticOdds API structure.
+    
+    **Query Parameters:**
+    - `fixture_id`: Filter by specific fixture ID (can specify multiple)
+    - `sportsbook`: Filter by sportsbook name (e.g., BetMGM, FanDuel)
+    - `market_id`: Filter by market ID (e.g., moneyline, point_spread, total_points)
+    - `market`: Filter by market name (e.g., Moneyline, Point Spread)
+    - `market_category`: Filter by market category: 'moneyline', 'spread', 'total', 'team_total', 'player_prop', 'other'
+    - `market_type`: Alias for market_category (same functionality)
+    - `player_id`: Filter by player ID
+    - `team_id`: Filter by team ID
+    - `selection`: Filter by selection name (partial match)
+    - `normalized_selection`: Filter by normalized selection name
+    - `is_main`: Filter by whether this is the main line (true/false)
+    - `price_min`: Filter by minimum price (e.g., -200)
+    - `price_max`: Filter by maximum price (e.g., 200)
+    - `points_min`: Filter by minimum points/spread value
+    - `points_max`: Filter by maximum points/spread value
+    - `limit`: Maximum number of results to return (default: 1000)
+    - `offset`: Number of results to skip (default: 0)
+    - `group_by_fixture`: Group results by fixture (default: false)
+    
+    **Response Format:**
+    The response matches the OpticOdds API format when `group_by_fixture=true`:
+    ```json
+    {
+      "data": [
+        {
+          "id": "202512029BE1BA5B",
+          "odds": [
+            {
+              "id": "37240-37430-25-48:betmgm:moneyline:new_england_patriots",
+              "sportsbook": "BetMGM",
+              "market": "Moneyline",
+              ...
+            }
+          ]
+        }
+      ],
+      "page": 1,
+      "total_pages": 1
+    }
+    ```
+    
+    When `group_by_fixture=false`, returns flat list of odds entries.
+    """,
+    tags=["nfl-odds"]
+)
+async def get_nfl_odds(
+    fixture_id: Optional[List[str]] = Query(None, description="Filter by fixture ID (can specify multiple)"),
+    sportsbook: Optional[str] = Query(None, description="Filter by sportsbook name"),
+    market_id: Optional[str] = Query(None, description="Filter by market ID (e.g., moneyline, point_spread, total_points)"),
+    market: Optional[str] = Query(None, description="Filter by market name (e.g., Moneyline, Point Spread)"),
+    market_category: Optional[str] = Query(None, description="Filter by market category: moneyline, spread, total, team_total, player_prop, other"),
+    market_type: Optional[str] = Query(None, description="Alias for market_category (same functionality)"),
+    player_id: Optional[str] = Query(None, description="Filter by player ID"),
+    team_id: Optional[str] = Query(None, description="Filter by team ID"),
+    selection: Optional[str] = Query(None, description="Filter by selection name (partial match)"),
+    normalized_selection: Optional[str] = Query(None, description="Filter by normalized selection name"),
+    is_main: Optional[bool] = Query(None, description="Filter by whether this is the main line"),
+    price_min: Optional[int] = Query(None, description="Filter by minimum price"),
+    price_max: Optional[int] = Query(None, description="Filter by maximum price"),
+    points_min: Optional[float] = Query(None, description="Filter by minimum points/spread value"),
+    points_max: Optional[float] = Query(None, description="Filter by maximum points/spread value"),
+    limit: int = Query(1000, ge=1, le=10000, description="Maximum number of results"),
+    offset: int = Query(0, ge=0, description="Number of results to skip"),
+    group_by_fixture: bool = Query(False, description="Group results by fixture (matches OpticOdds API format)")
+):
+    """
+    Get NFL odds from database with various filters.
+    
+    Returns odds in the same format as OpticOdds API when group_by_fixture=true.
+    """
+    db = SessionLocal()
+    try:
+        # Build query
+        query = db.query(NFLOdds)
+        
+        # Apply filters
+        if fixture_id:
+            if isinstance(fixture_id, list):
+                query = query.filter(NFLOdds.fixture_id.in_(fixture_id))
+            else:
+                query = query.filter(NFLOdds.fixture_id == fixture_id)
+        if sportsbook:
+            query = query.filter(NFLOdds.sportsbook == sportsbook)
+        if market_id:
+            query = query.filter(NFLOdds.market_id == market_id)
+        if market:
+            query = query.filter(NFLOdds.market.ilike(f"%{market}%"))
+        # Handle market_category or market_type (they're the same)
+        market_cat = market_category or market_type
+        if market_cat:
+            query = query.filter(NFLOdds.market_category == market_cat.lower())
+        if player_id:
+            query = query.filter(NFLOdds.player_id == player_id)
+        if team_id:
+            query = query.filter(NFLOdds.team_id == team_id)
+        if selection:
+            query = query.filter(NFLOdds.selection.ilike(f"%{selection}%"))
+        if normalized_selection:
+            query = query.filter(NFLOdds.normalized_selection == normalized_selection)
+        if is_main is not None:
+            query = query.filter(NFLOdds.is_main == is_main)
+        if price_min is not None:
+            query = query.filter(NFLOdds.price >= price_min)
+        if price_max is not None:
+            query = query.filter(NFLOdds.price <= price_max)
+        if points_min is not None:
+            query = query.filter(NFLOdds.points >= points_min)
+        if points_max is not None:
+            query = query.filter(NFLOdds.points <= points_max)
+        
+        # Order by fixture_id, then by sportsbook, then by market_id
+        query = query.order_by(NFLOdds.fixture_id.asc(), NFLOdds.sportsbook.asc(), NFLOdds.market_id.asc())
+        
+        # Get total count
+        total_count = query.count()
+        
+        # Apply pagination
+        odds_entries = query.offset(offset).limit(limit).all()
+        
+        if group_by_fixture:
+            # Group by fixture to match OpticOdds API format
+            fixtures_dict: Dict[str, Dict[str, Any]] = {}
+            
+            for odds_entry in odds_entries:
+                fixture_id = odds_entry.fixture_id
+                
+                if fixture_id not in fixtures_dict:
+                    # Get fixture data
+                    fixture = db.query(NFLFixture).filter(NFLFixture.id == fixture_id).first()
+                    if fixture:
+                        fixture_dict = fixture.to_dict()
+                        fixture_dict["odds"] = []
+                        fixtures_dict[fixture_id] = fixture_dict
+                    else:
+                        # Create minimal fixture structure if not found
+                        fixtures_dict[fixture_id] = {
+                            "id": fixture_id,
+                            "odds": []
+                        }
+                
+                # Add odds entry
+                odds_dict = odds_entry.to_dict()
+                if odds_dict:
+                    fixtures_dict[fixture_id]["odds"].append(odds_dict)
+            
+            # Convert to list
+            fixture_data = list(fixtures_dict.values())
+        else:
+            # Return flat list of odds entries
+            fixture_data = []
+            for odds_entry in odds_entries:
+                odds_dict = odds_entry.to_dict()
+                if odds_dict:
+                    fixture_data.append(odds_dict)
+        
+        # Calculate total pages
+        total_pages = (total_count + limit - 1) // limit if limit > 0 else 1
+        
+        return {
+            "data": fixture_data,
+            "page": (offset // limit) + 1 if limit > 0 else 1,
+            "total_pages": total_pages
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error fetching NFL odds: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Error fetching odds: {str(e)}")
+    finally:
+        db.close()
+
+
+@router.get(
+    "/nfl/odds/fixture/{fixture_id}",
+    summary="Get NFL Odds for Fixture",
+    description="""
+    Get all odds for a specific NFL fixture.
+    
+    Returns odds in the same format as OpticOdds API (grouped by fixture).
+    """,
+    tags=["nfl-odds"]
+)
+async def get_nfl_odds_for_fixture(
+    fixture_id: str,
+    sportsbook: Optional[str] = Query(None, description="Filter by sportsbook name"),
+    market_id: Optional[str] = Query(None, description="Filter by market ID")
+):
+    """
+    Get all odds for a specific NFL fixture.
+    """
+    db = SessionLocal()
+    try:
+        # Get fixture data
+        fixture = db.query(NFLFixture).filter(NFLFixture.id == fixture_id).first()
+        
+        if not fixture:
+            raise HTTPException(status_code=404, detail=f"Fixture with ID {fixture_id} not found")
+        
+        # Get odds for this fixture
+        query = db.query(NFLOdds).filter(NFLOdds.fixture_id == fixture_id)
+        
+        if sportsbook:
+            query = query.filter(NFLOdds.sportsbook == sportsbook)
+        if market_id:
+            query = query.filter(NFLOdds.market_id == market_id)
+        
+        # Order by sportsbook, then by market_id
+        query = query.order_by(NFLOdds.sportsbook.asc(), NFLOdds.market_id.asc())
+        
+        odds_entries = query.all()
+        
+        # Build response in OpticOdds API format
+        fixture_dict = fixture.to_dict()
+        fixture_dict["odds"] = []
+        
+        for odds_entry in odds_entries:
+            odds_dict = odds_entry.to_dict()
+            if odds_dict:
+                fixture_dict["odds"].append(odds_dict)
+        
+        return {
+            "data": [fixture_dict],
+            "page": 1,
+            "total_pages": 1
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error fetching NFL odds for fixture {fixture_id}: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Error fetching odds: {str(e)}")
+    finally:
+        db.close()
+

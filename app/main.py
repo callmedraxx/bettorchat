@@ -16,7 +16,9 @@ from app.models.tool_result import ToolResult  # Import ToolResult model to regi
 from app.models.odds_entry import OddsEntry  # Import OddsEntry model to register it
 from app.models.nfl_player import NFLPlayer  # Import NFLPlayer model to register it
 from app.models.nfl_fixture import NFLFixture  # Import NFLFixture model to register it
+from app.models.nfl_odds import NFLOdds  # Import NFLOdds model to register it
 from app.core.nfl_fixture_polling import nfl_fixture_polling_service
+from app.core.nfl_odds_polling import nfl_odds_polling_service
 
 # Configure logging
 logging.basicConfig(
@@ -79,14 +81,28 @@ async def lifespan(app: FastAPI):
         logger.error(f"Failed to start NFL fixture polling service: {e}", exc_info=True)
         # Don't fail startup if polling service fails
     
+    # Start NFL odds polling service
+    try:
+        await nfl_odds_polling_service.start_polling()
+        logger.info("NFL odds polling service started")
+    except Exception as e:
+        logger.error(f"Failed to start NFL odds polling service: {e}", exc_info=True)
+        # Don't fail startup if polling service fails
+    
     yield
     
-    # Shutdown - stop polling service
+    # Shutdown - stop polling services
     try:
         await nfl_fixture_polling_service.stop_polling()
         logger.info("NFL fixture polling service stopped")
     except Exception as e:
         logger.error(f"Error stopping NFL fixture polling service: {e}", exc_info=True)
+    
+    try:
+        await nfl_odds_polling_service.stop_polling()
+        logger.info("NFL odds polling service stopped")
+    except Exception as e:
+        logger.error(f"Error stopping NFL odds polling service: {e}", exc_info=True)
 
 
 app = FastAPI(

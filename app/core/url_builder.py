@@ -425,6 +425,12 @@ def build_opticodds_url_from_tool_call(tool_name: str, tool_args: Dict[str, Any]
         ("league_id" in tool_args and str(tool_args.get("league_id", "")).lower() in ["nfl", "367"])
     )
     
+    # Check if this is for NFL odds - if so, use local endpoint instead of OpticOdds proxy
+    is_nfl_odds = (
+        (tool_name == "fetch_live_odds" or tool_name == "fetch_player_props") and
+        ("fixture_id" in params or "fixture_id" in tool_args)
+    )
+    
     # Build the proxy URL instead of direct OpticOdds URL
     # This allows the frontend to call through the backend to avoid CORS issues
     # For NFL fixtures, use local endpoint instead
@@ -443,6 +449,44 @@ def build_opticodds_url_from_tool_call(tool_name: str, tool_args: Dict[str, Any]
             
             # Build local endpoint URL
             proxy_url = f"{settings.API_V1_STR}/nfl/fixtures"
+        elif is_nfl_odds:
+            # Use local NFL odds endpoint
+            # Format: /api/v1/nfl/odds?params...
+            proxy_params = {}
+            # Map parameters to our endpoint format
+            if "fixture_id" in params:
+                if isinstance(params["fixture_id"], list):
+                    proxy_params["fixture_id"] = params["fixture_id"]
+                else:
+                    proxy_params["fixture_id"] = [params["fixture_id"]]
+            if "sportsbook" in params:
+                # Convert to proper format (capitalize first letter)
+                sportsbook_list = params["sportsbook"] if isinstance(params["sportsbook"], list) else [params["sportsbook"]]
+                # Map lowercase to proper case (e.g., "draftkings" -> "DraftKings")
+                sportsbook_map = {
+                    "draftkings": "DraftKings",
+                    "fanduel": "FanDuel",
+                    "betmgm": "BetMGM",
+                    "caesars": "Caesars",
+                    "betrivers": "BetRivers"
+                }
+                resolved_sportsbooks = [sportsbook_map.get(sb.lower(), sb.title()) for sb in sportsbook_list]
+                if len(resolved_sportsbooks) == 1:
+                    proxy_params["sportsbook"] = resolved_sportsbooks[0]
+            if "market" in params:
+                market_list = params["market"] if isinstance(params["market"], list) else [params["market"]]
+                if len(market_list) == 1:
+                    proxy_params["market"] = market_list[0]
+            if "player_id" in params:
+                proxy_params["player_id"] = params["player_id"]
+            if "team_id" in params:
+                proxy_params["team_id"] = params["team_id"]
+            
+            # Always group by fixture for OpticOdds API format
+            proxy_params["group_by_fixture"] = "true"
+            
+            # Build local endpoint URL
+            proxy_url = f"{settings.API_V1_STR}/nfl/odds"
         else:
             # Build query parameters for the proxy endpoint
             # We'll pass all params except the API key (proxy will add it)

@@ -5,7 +5,7 @@ from fastapi import APIRouter
 
 # Import routers here as you add them
 # from app.api.v1.endpoints import chat, auth, etc.
-from app.api.v1.endpoints import example_stream, agent, fixtures, opticodds_proxy, nfl_fixtures
+from app.api.v1.endpoints import example_stream, agent, fixtures, opticodds_proxy, nfl_fixtures, nfl_odds
 
 api_router = APIRouter()
 
@@ -44,6 +44,12 @@ api_router.include_router(
 api_router.include_router(
     nfl_fixtures.router,
     tags=["nfl-fixtures"]
+)
+
+# NFL Odds endpoints
+api_router.include_router(
+    nfl_odds.router,
+    tags=["nfl-odds"]
 )
 
 # Admin endpoints
