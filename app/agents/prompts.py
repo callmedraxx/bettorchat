@@ -9,12 +9,29 @@ except ImportError:
 
 
 def get_current_datetime_string() -> str:
-    """Generate current date/time string for system prompt in EST."""
-    tz = ZoneInfo("America/New_York")
-    now = datetime.now(tz)
+    """Generate current date/time string for system prompt in EST and UTC."""
+    tz_est = ZoneInfo("America/New_York")
+    tz_utc = ZoneInfo("UTC")
+    now_est = datetime.now(tz_est)
+    now_utc = datetime.now(tz_utc)
     
-    return f"""Date: {now.strftime('%A, %B %d, %Y')} | Time: {now.strftime('%I:%M %p %Z')}
-Today={now.strftime('%B %d, %Y')} | Tomorrow={(now + timedelta(days=1)).strftime('%B %d, %Y')}"""
+    # Calculate "tonight" range in UTC (from now EST to end of day EST, converted to UTC)
+    # Convert current EST time to UTC (this is the start of "tonight")
+    now_est_as_utc = now_est.astimezone(tz_utc)
+    # End of today in EST (23:59:59)
+    end_of_today_est = now_est.replace(hour=23, minute=59, second=59, microsecond=0)
+    # Convert to UTC
+    end_of_today_utc = end_of_today_est.astimezone(tz_utc)
+    # Start of tomorrow in EST (00:00:00) - this is when "tonight" ends
+    start_of_tomorrow_est = (now_est + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+    # Convert to UTC
+    start_of_tomorrow_utc = start_of_tomorrow_est.astimezone(tz_utc)
+    
+    return f"""Date: {now_est.strftime('%A, %B %d, %Y')} | Time: {now_est.strftime('%I:%M %p %Z')}
+Today (EST)={now_est.strftime('%B %d, %Y')} | Tomorrow (EST)={(now_est + timedelta(days=1)).strftime('%B %d, %Y')}
+Current UTC: {now_utc.strftime('%Y-%m-%d %H:%M:%S UTC')}
+For "tonight" queries: Use start_date_after="{now_est_as_utc.strftime('%Y-%m-%dT%H:%M:%SZ')}" and start_date_before="{start_of_tomorrow_utc.strftime('%Y-%m-%dT%H:%M:%SZ')}"
+⚠️ CRITICAL: Fixtures are stored in UTC. "Tonight" in EST may span two UTC dates. Always use UTC datetime range for queries."""
 
 
 SPORTS_BETTING_INSTRUCTIONS = """Sports Betting Advisor - ZERO-LATENCY MODE
@@ -54,8 +71,12 @@ TEAM ODDS (e.g., "Lions odds"):
 └─ Not found? → build_opticodds_url(tool_name="fetch_live_odds", team_id="lions") → STOP
 
 LEAGUE GAMES (e.g., "NFL games", "show me nfl games for tonight"):
-└─ build_opticodds_url(tool_name="fetch_upcoming_games", league="nfl", start_date_after="TODAY_UTC") → STOP
-⚠️ For "tonight" or "today" queries, use start_date_after with today's date in UTC (from system prompt)
+└─ build_opticodds_url(tool_name="fetch_upcoming_games", league="nfl", start_date_after="TONIGHT_START_UTC", start_date_before="TONIGHT_END_UTC") → STOP
+⚠️ CRITICAL TIMEZONE HANDLING: 
+   - Fixtures are stored in UTC in the database
+   - "Tonight" in EST may span two UTC dates (e.g., Dec 1st 8PM EST = Dec 2nd 01:00 UTC)
+   - Use the UTC datetime range from system prompt (start_date_after and start_date_before)
+   - Example: If system prompt shows "For 'tonight' queries: start_date_after='2025-12-02T01:00:00Z'", use that EXACT value
 ⚠️ NEVER call fetch_upcoming_games - just build the URL directly
 
 🔧 TOOL PARAMETERS:
@@ -108,9 +129,10 @@ User: "stephen curry props"
 
 ✅ FAST (1 tool, <2 sec):
 User: "NFL games today" or "show me nfl games for tonight"
-[build_opticodds_url(tool_name="fetch_upcoming_games", league="nfl", start_date_after="TODAY_UTC", start_date_before="TOMORROW_UTC")]
+[build_opticodds_url(tool_name="fetch_upcoming_games", league="nfl", start_date_after="2025-12-02T01:00:00Z", start_date_before="2025-12-02T05:00:00Z")]
 "Sent."
-⚠️ For "tonight" queries, calculate today's date in UTC from system prompt and use start_date_after/start_date_before
+⚠️ CRITICAL: Use the EXACT UTC datetime values from system prompt for "tonight" queries
+⚠️ "Tonight" in EST (Dec 1st 6PM-11:59PM) = Dec 2nd 00:00-04:59 UTC (games stored in UTC!)
 ⚠️ NEVER call fetch_upcoming_games - just build URL directly
 
 ❌ SLOW (DON'T DO THIS):
