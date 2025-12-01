@@ -15,6 +15,8 @@ from app.models import Fixture  # Import models to register them
 from app.models.tool_result import ToolResult  # Import ToolResult model to register it
 from app.models.odds_entry import OddsEntry  # Import OddsEntry model to register it
 from app.models.nfl_player import NFLPlayer  # Import NFLPlayer model to register it
+from app.models.nfl_fixture import NFLFixture  # Import NFLFixture model to register it
+from app.core.nfl_fixture_polling import nfl_fixture_polling_service
 
 # Configure logging
 logging.basicConfig(
@@ -57,8 +59,34 @@ async def lifespan(app: FastAPI):
         except Exception as conn_error:
             logger.error(f"Database connection error: {conn_error}")
             # Don't raise - let the app start and handle DB errors at runtime
+    
+    # Pre-warm agent cache for faster first response
+    try:
+        from app.agents.agent import create_betting_agent
+        logger.info("Pre-warming agent cache for faster responses...")
+        # Create agent instance in background to cache it
+        # This avoids agent creation overhead on first request
+        agent = create_betting_agent(use_cache=True)
+        logger.info("Agent cache pre-warmed successfully")
+    except Exception as e:
+        logger.warning(f"Failed to pre-warm agent cache: {e} (this is non-critical)")
+    
+    # Start NFL fixture polling service
+    try:
+        await nfl_fixture_polling_service.start_polling()
+        logger.info("NFL fixture polling service started")
+    except Exception as e:
+        logger.error(f"Failed to start NFL fixture polling service: {e}", exc_info=True)
+        # Don't fail startup if polling service fails
+    
     yield
-    # Shutdown
+    
+    # Shutdown - stop polling service
+    try:
+        await nfl_fixture_polling_service.stop_polling()
+        logger.info("NFL fixture polling service stopped")
+    except Exception as e:
+        logger.error(f"Error stopping NFL fixture polling service: {e}", exc_info=True)
 
 
 app = FastAPI(

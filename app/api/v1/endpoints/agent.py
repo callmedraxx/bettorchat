@@ -4,6 +4,7 @@ Agent API endpoints.
 import asyncio
 import json
 import logging
+import time
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
@@ -27,6 +28,11 @@ except ImportError:
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
+
+# Simple in-memory cache for common queries (to reduce model inference time)
+# Using string annotation for forward reference since ChatResponse is defined later
+_query_cache: Dict[str, Tuple["ChatResponse", float]] = {}
+_cache_ttl: float = 60.0  # Cache for 60 seconds
 
 
 class ChatMessage(BaseModel):
@@ -65,12 +71,24 @@ async def chat(request: ChatRequest):
     logger.info(f"[chat] REQUEST RECEIVED - session_id: {session_id}, messages: {message_count}, last_message: {last_message}...")
     
     try:
-        # Clear cache to ensure fresh agent with latest model and tools
-        from app.agents.agent import clear_agent_cache
-        clear_agent_cache()
+        # Check cache for identical queries (only for single-message requests to avoid context issues)
+        if message_count == 1 and request.messages:
+            cache_key = request.messages[0].content.lower().strip()
+            current_time = time.time()
+            
+            # Check if we have a cached response that's still valid
+            if cache_key in _query_cache:
+                cached_response, cache_timestamp = _query_cache[cache_key]
+                if (current_time - cache_timestamp) < _cache_ttl:
+                    logger.info(f"[chat] Returning cached response for query: {cache_key[:50]}...")
+                    return cached_response
+                else:
+                    # Remove expired cache entry
+                    del _query_cache[cache_key]
         
         # Use cached agent instance for faster response (reuses agent, only creates once)
-        # Note: Cache is cleared above to ensure fresh agent
+        # Don't clear cache on every request - this causes significant latency overhead
+        # Cache is only cleared when model/prompt changes (via admin endpoint or restart)
         agent = create_betting_agent(use_cache=True)
         
         # Convert request messages to the format expected by the agent
@@ -97,7 +115,20 @@ async def chat(request: ChatRequest):
         ]
         
         logger.info(f"[chat] Successfully processed chat request for thread_id: {thread_id}, response_messages: {len(formatted_messages)}")
-        return ChatResponse(messages=formatted_messages)
+        
+        response = ChatResponse(messages=formatted_messages)
+        
+        # Cache the response for single-message requests (common queries)
+        if message_count == 1 and request.messages:
+            cache_key = request.messages[0].content.lower().strip()
+            _query_cache[cache_key] = (response, time.time())
+            # Limit cache size to prevent memory issues
+            if len(_query_cache) > 100:
+                # Remove oldest entries
+                oldest_key = min(_query_cache.keys(), key=lambda k: _query_cache[k][1])
+                del _query_cache[oldest_key]
+        
+        return response
     except (BadRequestError, APIError) as e:
         # Handle Anthropic API errors gracefully
         error_traceback = traceback.format_exc()
@@ -291,23 +322,45 @@ async def chat_stream(request: ChatRequest):
             import uuid
             from datetime import datetime
             from app.agents.tools.betting_tools import _current_session_id
-            from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
             from app.core.config import settings
             
-            # Use AsyncPostgresSaver for async streaming operations
-            # This is the proper async version that supports aget_tuple
-            async_checkpointer_cm = AsyncPostgresSaver.from_conn_string(settings.DATABASE_URL)
-            async_checkpointer = await async_checkpointer_cm.__aenter__()
+            # For streaming in local environment, use MemorySaver (simpler, no PostgreSQL needed)
+            # In production with PostgreSQL, AsyncPostgresSaver can be used if available
+            checkpointer = None
             
-            # Setup tables if needed (only first time)
+            # Try to use AsyncPostgresSaver only if available and DATABASE_URL is configured
             try:
-                await async_checkpointer.setup()
-                logger.info("[chat/stream] AsyncPostgresSaver initialized and tables created/verified")
-            except Exception as setup_error:
-                logger.warning(f"[chat/stream] AsyncPostgresSaver setup failed (tables may already exist): {setup_error}")
+                from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
+                has_async_postgres = True
+            except ImportError:
+                has_async_postgres = False
+                logger.info("[chat/stream] AsyncPostgresSaver not available, using MemorySaver for local development")
             
-            logger.info(f"[chat/stream] Using AsyncPostgresSaver for persistent state")
-            agent = create_betting_agent(checkpointer=async_checkpointer)
+            if has_async_postgres and settings.DATABASE_URL and "postgres" in settings.DATABASE_URL.lower():
+                try:
+                    # Try to use AsyncPostgresSaver for production PostgreSQL
+                    async_checkpointer_cm = AsyncPostgresSaver.from_conn_string(settings.DATABASE_URL)
+                    checkpointer = await async_checkpointer_cm.__aenter__()
+                    
+                    # Setup tables if needed (only first time)
+                    try:
+                        await checkpointer.setup()
+                        logger.info("[chat/stream] AsyncPostgresSaver initialized and tables created/verified")
+                    except Exception as setup_error:
+                        logger.warning(f"[chat/stream] AsyncPostgresSaver setup failed (tables may already exist): {setup_error}")
+                    
+                    logger.info(f"[chat/stream] Using AsyncPostgresSaver for persistent state")
+                except Exception as e:
+                    logger.warning(f"[chat/stream] Failed to initialize AsyncPostgresSaver: {e}")
+                    logger.info("[chat/stream] Falling back to MemorySaver for local development")
+                    checkpointer = None  # Will use MemorySaver default
+            else:
+                logger.info("[chat/stream] Using MemorySaver for local development (no PostgreSQL connection needed)")
+                checkpointer = None  # Will use MemorySaver default
+            
+            # Create agent - use_cache=False for streaming to avoid conflicts
+            # MemorySaver will be used automatically if checkpointer is None
+            agent = create_betting_agent(checkpointer=checkpointer, use_cache=False)
             
             # Convert request messages to the format expected by the agent
             messages = [{"role": msg.role, "content": msg.content} for msg in request.messages]
@@ -927,7 +980,8 @@ async def chat_stream(request: ChatRequest):
             error_data = {
                 "type": "error", 
                 "message": user_message,
-                "error_type": error_type
+                "error_type": error_type,
+                "error_details": str(e) if 'e' in locals() else "Unknown error"
             }
             yield f"data: {json.dumps(error_data)}\n\n"
     

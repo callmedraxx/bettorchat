@@ -240,31 +240,60 @@ def build_opticodds_url_from_tool_call(tool_name: str, tool_args: Dict[str, Any]
             if has_player:
                 params["player_id"] = str(tool_args["player_id"])
         elif has_player:
-            # Only player_id specified - OpticOdds API requires at least fixture_id or team_id
-            # Return None - URL would be invalid without fixture/team context
-            return None
+            # Only player_id specified - valid for player props (API only requires sportsbook + player_id)
+            params["player_id"] = str(tool_args["player_id"])
     
     elif tool_name == "fetch_upcoming_games":
+        # Check if this is for NFL - if so, we'll use the local endpoint
+        is_nfl = False
+        league_value = None
+        if "league" in tool_args and tool_args["league"]:
+            league_value = str(tool_args["league"]).lower()
+            is_nfl = league_value == "nfl"
+        elif "league_id" in tool_args and tool_args["league_id"]:
+            league_value = str(tool_args["league_id"]).lower()
+            is_nfl = league_value == "nfl" or league_value == "367"  # NFL league ID is 367
+        
         # Priority: fixture_id (most specific) > league/league_id + team_id + dates > league/league_id + dates > league/league_id
         if "fixture_id" in tool_args and tool_args["fixture_id"]:
             # Most specific - single fixture
-            params["fixture_id"] = str(tool_args["fixture_id"])
+            if is_nfl:
+                # For NFL, use local endpoint with id parameter
+                params["id"] = str(tool_args["fixture_id"])
+            else:
+                params["fixture_id"] = str(tool_args["fixture_id"])
         else:
-            # Use league filter (prefer league_id over league name)
-            if "league_id" in tool_args and tool_args["league_id"]:
-                params["league"] = str(tool_args["league_id"])
-            elif "league" in tool_args and tool_args["league"]:
-                params["league"] = str(tool_args["league"])
+            if is_nfl:
+                # For NFL, map to local endpoint parameters
+                # Local endpoint uses: id, home_team, away_team, status, season_year, season_week, 
+                # start_date_from, start_date_to, etc.
+                # Note: team_id from OpticOdds needs to be converted to team name lookup
+                # For now, we'll use the league filter and let the endpoint handle it
+                pass  # League is already handled by the endpoint path
+            else:
+                # Use league filter (prefer league_id over league name) for non-NFL
+                if "league_id" in tool_args and tool_args["league_id"]:
+                    params["league"] = str(tool_args["league_id"])
+                elif "league" in tool_args and tool_args["league"]:
+                    params["league"] = str(tool_args["league"])
             
-            # Add team filter if specified
+            # Add team filter if specified (for non-NFL, use team_id; for NFL, we'd need team name)
             if "team_id" in tool_args and tool_args["team_id"]:
-                params["team_id"] = str(tool_args["team_id"])
+                if not is_nfl:
+                    params["team_id"] = str(tool_args["team_id"])
+                # For NFL, team_id would need to be converted to team name - skip for now
             
             # Add date filters if specified
             if "start_date_after" in tool_args and tool_args["start_date_after"]:
-                params["start_date_after"] = str(tool_args["start_date_after"])
+                if is_nfl:
+                    params["start_date_from"] = str(tool_args["start_date_after"])
+                else:
+                    params["start_date_after"] = str(tool_args["start_date_after"])
             if "start_date_before" in tool_args and tool_args["start_date_before"]:
-                params["start_date_before"] = str(tool_args["start_date_before"])
+                if is_nfl:
+                    params["start_date_to"] = str(tool_args["start_date_before"])
+                else:
+                    params["start_date_before"] = str(tool_args["start_date_before"])
     
     elif tool_name == "fetch_player_props":
         # Player props uses same endpoint as fetch_live_odds (/fixtures/odds)
@@ -388,29 +417,51 @@ def build_opticodds_url_from_tool_call(tool_name: str, tool_args: Dict[str, Any]
         if "league" not in params and "id" not in params:
             return None  # Need at least league or team_id
     
+    # Check if this is for NFL fixtures - if so, use local endpoint instead of OpticOdds proxy
+    is_nfl_fixtures = (
+        tool_name == "fetch_upcoming_games" and 
+        ("league" in params and str(params["league"]).lower() == "nfl") or
+        ("league" in tool_args and str(tool_args.get("league", "")).lower() == "nfl") or
+        ("league_id" in tool_args and str(tool_args.get("league_id", "")).lower() in ["nfl", "367"])
+    )
+    
     # Build the proxy URL instead of direct OpticOdds URL
     # This allows the frontend to call through the backend to avoid CORS issues
+    # For NFL fixtures, use local endpoint instead
     try:
-        # Build query parameters for the proxy endpoint
-        # We'll pass all params except the API key (proxy will add it)
-        proxy_params = {}
-        for key, value in params.items():
-            if key != "key":  # Don't include API key in proxy URL
+        from app.core.config import settings
+        
+        if is_nfl_fixtures:
+            # Use local NFL fixtures endpoint
+            # Format: /api/v1/nfl/fixtures?params...
+            proxy_params = {}
+            for key, value in params.items():
                 if isinstance(value, list):
-                    # For lists, we'll pass them as multiple query params
                     proxy_params[key] = value
                 else:
                     proxy_params[key] = value
-        
-        # Build the proxy endpoint URL
-        # Format: /api/v1/opticodds/proxy/{endpoint}?params...
-        from app.core.config import settings
-        
-        # Remove leading slash from endpoint if present
-        endpoint_clean = endpoint.lstrip("/")
-        
-        # Build proxy URL with query parameters
-        proxy_url = f"{settings.API_V1_STR}/opticodds/proxy/{endpoint_clean}"
+            
+            # Build local endpoint URL
+            proxy_url = f"{settings.API_V1_STR}/nfl/fixtures"
+        else:
+            # Build query parameters for the proxy endpoint
+            # We'll pass all params except the API key (proxy will add it)
+            proxy_params = {}
+            for key, value in params.items():
+                if key != "key":  # Don't include API key in proxy URL
+                    if isinstance(value, list):
+                        # For lists, we'll pass them as multiple query params
+                        proxy_params[key] = value
+                    else:
+                        proxy_params[key] = value
+            
+            # Build the proxy endpoint URL
+            # Format: /api/v1/opticodds/proxy/{endpoint}?params...
+            # Remove leading slash from endpoint if present
+            endpoint_clean = endpoint.lstrip("/")
+            
+            # Build proxy URL with query parameters
+            proxy_url = f"{settings.API_V1_STR}/opticodds/proxy/{endpoint_clean}"
         
         # Build query string from params
         if proxy_params:

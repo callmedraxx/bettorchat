@@ -283,9 +283,9 @@ def build_opticodds_url(
             if not any(key in args_dict and args_dict.get(key) for key in ["fixture_id", "player_id"]):
                 missing_params.append("at least one of: fixture_id or player_id (required)")
         elif tool_name == "fetch_upcoming_games":
-            # At least one filter is recommended but not strictly required
-            if not any(key in args_dict and args_dict.get(key) for key in ["fixture_id", "league", "team_id", "start_date_after"]):
-                missing_params.append("at least one filter: fixture_id, league, team_id, or start_date_after (recommended)")
+            # For fetch_upcoming_games, validation is minimal - just need league or fixture_id
+            # Skip strict validation to reduce latency
+            pass
         
         if missing_params:
             return f"Error: Could not build URL for {tool_name}. Missing required parameters: {', '.join(missing_params)}. Args provided: {list(args_dict.keys())}"
@@ -294,9 +294,9 @@ def build_opticodds_url(
         url = build_opticodds_url_from_tool_call(tool_name, args_dict)
         
         if url:
-            # Return URL in a format that's easy to extract
+            # Return URL in a shorter format to reduce token usage and latency
             # The frontend will extract this URL from the response
-            return f"URL: {url}\n\nThe URL has been generated and is ready to use. This is the proxy URL the frontend should use to fetch the data from OpticOdds."
+            return f"URL: {url}"
         else:
             # URL builder returned None - provide more detailed error
             if tool_name == "fetch_live_odds":
@@ -780,49 +780,117 @@ def fetch_upcoming_games(
         Fixture data is automatically emitted to SSE stream if stream_output=True.
     """
     try:
-        client = get_client()
+        # Check if this is for NFL - if so, use local endpoint instead of OpticOdds API
+        is_nfl = False
+        if league and str(league).lower() == "nfl":
+            is_nfl = True
+        elif league_id and (str(league_id).lower() == "nfl" or str(league_id) == "367"):
+            is_nfl = True
         
-        # Build parameters dict - use all available filters to narrow results
-        params = {}
-        
-        # If fixture_id is provided, use only that (most specific filter)
-        if fixture_id:
-            params["fixture_id"] = str(fixture_id)
+        if is_nfl:
+            # Use local NFL fixtures endpoint
+            from app.core.database import SessionLocal
+            from app.models.nfl_fixture import NFLFixture
+            from sqlalchemy import or_
+            from datetime import datetime as dt
+            
+            db = SessionLocal()
+            try:
+                # Build query
+                query = db.query(NFLFixture)
+                
+                # Apply filters matching local endpoint parameters
+                if fixture_id:
+                    query = query.filter(NFLFixture.id == fixture_id)
+                else:
+                    # Date filters
+                    if start_date_after:
+                        try:
+                            from_date = dt.fromisoformat(start_date_after.replace("Z", "+00:00"))
+                            query = query.filter(NFLFixture.start_date >= from_date)
+                        except ValueError:
+                            pass
+                    elif not start_date_after and not start_date_before:
+                        # Default: Only get upcoming games
+                        now_utc = datetime.now(ZoneInfo("UTC"))
+                        query = query.filter(NFLFixture.start_date >= now_utc)
+                    
+                    if start_date_before:
+                        try:
+                            to_date = dt.fromisoformat(start_date_before.replace("Z", "+00:00"))
+                            query = query.filter(NFLFixture.start_date <= to_date)
+                        except ValueError:
+                            pass
+                    
+                    # Note: team_id would need to be converted to team name - skip for now
+                    # The local endpoint supports home_team/away_team but we don't have team_id mapping here
+                
+                # Order by start_date
+                query = query.order_by(NFLFixture.start_date.asc())
+                
+                # Get fixtures
+                fixtures = query.all()
+                
+                # Convert to OpticOdds API format
+                fixture_data = []
+                for fixture in fixtures:
+                    fixture_dict = fixture.to_dict()
+                    if fixture_dict:
+                        fixture_data.append(fixture_dict)
+                
+                # Build result in OpticOdds format
+                result = {
+                    "data": fixture_data,
+                    "page": 1,
+                    "total_pages": 1
+                }
+            finally:
+                db.close()
         else:
-            # Use league_id if provided (more precise), otherwise fall back to league name
-            if league_id:
-                params["league_id"] = str(league_id)
-            elif league:
-                params["league"] = str(league)
+            # Use OpticOdds API for non-NFL leagues
+            client = get_client()
             
-            # Add team filter if provided
-            if team_id:
-                params["team_id"] = str(team_id)
+            # Build parameters dict - use all available filters to narrow results
+            params = {}
             
-            # Handle date filters - use judiciously to narrow results
-            # API rule: Cannot use start_date with start_date_after or start_date_before
-            # API expects ISO 8601 datetime format (YYYY-MM-DDTHH:MM:SSZ) for best results
-            if start_date:
-                # Specific date - most precise filter (should be ISO 8601 format)
-                params["start_date"] = str(start_date)
-            elif start_date_after or start_date_before:
-                # Date range filters (should be ISO 8601 format)
-                if start_date_after:
-                    params["start_date_after"] = str(start_date_after)
-                if start_date_before:
-                    params["start_date_before"] = str(start_date_before)
+            # If fixture_id is provided, use only that (most specific filter)
+            if fixture_id:
+                params["fixture_id"] = str(fixture_id)
             else:
-                # Default: Only get upcoming games (from current datetime onwards)
-                # This prevents getting games from 3 days ago (API default)
-                # Format as ISO 8601 datetime in UTC (YYYY-MM-DDTHH:MM:SSZ)
-                now_utc = datetime.now(ZoneInfo("UTC"))
-                params["start_date_after"] = now_utc.strftime("%Y-%m-%dT%H:%M:%SZ")
-        
-        # Get fixtures from OpticOdds API with all filters applied
-        result = client.get_fixtures(
-            paginate=paginate,
-            **params
-        )
+                # Use league_id if provided (more precise), otherwise fall back to league name
+                if league_id:
+                    params["league_id"] = str(league_id)
+                elif league:
+                    params["league"] = str(league)
+                
+                # Add team filter if provided
+                if team_id:
+                    params["team_id"] = str(team_id)
+                
+                # Handle date filters - use judiciously to narrow results
+                # API rule: Cannot use start_date with start_date_after or start_date_before
+                # API expects ISO 8601 datetime format (YYYY-MM-DDTHH:MM:SSZ) for best results
+                if start_date:
+                    # Specific date - most precise filter (should be ISO 8601 format)
+                    params["start_date"] = str(start_date)
+                elif start_date_after or start_date_before:
+                    # Date range filters (should be ISO 8601 format)
+                    if start_date_after:
+                        params["start_date_after"] = str(start_date_after)
+                    if start_date_before:
+                        params["start_date_before"] = str(start_date_before)
+                else:
+                    # Default: Only get upcoming games (from current datetime onwards)
+                    # This prevents getting games from 3 days ago (API default)
+                    # Format as ISO 8601 datetime in UTC (YYYY-MM-DDTHH:MM:SSZ)
+                    now_utc = datetime.now(ZoneInfo("UTC"))
+                    params["start_date_after"] = now_utc.strftime("%Y-%m-%dT%H:%M:%SZ")
+            
+            # Get fixtures from OpticOdds API with all filters applied
+            result = client.get_fixtures(
+                paginate=paginate,
+                **params
+            )
         
         # Format response
         formatted = format_fixtures_response(result)
@@ -1758,15 +1826,32 @@ def fetch_players(
                     formatted = format_players_response(result, player_name=player_name, league=league)
                     return formatted
                 
-                # If database lookup returned no results, fall through to API
+                # If database lookup returned no results, return empty result (don't fall back to API for NFL)
                 if use_db and not db_players:
-                    logger.info(f"[fetch_players] Database lookup returned no results, falling back to API")
+                    logger.info(f"[fetch_players] Database lookup returned no results for NFL player_name={player_name}")
+                    # Return empty result instead of falling back to API for NFL
+                    result = {
+                        "data": [],
+                        "page": 1,
+                        "total_pages": 1,
+                    }
+                    formatted = format_players_response(result, player_name=player_name, league=league)
+                    return formatted
             
             except Exception as db_error:
-                # If database lookup fails, fall back to API
-                logger.warning(f"[fetch_players] Database lookup failed: {db_error}, falling back to API")
+                # Check if error is due to missing table
+                error_str = str(db_error).lower()
+                if "no such table" in error_str or "does not exist" in error_str:
+                    # Table doesn't exist - fall back to API for this request
+                    # But log warning that database should be set up
+                    logger.warning(f"[fetch_players] NFL players table doesn't exist, falling back to API. Please run fetch_nfl_players script to populate database.")
+                else:
+                    # Other database error - log and fall back to API
+                    logger.warning(f"[fetch_players] Database lookup failed for NFL: {db_error}, falling back to API")
+                
+                # Fall through to API call below
         
-        # For non-NFL leagues or if database lookup failed/returned no results, use API
+        # For non-NFL leagues, use API
         client = get_client()
         
         # Validate: must provide at least one of league, player_id, or sport

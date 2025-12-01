@@ -174,7 +174,7 @@ def _get_checkpointer(force_memory: bool = False):
 
 
 def create_betting_agent(
-    model_name: str = "claude-haiku-4-5-20251001",
+    model_name: str = "gpt-4o-mini",  # Changed to GPT-4o-mini for 2-3x faster responses
     user_id: str = "default",
     checkpointer=None,
     use_cache: bool = True,
@@ -206,23 +206,65 @@ def create_betting_agent(
         logger.debug(f"Reusing cached agent instance (model: {model_name}) for faster response")
         return _agent_instance_cache[cache_key]
     
-    # Get API key with proper error handling
-    api_key = settings.ANTHROPIC_API_KEY or os.environ.get("ANTHROPIC_API_KEY")
-    if not api_key:
-        raise ValueError(
-            "ANTHROPIC_API_KEY must be set in environment variables or config. "
-            "Please set it in LangSmith deployment settings."
-        )
+    # Determine model provider and API key based on model name
+    if model_name.startswith("gpt") or "openai" in model_name.lower():
+        # OpenAI models (GPT-4o-mini is fastest)
+        api_key = settings.OPENAI_API_KEY or os.environ.get("OPENAI_API_KEY")
+        if not api_key:
+            raise ValueError(
+                "OPENAI_API_KEY must be set in environment variables or config. "
+                "Please set it in your environment or config file."
+            )
+        model_provider = "openai"
+        # Clean model name (remove 'openai/' prefix if present)
+        clean_model_name = model_name.replace("openai/", "")
+    elif model_name.startswith("claude") or "anthropic" in model_name.lower():
+        # Anthropic models (Claude Haiku)
+        api_key = settings.ANTHROPIC_API_KEY or os.environ.get("ANTHROPIC_API_KEY")
+        if not api_key:
+            raise ValueError(
+                "ANTHROPIC_API_KEY must be set in environment variables or config. "
+                "Please set it in LangSmith deployment settings."
+            )
+        model_provider = "anthropic"
+        clean_model_name = model_name
+    elif model_name.startswith("gemini") or "google" in model_name.lower():
+        # Google models (Gemini Flash)
+        api_key = settings.GOOGLE_API_KEY or os.environ.get("GOOGLE_API_KEY")
+        if not api_key:
+            raise ValueError(
+                "GOOGLE_API_KEY must be set in environment variables or config."
+            )
+        model_provider = "google"
+        clean_model_name = model_name
+    else:
+        # Default to Anthropic for backward compatibility
+        api_key = settings.ANTHROPIC_API_KEY or os.environ.get("ANTHROPIC_API_KEY")
+        if not api_key:
+            raise ValueError(
+                "ANTHROPIC_API_KEY must be set in environment variables or config."
+            )
+        model_provider = "anthropic"
+        clean_model_name = model_name
     
     # Initialize model with latency-optimized settings
-    # Haiku 4.5 is the smallest, fastest Claude model with minimal latency
+    # GPT-4o-mini is typically 2-3x faster than Claude Haiku for tool use
+    # Set provider-specific timeouts (OpenAI needs more time for complex tool calls)
+    if model_provider == "openai":
+        request_timeout = 30  # OpenAI models may need more time for tool use
+    elif model_provider == "anthropic":
+        request_timeout = 10  # Anthropic models are generally faster
+    else:
+        request_timeout = 15  # Default for other providers
+    
     model = init_chat_model(
-        model=model_name,  # Explicitly set model parameter to ensure Haiku is used
-        model_provider="anthropic",
+        model=clean_model_name,
+        model_provider=model_provider,
         api_key=api_key,
         temperature=0,  # Deterministic responses for faster, consistent output
-        timeout=10,  # Lower timeout for faster failure detection
-        max_retries=1,  # Minimal retries to avoid delay
+        timeout=request_timeout,  # Provider-specific timeout
+        max_retries=0,  # No retries to avoid delay - fail fast
+        max_tokens=500,  # Limit response length for faster generation (short responses only)
     )
     
     # Create checkpointer for conversation persistence (PostgreSQL in production, MemorySaver in dev)

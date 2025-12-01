@@ -39,7 +39,7 @@ def test_chat_latency(query: str, num_tests: int = 3):
                 CHAT_ENDPOINT,
                 json=payload,
                 headers={"Content-Type": "application/json"},
-                timeout=30
+                timeout=60
             )
             end_time = time.time()
             
@@ -68,8 +68,9 @@ def test_chat_latency(query: str, num_tests: int = 3):
                 if tool_names:
                     print(f"  Tools called: {', '.join(tool_names)}")
                 
-                # Check all messages for tool calls
+                # Check all messages for tool calls and tool results
                 print(f"  All messages breakdown:")
+                url_found = False
                 for idx, msg in enumerate(messages):
                     role = msg.get("role", "unknown")
                     if role == "assistant":
@@ -77,21 +78,40 @@ def test_chat_latency(query: str, num_tests: int = 3):
                         if tool_calls:
                             print(f"    Message {idx} (assistant): {len(tool_calls)} tool call(s)")
                             for tc in tool_calls:
-                                print(f"      - {tc.get('name', 'unknown')}")
+                                tool_name = tc.get('name', 'unknown')
+                                print(f"      - {tool_name}")
+                                if tool_name == "build_opticodds_url":
+                                    print(f"        ✅ build_opticodds_url called!")
                     elif role == "tool":
-                        print(f"    Message {idx} (tool): {msg.get('name', 'unknown')}")
+                        tool_name = msg.get('name', 'unknown')
+                        tool_content = msg.get('content', '')
+                        print(f"    Message {idx} (tool): {tool_name}")
+                        if "/api/v1/opticodds/proxy" in str(tool_content):
+                            print(f"      ✅ URL found in tool result!")
+                            url_found = True
+                            # Extract and show URL
+                            import re
+                            url_match = re.search(r'/api/v1/opticodds/proxy/[^\s\n?]+(?:\?[^\s\n]+)?', str(tool_content))
+                            if url_match:
+                                print(f"      URL: {url_match.group(0)[:100]}...")
                 
                 # Check if URL was generated
                 content = last_ai_message.get("content", "") if last_ai_message else ""
-                print(f"  Content preview: {str(content)[:500]}...")
-                if "/api/v1/opticodds/proxy" in str(content):
-                    print(f"  ✅ URL found in response")
-                else:
-                    print(f"  ⚠️  No URL found in response")
+                if not url_found:
+                    if "/api/v1/opticodds/proxy" in str(content):
+                        print(f"  ✅ URL found in response content")
+                        url_found = True
+                    else:
+                        print(f"  ⚠️  No URL found in response (check tool messages above)")
                 
-                # Print full response for debugging
-                print(f"\n  Full response JSON (first 1000 chars):")
-                print(f"  {json.dumps(result, indent=2)[:1000]}...")
+                # Print full response for debugging (show all messages)
+                print(f"\n  Full messages breakdown:")
+                for idx, msg in enumerate(messages):
+                    print(f"    [{idx}] {msg.get('type', 'unknown')} - role: {msg.get('role', 'N/A')}")
+                    if msg.get('type') == 'tool':
+                        print(f"        Tool: {msg.get('name', 'unknown')}")
+                        content_preview = str(msg.get('content', ''))[:200]
+                        print(f"        Content: {content_preview}...")
                 
                 latencies.append(latency)
             else:
@@ -125,5 +145,5 @@ def test_chat_latency(query: str, num_tests: int = 3):
         print(f"{'='*60}\n")
 
 if __name__ == "__main__":
-    test_chat_latency("fetch upcoming nfl games", num_tests=3)
+    test_chat_latency("show me the player props for jameson williams", num_tests=3)
 

@@ -57,6 +57,7 @@ class Settings(BaseSettings):
     TAVILY_API_KEY: Optional[str] = Field(default=None)
     OPENAI_API_KEY: Optional[str] = Field(default=None)
     ANTHROPIC_API_KEY: Optional[str] = Field(default=None)
+    GOOGLE_API_KEY: Optional[str] = Field(default=None)  # For Gemini models
     
     # OpticOdds API
     OPTICODDS_API_KEY: Optional[str] = Field(default="f8a621e8-2583-4e97-a769-e70c99acdb85")
