@@ -1,9 +1,11 @@
 """
 Python REPL tool for data extraction and filtering from betting tool results.
+Improved version with better error handling, security, and functionality.
 """
 import io
 import sys
 import logging
+import traceback
 from typing import Any, Dict, Optional
 from contextlib import redirect_stdout, redirect_stderr
 from langchain.tools import tool
@@ -63,12 +65,18 @@ class PythonREPL:
     def run(self, command: str) -> str:
         """Execute Python code and return the output.
         
+        Supports both statements (exec) and expressions (eval).
+        If the command is a single expression, it will be evaluated and the result returned.
+        
         Args:
-            command: Python code to execute
+            command: Python code to execute (can be statement or expression)
             
         Returns:
             Output from executing the code, or error message
         """
+        if not command or not command.strip():
+            return "Error: Empty command provided."
+        
         # Capture stdout and stderr
         stdout_capture = io.StringIO()
         stderr_capture = io.StringIO()
@@ -78,29 +86,80 @@ class PythonREPL:
         
         try:
             with redirect_stdout(stdout_capture), redirect_stderr(stderr_capture):
-                # Try to compile and execute
+                # Try to determine if it's an expression or statement
+                # First, try to compile as expression (eval mode)
+                is_expression = False
+                result_value = None
+                
                 try:
-                    # Compile to check for syntax errors
-                    code = compile(command, '<string>', 'exec')
-                    # Use globals directly (not a copy) so variables persist across calls
-                    exec(code, self.globals)
-                except SyntaxError as e:
-                    return f"Syntax Error: {str(e)}\nLine {e.lineno}: {e.text}"
+                    # Try compiling as expression first
+                    code_obj = compile(command.strip(), '<string>', 'eval')
+                    is_expression = True
+                except SyntaxError:
+                    # Not an expression, try as statement
+                    try:
+                        code_obj = compile(command, '<string>', 'exec')
+                        is_expression = False
+                    except SyntaxError as e:
+                        # Syntax error in both modes
+                        return f"Syntax Error: {str(e)}\nLine {e.lineno if hasattr(e, 'lineno') else '?'}: {getattr(e, 'text', 'N/A')}"
+                
+                # Execute the code
+                try:
+                    if is_expression:
+                        # Evaluate expression and capture result
+                        result_value = eval(code_obj, self.globals)
+                    else:
+                        # Execute statement
+                        exec(code_obj, self.globals)
                 except Exception as e:
-                    return f"Error: {str(e)}\nType: {type(e).__name__}"
+                    # Get full traceback for better error messages
+                    exc_type = type(e).__name__
+                    exc_msg = str(e)
+                    tb_str = ''.join(traceback.format_exception(type(e), e, e.__traceback__))
+                    
+                    # Return concise but informative error
+                    error_msg = f"Error: {exc_msg}\nType: {exc_type}"
+                    # Include traceback if it's not too long
+                    if len(tb_str) < 2000:
+                        error_msg += f"\n\nTraceback:\n{tb_str}"
+                    
+                    return error_msg
             
             # Get output
             stdout_output = stdout_capture.getvalue()
             stderr_output = stderr_capture.getvalue()
             
+            # Handle stderr output
             if stderr_output:
-                output = f"Error output:\n{stderr_output}\n\nStandard output:\n{stdout_output}"
+                output = f"Warning/Error output:\n{stderr_output}"
+                if stdout_output:
+                    output += f"\n\nStandard output:\n{stdout_output}"
                 # Truncate if too large
                 if len(output) > MAX_OUTPUT_SIZE:
                     truncated_size = len(output) - MAX_OUTPUT_SIZE
                     output = output[:MAX_OUTPUT_SIZE] + f"\n\n[Output truncated: {truncated_size} characters removed. Consider filtering or summarizing the data.]"
                 return output
             
+            # Handle expression result
+            if is_expression and result_value is not None:
+                # Format the result nicely
+                try:
+                    import json
+                    # Try to serialize as JSON if possible
+                    if isinstance(result_value, (dict, list, str, int, float, bool, type(None))):
+                        result_str = json.dumps(result_value, indent=2, default=str)
+                    else:
+                        result_str = repr(result_value)
+                except Exception:
+                    result_str = repr(result_value)
+                
+                # Combine with stdout if any
+                if stdout_output:
+                    return f"{stdout_output}\n\nResult: {result_str}"
+                return result_str
+            
+            # Handle stdout output
             if stdout_output:
                 # Truncate if too large
                 if len(stdout_output) > MAX_OUTPUT_SIZE:
@@ -112,7 +171,10 @@ class PythonREPL:
             return "Code executed successfully (no output)."
             
         except Exception as e:
-            return f"Unexpected error: {str(e)}"
+            # Catch-all for unexpected errors
+            error_msg = f"Unexpected error: {str(e)}\nType: {type(e).__name__}"
+            logger.error(f"[PythonREPL] Unexpected error: {e}", exc_info=True)
+            return error_msg
 
 
 # Create a global REPL instance
@@ -130,13 +192,16 @@ def python_repl(command: str, data: Optional[str] = None) -> str:
     - Transform or aggregate data
     - Perform calculations on betting data
     - Fetch large tool results from the database (instead of filesystem)
+    - Evaluate expressions and get return values
     
     The code runs in a safe environment with access to common Python libraries
     like json, re, datetime, and collections. If pandas is available, it will
     also be accessible.
     
     IMPORTANT: 
-    - Use print() to display results you want to see
+    - You can use print() to display results OR return values from expressions
+    - Single expressions (like "2 + 2" or "len(data)") will automatically return their result
+    - Statements (like "x = 5" or "for item in data: print(item)") use print() for output
     - The 'data' parameter can contain JSON strings or other data to process
     - Variables persist across multiple calls in the same session
     - When you see a truncated tool result message mentioning "/large_tool_results/toolu_XXXXX",
@@ -149,6 +214,10 @@ def python_repl(command: str, data: Optional[str] = None) -> str:
       * Aggregate data (counts, averages, etc.)
     
     Examples:
+        # Simple expression (automatically returns result)
+        python_repl(command="2 + 2")  # Returns: 4
+        python_repl(command="len([1, 2, 3])")  # Returns: 3
+        
         # Extract specific fields from a JSON result
         python_repl(
             command='''
@@ -160,13 +229,12 @@ for game in result.get("games", []):
             data='{"games": [{"home_team": "Lakers", "away_team": "Warriors"}]}'
         )
         
-        # Filter results
+        # Filter results (expression returns value)
         python_repl(
             command='''
 import json
 result = json.loads(data)
-filtered = [g for g in result.get("games", []) if g.get("sport") == "NBA"]
-print(json.dumps(filtered, indent=2))
+json.dumps([g for g in result.get("games", []) if g.get("sport") == "NBA"], indent=2)
             ''',
             data='{"games": [...]}'
         )

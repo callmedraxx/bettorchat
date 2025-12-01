@@ -1,0 +1,8 @@
+# IMPORTANT: To protect your database from deletion
+# 
+# NEVER run: docker-compose down -v
+# This will DELETE all your data!
+#
+# Instead use: docker-compose down
+# This keeps your volumes safe.
+

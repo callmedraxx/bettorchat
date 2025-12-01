@@ -56,6 +56,39 @@ class OpticOddsClient:
         
         self._request_times.append(now)
     
+    def build_url(self, endpoint: str, **kwargs) -> str:
+        """Build the full URL for an API request.
+        
+        Args:
+            endpoint: API endpoint (e.g., "/fixtures/odds")
+            **kwargs: Request parameters (params, json, etc.)
+        
+        Returns:
+            Full URL string with query parameters
+        """
+        from urllib.parse import urlencode
+        
+        # Build base URL
+        url = f"{self.BASE_URL}{endpoint}"
+        
+        # Handle query parameters
+        params = kwargs.get("params", {})
+        if params:
+            # Handle list parameters (multiple values for same key)
+            query_parts = []
+            for key, value in params.items():
+                if isinstance(value, list):
+                    for v in value:
+                        query_parts.append((key, str(v)))
+                else:
+                    query_parts.append((key, str(value)))
+            
+            if query_parts:
+                query_string = urlencode(query_parts)
+                url = f"{url}?{query_string}"
+        
+        return url
+    
     def _request(
         self, 
         method: str, 
@@ -205,60 +238,168 @@ class OpticOddsClient:
         return self._request("GET", "/sportsbooks/active", params=params, paginate=paginate)
     
     def get_markets(self, paginate: bool = False) -> Dict[str, Any]:
-        """Get all markets.
+        """Get all market types (market type definitions).
+        
+        This endpoint returns all available market types with their IDs, names, selections, and notes.
+        Use this to understand which market types are available and their structure.
         
         Args:
             paginate: If True, fetch all pages of results
         """
         return self._request("GET", "/markets", paginate=paginate)
     
-    def get_active_markets(self, paginate: bool = False) -> Dict[str, Any]:
+    def get_active_markets(
+        self,
+        fixture_id: Optional[Union[str, int]] = None,
+        sportsbook: Optional[Union[str, int, List[Union[str, int]]]] = None,
+        paginate: bool = False
+    ) -> Dict[str, Any]:
         """Get active markets.
         
         Args:
+            fixture_id: Optional fixture ID to filter markets available for this fixture
+            sportsbook: Optional sportsbook name/ID or list of sportsbooks to filter markets available for these sportsbooks
             paginate: If True, fetch all pages of results
         """
-        return self._request("GET", "/markets/active", paginate=paginate)
+        params = {}
+        if fixture_id:
+            params["fixture_id"] = str(fixture_id)
+        if sportsbook:
+            if isinstance(sportsbook, list):
+                # Handle multiple sportsbooks - use list to create multiple query params
+                sportsbooks = [str(sb).strip().lower() for sb in sportsbook[:5]]
+                params["sportsbook"] = sportsbooks
+            else:
+                params["sportsbook"] = str(sportsbook).strip().lower()
+        return self._request("GET", "/markets/active", params=params, paginate=paginate)
     
     # Squads endpoints
     def get_teams(
         self, 
-        league: Optional[Union[str, int]] = None, 
-        sport: Optional[Union[str, int]] = None,
+        sport: Optional[Union[str, int, List[Union[str, int]]]] = None,
+        league: Optional[Union[str, int, List[Union[str, int]]]] = None, 
+        id: Optional[Union[str, int, List[Union[str, int]]]] = None,
+        numerical_id: Optional[Union[str, int, List[Union[str, int]]]] = None,
+        base_id: Optional[Union[str, int, List[Union[str, int]]]] = None,
+        division: Optional[Union[str, List[str]]] = None,
+        conference: Optional[Union[str, List[str]]] = None,
+        include_statsperform_id: Optional[bool] = None,
         paginate: bool = False
     ) -> Dict[str, Any]:
         """Get teams.
         
+        IMPORTANT: Team IDs are unique per league. The same team can have different IDs 
+        across leagues. For example, Manchester City FC has:
+        - 578E2130DC1B for UEFA - Champions League
+        - E69E55FFCF65 for England - Premier League
+        
+        base_id provides a way to link the same team across leagues, but for some sports 
+        like tennis where different providers are used across leagues, this might not be 
+        100% reliable.
+        
         Args:
-            league: League name (e.g., 'nba') or ID
-            sport: Sport name (e.g., 'basketball') or ID
+            sport: Sport name (e.g., 'football') or ID, or list of sports. Optional - league is usually enough.
+            league: League name (e.g., 'nfl', 'nba') or ID, or list of leagues. RECOMMENDED - use this to get 
+                   league-specific team IDs.
+            id: Team ID or list of team IDs. If provided, returns data for that specific team (including inactive).
+            numerical_id: Numerical team ID or list of numerical IDs.
+            base_id: Base team ID or list of base IDs (for linking same team across leagues).
+            division: Division name or list of divisions (e.g., 'West', 'East' for NBA).
+            conference: Conference name or list of conferences (e.g., 'NFC', 'AFC' for NFL).
+            include_statsperform_id: If True, includes StatsPerform IDs in response.
             paginate: If True, fetch all pages of results
+        
+        Note: Must pass at least one of: sport, league, or id.
         """
         params = {}
-        if league:
-            params["league"] = str(league)
+        
+        # Handle arrays for parameters that support multiple values
         if sport:
-            params["sport"] = str(sport)
+            if isinstance(sport, list):
+                for s in sport:
+                    params.setdefault("sport", []).append(str(s))
+            else:
+                params["sport"] = str(sport)
+        
+        if league:
+            if isinstance(league, list):
+                for l in league:
+                    params.setdefault("league", []).append(str(l))
+            else:
+                params["league"] = str(league)
+        
+        if id:
+            if isinstance(id, list):
+                for i in id:
+                    params.setdefault("id", []).append(str(i))
+            else:
+                params["id"] = str(id)
+        
+        if numerical_id:
+            if isinstance(numerical_id, list):
+                for nid in numerical_id:
+                    params.setdefault("numerical_id", []).append(str(nid))
+            else:
+                params["numerical_id"] = str(numerical_id)
+        
+        if base_id:
+            if isinstance(base_id, list):
+                for bid in base_id:
+                    params.setdefault("base_id", []).append(str(bid))
+            else:
+                params["base_id"] = str(base_id)
+        
+        if division:
+            if isinstance(division, list):
+                for d in division:
+                    params.setdefault("division", []).append(str(d))
+            else:
+                params["division"] = str(division)
+        
+        if conference:
+            if isinstance(conference, list):
+                for c in conference:
+                    params.setdefault("conference", []).append(str(c))
+            else:
+                params["conference"] = str(conference)
+        
+        if include_statsperform_id is not None:
+            params["include_statsperform_id"] = "true" if include_statsperform_id else "false"
+        
         return self._request("GET", "/teams", params=params, paginate=paginate)
     
     def get_players(
         self, 
+        sport: Optional[Union[str, int]] = None,
         league: Optional[Union[str, int]] = None, 
-        team: Optional[Union[str, int]] = None,
+        id: Optional[Union[str, int]] = None,
+        include_statsperform_id: Optional[bool] = None,
         paginate: bool = False
     ) -> Dict[str, Any]:
         """Get players.
         
+        IMPORTANT: Player IDs are unique per league. The same player can have different IDs 
+        across leagues. For example, Lionel Messi has different IDs for MLS vs Copa America.
+        
         Args:
-            league: League name (e.g., 'nba') or ID
-            team: Team name or ID
+            sport: Sport name (e.g., 'football') or ID. Optional - league is usually enough.
+            league: League name (e.g., 'nba', 'nfl') or ID. RECOMMENDED - use this to get 
+                   league-specific player IDs.
+            id: Player ID. If provided, returns data for that specific player (including inactive).
+            include_statsperform_id: If True, includes StatsPerform IDs in response.
             paginate: If True, fetch all pages of results
+        
+        Note: Must pass at least one of: sport, league, or id.
         """
         params = {}
+        if sport:
+            params["sport"] = str(sport)
         if league:
             params["league"] = str(league)
-        if team:
-            params["team"] = str(team)
+        if id:
+            params["id"] = str(id)
+        if include_statsperform_id is not None:
+            params["include_statsperform_id"] = "true" if include_statsperform_id else "false"
         return self._request("GET", "/players", params=params, paginate=paginate)
     
     # Fixtures endpoints

@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     
     # CORS
     BACKEND_CORS_ORIGINS: Union[List[str], str] = Field(
-        default=["http://localhost:3000", "http://localhost:8000", "https://lovable.dev"]
+        default=["http://localhost:3000", "http://localhost:8000", "https://lovable.dev", "https://bettorchat.app"]
     )
     
     @field_validator("BACKEND_CORS_ORIGINS", mode="before")

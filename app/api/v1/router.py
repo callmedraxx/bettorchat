@@ -5,7 +5,7 @@ from fastapi import APIRouter
 
 # Import routers here as you add them
 # from app.api.v1.endpoints import chat, auth, etc.
-from app.api.v1.endpoints import example_stream, agent, fixtures
+from app.api.v1.endpoints import example_stream, agent, fixtures, opticodds_proxy
 
 api_router = APIRouter()
 
@@ -32,6 +32,19 @@ api_router.include_router(
     fixtures.router,
     prefix="/fixtures",
     tags=["fixtures"]
+)
+
+# OpticOdds proxy endpoint (to avoid CORS issues)
+api_router.include_router(
+    opticodds_proxy.router,
+    tags=["opticodds"]
+)
+
+# Admin endpoints
+from app.api.v1.endpoints import admin
+api_router.include_router(
+    admin.router,
+    tags=["admin"]
 )
 
 

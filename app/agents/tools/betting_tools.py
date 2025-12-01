@@ -21,6 +21,7 @@ from app.core.fixture_stream import fixture_stream_manager
 from app.core.odds_stream import odds_stream_manager
 from app.core.tool_result_storage import store_tool_result
 from app.core.tool_result_db import save_tool_result_to_db
+from app.core.async_db_ops import save_tool_result_async, save_odds_async, save_fixtures_async
 
 # Logger for betting tools
 logger = logging.getLogger(__name__)
@@ -301,6 +302,210 @@ Your timezone preference has been set to {tz_abbr}. All times will now be displa
 
 
 @tool
+def build_opticodds_url(
+    tool_name: str,
+    sportsbook: Optional[str] = None,
+    fixture_id: Optional[str] = None,
+    team_id: Optional[str] = None,
+    player_id: Optional[str] = None,
+    market: Optional[str] = None,
+    league: Optional[str] = None,
+    start_date_after: Optional[str] = None,
+    start_date_before: Optional[str] = None,
+    **kwargs: Any
+) -> str:
+    """🚨 MANDATORY: Build and return the OpticOdds API proxy URL for a tool call.
+    
+    ⚠️ CRITICAL: You MUST call this tool BEFORE calling ANY data-fetching tool (fetch_live_odds, fetch_upcoming_games, fetch_player_props, etc.).
+    This is a HARD REQUIREMENT - the frontend needs the URL to display data.
+    
+    ❌ DO NOT call fetch_live_odds, fetch_upcoming_games, or any other data-fetching tool without first calling this tool.
+    
+    🚨 MANDATORY WORKFLOW FOR PLAYER-SPECIFIC REQUESTS:
+    When user requests odds for a specific player (e.g., "show me odds for Jameson Williams", "Jameson Williams props"):
+    ❌ WRONG: Do NOT call build_opticodds_url or fetch_live_odds without player_id
+    ❌ WRONG: Do NOT fetch all player props and then extract player info from the response
+    ✅ CORRECT WORKFLOW (MANDATORY):
+    1. FIRST: Call fetch_players(league="nfl", player_name="Jameson Williams") to get player_id
+       - For NFL, this uses fast database lookup (instant)
+       - Extract the player_id from the response (e.g., "ABC123...")
+    2. THEN: Call build_opticodds_url with player_id included
+       - Include: player_id, fixture_id (if known), sportsbook, market
+       - The URL MUST include player_id so frontend gets only that player's odds
+    3. FINALLY: Call fetch_live_odds with the same player_id
+       - Use the exact same parameters including player_id
+    
+    This tool generates the URL that the frontend should use to fetch data from OpticOdds.
+    You MUST call this tool BEFORE calling the actual data-fetching tool to send the URL to the frontend first.
+    
+    Args:
+        tool_name: Name of the tool (e.g., 'fetch_live_odds', 'fetch_upcoming_games', 'fetch_player_props')
+        sportsbook: Sportsbook name(s), comma-separated (e.g., 'draftkings,fanduel,betmgm')
+        fixture_id: Fixture ID for the game (REQUIRED for player-specific requests)
+        team_id: Team ID (optional)
+        player_id: 🚨 REQUIRED for player-specific requests. Player ID obtained from fetch_players(league=..., player_name=...).
+                   ⚠️ CRITICAL: When user requests odds for a specific player:
+                   - You MUST call fetch_players FIRST to get the player_id
+                   - Do NOT proceed without player_id - the frontend needs it in the URL
+                   - The URL will include player_id so the frontend can filter odds for that specific player only
+                   - Without player_id, the frontend will receive ALL player props, not just the requested player
+        market: Market type(s), comma-separated (e.g., 'Moneyline,Spread,Total' or 'Player Points,Player Receptions')
+        league: League name (e.g., 'nfl', 'nba')
+        base_id: Base ID for player (fastest route for specific player info). Get this from stored player data in database.
+        start_date_after: Start date filter (ISO format)
+        start_date_before: End date filter (ISO format)
+        **kwargs: Any other parameters that would be passed to the actual tool
+        
+    Returns:
+        The proxy URL string that the frontend should use to fetch the data.
+        Format: /api/v1/opticodds/proxy/{endpoint}?params...
+        
+    Example for player-specific request ("show me odds for Jameson Williams"):
+        # Step 1: Get player_id FIRST (MANDATORY - do not skip this step)
+        fetch_players(league="nfl", player_name="Jameson Williams")
+        # Returns: player_id="ABC123..." (fast database lookup for NFL)
+        
+        # Step 2: Call this tool with player_id included (MANDATORY)
+        build_opticodds_url(
+            tool_name="fetch_live_odds",
+            sportsbook="draftkings,fanduel,betmgm",
+            fixture_id="20251127E5C64DE0",  # Get from fetch_upcoming_games if not provided
+            player_id="ABC123",  # 🚨 CRITICAL: Must include player_id for player-specific requests
+            market="Player Points,Player Receptions,Player Touchdowns"
+        )
+        # Returns: "URL: /api/v1/opticodds/proxy/fixtures/odds?sportsbook=draftkings&sportsbook=fanduel&sportsbook=betmgm&fixture_id=20251127E5C64DE0&player_id=ABC123&market=Player+Points&market=Player+Receptions&market=Player+Touchdowns"
+        
+        # Step 3: THEN call the actual tool with the same parameters (including player_id)
+        fetch_live_odds(
+            sportsbook="draftkings,fanduel,betmgm",
+            fixture_id="20251127E5C64DE0",
+            player_id="ABC123",  # 🚨 CRITICAL: Must include player_id
+            market="Player Points,Player Receptions,Player Touchdowns"
+        )
+    """
+    try:
+        from app.core.url_builder import build_opticodds_url_from_tool_call
+        from app.core.market_names import resolve_market_names
+        
+        # Build args dict from explicit parameters and kwargs
+        args_dict = {}
+        if sportsbook:
+            args_dict["sportsbook"] = sportsbook
+        if fixture_id:
+            args_dict["fixture_id"] = fixture_id
+        if team_id:
+            args_dict["team_id"] = team_id
+        if player_id:
+            args_dict["player_id"] = player_id
+        if market:
+            # Resolve market names from user-friendly terms to correct API names
+            args_dict["market"] = resolve_market_names(market)
+        if league:
+            args_dict["league"] = league
+        if start_date_after:
+            args_dict["start_date_after"] = start_date_after
+        if start_date_before:
+            args_dict["start_date_before"] = start_date_before
+        
+        # Add any additional kwargs (but filter out None/empty values)
+        for key, value in kwargs.items():
+            if value is not None and value != "":
+                args_dict[key] = value
+        
+        # Handle case where AI passes tool_args as a single dict parameter (legacy support)
+        if "tool_args" in args_dict and isinstance(args_dict.get("tool_args"), dict):
+            # Extract the nested tool_args and merge with other params
+            nested_args = args_dict.pop("tool_args")
+            # Filter out None/empty values from nested args too
+            for key, value in nested_args.items():
+                if value is not None and value != "":
+                    args_dict[key] = value
+        
+        # Validate required parameters based on tool_name before building URL
+        missing_params = []
+        if tool_name == "fetch_live_odds":
+            # Requires: sportsbook AND at least one of (fixture_id, team_id, player_id)
+            if "sportsbook" not in args_dict or not args_dict.get("sportsbook"):
+                missing_params.append("sportsbook (required)")
+            if not any(key in args_dict and args_dict.get(key) for key in ["fixture_id", "team_id", "player_id"]):
+                missing_params.append("at least one of: fixture_id, team_id, or player_id (required)")
+            
+            # ⚠️ WARNING: Check for player prop markets - if user requested a specific player, player_id should be included
+            # Note: We don't block this because user might want ALL player props, not just one player
+            market = args_dict.get("market", "")
+            if market and isinstance(market, str):
+                # Check if market contains player prop markets
+                market_lower = market.lower()
+                is_player_market = (
+                    "player" in market_lower and (
+                        "points" in market_lower or
+                        "receptions" in market_lower or
+                        "touchdowns" in market_lower or
+                        "yards" in market_lower or
+                        "rushing" in market_lower or
+                        "passing" in market_lower or
+                        "receiving" in market_lower or
+                        "anytime" in market_lower or
+                        "total" in market_lower
+                    )
+                )
+                
+                if is_player_market:
+                    if "player_id" not in args_dict or not args_dict.get("player_id"):
+                        logger.warning(
+                            f"[build_opticodds_url] ⚠️ WARNING: Player prop markets detected ('{market}') but player_id is not included. "
+                            "If the user requested odds for a SPECIFIC player (e.g., 'Jameson Williams'), you MUST call fetch_players first "
+                            "to get player_id, then include it here. If the user wants ALL player props, this is correct."
+                        )
+        elif tool_name == "fetch_player_props":
+            # Requires: sportsbook AND at least one of (fixture_id, player_id)
+            if "sportsbook" not in args_dict or not args_dict.get("sportsbook"):
+                missing_params.append("sportsbook (required)")
+            if not any(key in args_dict and args_dict.get(key) for key in ["fixture_id", "player_id"]):
+                missing_params.append("at least one of: fixture_id or player_id (required)")
+        elif tool_name == "fetch_upcoming_games":
+            # At least one filter is recommended but not strictly required
+            if not any(key in args_dict and args_dict.get(key) for key in ["fixture_id", "league", "team_id", "start_date_after"]):
+                missing_params.append("at least one filter: fixture_id, league, team_id, or start_date_after (recommended)")
+        
+        if missing_params:
+            return f"Error: Could not build URL for {tool_name}. Missing required parameters: {', '.join(missing_params)}. Args provided: {list(args_dict.keys())}"
+        
+        # Build the URL using the URL builder
+        url = build_opticodds_url_from_tool_call(tool_name, args_dict)
+        
+        if url:
+            # Return URL in a format that's easy to extract
+            # The frontend will extract this URL from the response
+            return f"URL: {url}\n\nThe URL has been generated and is ready to use. This is the proxy URL the frontend should use to fetch the data from OpticOdds."
+        else:
+            # URL builder returned None - provide more detailed error
+            if tool_name == "fetch_live_odds":
+                has_sportsbook = "sportsbook" in args_dict and args_dict.get("sportsbook")
+                has_fixture = "fixture_id" in args_dict and args_dict.get("fixture_id")
+                has_team = "team_id" in args_dict and args_dict.get("team_id")
+                has_player = "player_id" in args_dict and args_dict.get("player_id")
+                details = []
+                if not has_sportsbook:
+                    details.append("sportsbook is missing or empty")
+                if not (has_fixture or has_team or has_player):
+                    details.append("no valid identifier (fixture_id, team_id, or player_id)")
+                
+                # If details is empty, parameters appear valid but URL builder failed
+                if not details:
+                    # Log the actual values for debugging
+                    logger.warning(f"[build_opticodds_url] URL builder returned None despite valid-looking parameters. sportsbook={args_dict.get('sportsbook')}, fixture_id={args_dict.get('fixture_id')}, team_id={args_dict.get('team_id')}, player_id={args_dict.get('player_id')}")
+                    details.append("URL builder validation failed (check parameter formats)")
+                
+                return f"Error: Could not build URL for {tool_name}. {'; '.join(details)}. Args provided: {list(args_dict.keys())}"
+            else:
+                return f"Error: Could not build URL for {tool_name}. Required parameters may be missing or invalid. Args provided: {list(args_dict.keys())}"
+    except Exception as e:
+        logger.error(f"[build_opticodds_url] Error building URL: {e}", exc_info=True)
+        return f"Error building URL: {str(e)}"
+
+
+@tool
 def fetch_live_odds(
     sportsbook: str,
     fixture_id: Optional[str] = None,
@@ -314,32 +519,111 @@ def fetch_live_odds(
 ) -> str:
     """Fetch live betting odds for fixtures using OpticOdds /fixtures/odds endpoint.
     
+    🚨 MANDATORY WORKFLOW FOR PLAYER-SPECIFIC REQUESTS:
+    When the user requests odds for a specific player (e.g., "show me odds for Jameson Williams", "Jameson Williams props"):
+    
+    ❌ WRONG APPROACH (DO NOT DO THIS):
+    - Do NOT call this tool without player_id
+    - Do NOT fetch all player props and then extract player info from the response
+    - Do NOT build URL without player_id - frontend will receive ALL player props, not just the requested player
+    
+    ✅ CORRECT WORKFLOW (MANDATORY - FOLLOW THIS EXACTLY):
+    1. FIRST: Call fetch_players(league="nfl", player_name="Jameson Williams") to get player_id
+       - For NFL, this uses fast database lookup (instant, no API call needed)
+       - Extract the player_id from the response (e.g., "ABC123...")
+       - If you have team info, use: fetch_teams(league="nfl", team_name="Detroit Lions") first, then fetch_players with team_id
+    2. THEN: Call build_opticodds_url with player_id included
+       - Include: player_id (REQUIRED), fixture_id (if known), sportsbook, market
+       - The URL MUST include player_id so frontend gets only that player's odds
+    3. FINALLY: Call this tool (fetch_live_odds) with the same player_id
+       - Use the exact same parameters including player_id
+       - This ensures the frontend receives odds for ONLY the requested player
+    
+    The player_id MUST be included in both the URL and this tool call so the frontend can filter odds for that specific player.
+    Do NOT try to extract player information from odds data - get the player_id first, then request odds with it.
+    
     IMPORTANT: 
     - sportsbook is REQUIRED (at least 1, max 5). Pass comma-separated string (e.g., "DraftKings,FanDuel").
     - If requesting odds for fixtures, fixture_id must be provided (up to 5 fixture_ids per request).
     - API requires at least one of: fixture_id, team_id, or player_id AND at least 1 sportsbook.
+    - For player-specific requests: ALWAYS provide player_id (obtained from fetch_players) along with fixture_id
+    - If market is not provided and fixture_id and sportsbook are provided, this tool will automatically fetch 
+      available markets for that specific fixture and sportsbook combination, then select multiple markets 
+      (at least 2-3, preferring common markets like "Moneyline", "Point Spread", "Total Points") to provide 
+      comprehensive odds coverage while reducing data volume.
     
     Args:
         sportsbook: REQUIRED. Comma-separated list of sportsbook IDs or names (max 5).
                    Example: "DraftKings,FanDuel,BetMGM"
         fixture_id: Single fixture ID or comma-separated list of fixture IDs (up to 5).
                    Example: "20251127E5C64DE0" or "20251127E5C64DE0,20251127C95F3929"
+                   REQUIRED when requesting player-specific odds (use with player_id).
         fixture: Full fixture object as JSON string (alternative to fixture_id). 
                  If provided, fixture_id will be extracted from it.
         fixtures: JSON string containing multiple full fixture objects (array, up to 5).
                  If provided, fixture_ids will be extracted and odds fetched for all.
-        market: Optional. Comma-separated list of market names (e.g., 'Moneyline,Run Line,Total Runs').
-               If not provided, returns all available markets.
-        player_id: Optional. Player ID for player prop odds.
+        market: Optional. Comma-separated list of MARKET NAMES (e.g., 'Moneyline,Player Points,Total Points').
+               ⚠️ IMPORTANT: Market names are automatically resolved from user-friendly terms to correct API names.
+               - ✅ CORRECT: Use user-friendly terms like "total points", "spread", "moneyline" - they will be automatically resolved to "Total Points", "Point Spread", "Moneyline"
+               - ✅ CORRECT: "Player Points", "Player Receptions", "Moneyline" (actual market names - also work)
+               - ❌ WRONG: "player_total", "player_yes_no", "player_only" (these are market type names, not market names)
+               - ❌ WRONG: "Total" (should be "Total Points" or just use "total points" and it will be resolved)
+               Common markets are automatically resolved - you don't need to call fetch_available_markets for common requests like "total points", "spread", "moneyline".
+               If not provided and fixture_id and sportsbook are provided, automatically fetches available markets 
+               for that specific fixture and sportsbook combination, then selects multiple markets (at least 2-3).
+               If not provided and no fixture_id, returns all available markets (not recommended - large response).
+        player_id: REQUIRED for player-specific requests. Player ID obtained from fetch_players(league=..., player_name=...).
+                   ⚠️ CRITICAL: When user requests odds for a specific player:
+                   - First call fetch_players to get the player_id
+                   - Then pass that player_id to this tool
+                   - Include player_id in build_opticodds_url so the frontend receives the correct URL
+                   Example: If user says "show me odds for Jameson Williams", do:
+                   1. fetch_players(league="nfl", player_name="Jameson Williams") → get player_id
+                   2. build_opticodds_url(..., player_id=player_id, fixture_id=...) → build URL with player_id
+                   3. fetch_live_odds(..., player_id=player_id, fixture_id=...) → fetch odds with player_id
         team_id: Optional. Team ID to filter odds for a specific team.
         session_id: Optional session identifier for SSE streaming. Defaults to "default".
         stream_output: Whether to emit odds data to SSE stream. Set to False when calling as intermediate step.
                       Defaults to True. Only set to True for the final tool call that directly answers user's request.
     
     Returns:
-        Formatted string with odds from multiple sportsbooks. Odds data is automatically emitted to SSE stream if stream_output=True.
+        Full JSON data with odds from multiple sportsbooks, including Moneyline, Point Spread/Spread, and Total Points when available.
+        The response includes a formatted summary of the odds data.
+        Spread odds are automatically included when available. Odds data is automatically emitted to SSE stream if stream_output=True.
     """
     try:
+        from app.core.market_names import resolve_market_names
+        
+        # Resolve market names from user-friendly terms to correct API names
+        if market and isinstance(market, str):
+            market = resolve_market_names(market)
+        
+        # ⚠️ WARNING: Check for player prop markets - if user requested a specific player, player_id should be included
+        # Note: We don't block this because user might want ALL player props, not just one player
+        if market and isinstance(market, str):
+            # Check if market contains player prop markets
+            market_lower = market.lower()
+            is_player_market = (
+                "player" in market_lower and (
+                    "points" in market_lower or
+                    "receptions" in market_lower or
+                    "touchdowns" in market_lower or
+                    "yards" in market_lower or
+                    "rushing" in market_lower or
+                    "passing" in market_lower or
+                    "receiving" in market_lower or
+                    "anytime" in market_lower or
+                    "total" in market_lower
+                )
+            )
+            
+            if is_player_market and not player_id:
+                logger.warning(
+                    f"[fetch_live_odds] ⚠️ WARNING: Player prop markets detected ('{market}') but player_id is not included. "
+                    "If the user requested odds for a SPECIFIC player (e.g., 'Jameson Williams'), you MUST call fetch_players first "
+                    "to get player_id, then include it here. If the user wants ALL player props, this is correct."
+                )
+        
         client = get_client()
         
         # Process sportsbook - REQUIRED, split comma-separated, limit to 5
@@ -418,6 +702,76 @@ def fetch_live_odds(
         if not fixture_ids_list and not team_id and not player_id:
             return "Error: Must provide at least one of: fixture_id, fixtures, fixture, team_id, or player_id"
         
+        # If no market is specified and we have fixture_ids and sportsbooks, fetch available markets and choose one
+        if not resolved_market and fixture_ids_list and resolved_sportsbook:
+            try:
+                # Use the first fixture_id and first sportsbook to get available markets
+                # This gets markets that are actually available for this specific fixture and sportsbook combination
+                first_fixture_id = fixture_ids_list[0]
+                first_sportsbook = resolved_sportsbook[0] if isinstance(resolved_sportsbook, list) else resolved_sportsbook
+                
+                logger.info(f"[fetch_live_odds] No market specified, fetching available markets for fixture_id={first_fixture_id}, sportsbook={first_sportsbook}")
+                markets_result = client.get_active_markets(
+                    fixture_id=first_fixture_id,
+                    sportsbook=first_sportsbook
+                )
+                markets_data = markets_result.get("data", [])
+                
+                if isinstance(markets_data, list) and len(markets_data) > 0:
+                    # Prefer common markets in this order: Moneyline, Point Spread/Spread, Total Points/Total
+                    # Always include Spread if available - it's a key market users want to see
+                    preferred_markets = ["Moneyline", "Point Spread", "Spread", "Total Points", "Total", "Run Line", "Total Runs"]
+                    
+                    # Extract market names from the response
+                    available_market_names = []
+                    for market in markets_data:
+                        market_name = market.get("name")
+                        if market_name:
+                            available_market_names.append(market_name)
+                    
+                    # Select multiple preferred markets (at least 2-3 common markets)
+                    # Always prioritize including Spread/Point Spread if available
+                    chosen_markets = []
+                    
+                    # First, ensure we get Spread if available (high priority)
+                    spread_variants = ["Point Spread", "Spread"]
+                    for spread_name in spread_variants:
+                        if spread_name in available_market_names and spread_name not in chosen_markets:
+                            chosen_markets.append(spread_name)
+                            break  # Only add one spread variant
+                    
+                    # Then add other preferred markets
+                    for preferred in preferred_markets:
+                        if preferred in available_market_names and preferred not in chosen_markets:
+                            chosen_markets.append(preferred)
+                            # Select at least 2-3 markets for better coverage (including spread)
+                            if len(chosen_markets) >= 3:
+                                break
+                    
+                    # If we don't have enough preferred markets, add more from available
+                    if len(chosen_markets) < 2:
+                        for market_name in available_market_names:
+                            if market_name not in chosen_markets:
+                                chosen_markets.append(market_name)
+                                if len(chosen_markets) >= 2:
+                                    break
+                    
+                    if chosen_markets:
+                        resolved_market = chosen_markets
+                        logger.info(f"[fetch_live_odds] Selected {len(chosen_markets)} markets: {chosen_markets} from {len(available_market_names)} available markets")
+                    else:
+                        # Default to Moneyline if no markets found
+                        resolved_market = ["Moneyline"]
+                        logger.info(f"[fetch_live_odds] No markets found, defaulting to Moneyline")
+                else:
+                    # Default to Moneyline if no markets data
+                    resolved_market = ["Moneyline"]
+                    logger.info(f"[fetch_live_odds] No markets data in API response, defaulting to Moneyline")
+            except Exception as market_error:
+                # Default to Moneyline if market fetch fails
+                resolved_market = ["Moneyline"]
+                logger.warning(f"[fetch_live_odds] Error fetching available markets: {market_error}, defaulting to Moneyline")
+        
         # Build API call parameters
         api_params = {
             "sportsbook": resolved_sportsbook,
@@ -474,34 +828,85 @@ def fetch_live_odds(
                 # Don't fail the whole request if emit fails
                 pass
         
-        # Format response for frontend
-        formatted = format_odds_response(result)
+        # Get session_id early so it can be used for both odds storage and tool result storage
+        session = session_id or _current_session_id.get() or "default"
+        
+        # Store odds entries in normalized database table for efficient querying (non-blocking)
+        # This allows the agent to query/filter large odds datasets efficiently
+        # Run in background thread so it doesn't block the agent
+        try:
+            import uuid
+            temp_tool_call_id = f"odds_{uuid.uuid4().hex[:12]}"
+            
+            # Save odds for each fixture in background
+            fixtures_data = result.get("data", [])
+            if not isinstance(fixtures_data, list):
+                fixtures_data = [fixtures_data] if fixtures_data else []
+            
+            for fixture_data in fixtures_data:
+                if isinstance(fixture_data, dict):
+                    fixture_id = fixture_data.get("id")
+                    if fixture_id:
+                        # Save in background thread - non-blocking
+                        save_odds_async(
+                            tool_call_id=temp_tool_call_id,
+                            session_id=session,
+                            fixture_id=fixture_id,
+                            odds_data=fixture_data,
+                        )
+                        logger.debug(f"Queued odds save for fixture_id={fixture_id} in background thread")
+        except Exception as odds_db_error:
+            logger.warning(f"Failed to queue odds save to database: {odds_db_error}")
+            # Don't fail the whole request if database save fails
         
         # Store full result in database for retrieval if LangGraph truncates it
         # We'll use a temporary key that can be matched when we see the tool_call_id
-        session = session_id or _current_session_id.get() or "default"
         
         # Create a temporary tool_call_id placeholder that will be replaced when we see the actual tool_call_id
         # We'll store it with a temporary ID that includes session and timestamp
         import time
         temp_tool_call_id = f"temp_{session}_{int(time.time() * 1000)}"
         
+        # Return a formatted summary instead of full JSON
+        # Create a concise summary of the odds data
+        fixture_count = len(result.get("data", [])) if isinstance(result, dict) and "data" in result else len(result) if isinstance(result, list) else 0
+        
+        if fixture_count == 0:
+            return "No odds data available for the specified criteria."
+        
+        # Create a summary message
+        summary_parts = [f"Found odds for {fixture_count} fixture(s)."]
+        
+        # Add key information from the first fixture if available
+        fixtures = result.get("data", result) if isinstance(result, dict) else result
+        if fixtures and len(fixtures) > 0:
+            first_fixture = fixtures[0] if isinstance(fixtures, list) else fixtures
+            if isinstance(first_fixture, dict):
+                home_team = first_fixture.get("home_competitors", [{}])[0].get("name", "Home") if first_fixture.get("home_competitors") else "Home"
+                away_team = first_fixture.get("away_competitors", [{}])[0].get("name", "Away") if first_fixture.get("away_competitors") else "Away"
+                summary_parts.append(f"Match: {away_team} vs {home_team}.")
+        
+        json_response = " ".join(summary_parts)
+        
         try:
             # Store in database with temporary ID (will be updated when we get the real tool_call_id)
-            save_tool_result_to_db(
+            # Pass raw API result as structured_data for efficient querying
+            # Run in background thread so it doesn't block the agent
+            save_tool_result_async(
                 tool_call_id=temp_tool_call_id,
                 session_id=session,
                 tool_name="fetch_live_odds",
-                full_result=formatted
+                full_result=json_response,
+                structured_data=result  # Pass raw API response for structured querying
             )
-            logger.debug(f"[fetch_live_odds] Stored full result in database with temp_id={temp_tool_call_id}, size={len(formatted)}")
+            logger.debug(f"[fetch_live_odds] Queued tool result save in background thread with temp_id={temp_tool_call_id}, size={len(json_response)}")
             
-            # Also store in in-memory cache as backup
-            store_tool_result(temp_tool_call_id, formatted)
+            # Also store in in-memory cache as backup (this is fast, so keep it synchronous)
+            store_tool_result(temp_tool_call_id, json_response)
         except Exception as store_error:
-            logger.warning(f"[fetch_live_odds] Failed to store full result: {store_error}")
+            logger.warning(f"[fetch_live_odds] Failed to queue tool result save: {store_error}")
         
-        return formatted
+        return json_response
     except Exception as e:
         return f"Error fetching live odds: {str(e)}"
 
@@ -607,18 +1012,21 @@ def fetch_upcoming_games(
         
         try:
             # Store in database with temporary ID (will be updated when we get the real tool_call_id)
-            save_tool_result_to_db(
+            # Pass raw API result as structured_data for efficient querying
+            # Run in background thread so it doesn't block the agent
+            save_tool_result_async(
                 tool_call_id=temp_tool_call_id,
                 session_id=session,
                 tool_name="fetch_upcoming_games",
-                full_result=formatted
+                full_result=formatted,
+                structured_data=result  # Pass raw API response for structured querying
             )
-            logger.debug(f"[fetch_upcoming_games] Stored full result in database with temp_id={temp_tool_call_id}, size={len(formatted)}")
+            logger.debug(f"[fetch_upcoming_games] Queued tool result save in background thread with temp_id={temp_tool_call_id}, size={len(formatted)}")
             
-            # Also store in in-memory cache as backup
+            # Also store in in-memory cache as backup (this is fast, so keep it synchronous)
             store_tool_result(temp_tool_call_id, formatted)
         except Exception as store_error:
-            logger.warning(f"[fetch_upcoming_games] Failed to store full result: {store_error}")
+            logger.warning(f"[fetch_upcoming_games] Failed to queue tool result save: {store_error}")
         
         # Automatically extract and emit fixture objects to frontend
         # Extract fixtures from the formatted response (from <!-- FIXTURES_DATA_START --> block)
@@ -640,13 +1048,12 @@ def fetch_upcoming_games(
                         or "default"
                     )
                     
-                    # Save fixtures to database
+                    # Save fixtures to database (non-blocking)
                     try:
-                        from app.core.fixture_storage import save_fixtures_to_db
-                        save_fixtures_to_db(effective_session_id, fixtures_list)
-                        logger.info(f"[fetch_upcoming_games] Saved {len(fixtures_list)} fixtures to database for session_id: {effective_session_id}")
+                        save_fixtures_async(effective_session_id, fixtures_list)
+                        logger.debug(f"[fetch_upcoming_games] Queued save of {len(fixtures_list)} fixtures to database in background thread for session_id: {effective_session_id}")
                     except Exception as db_error:
-                        logger.error(f"[fetch_upcoming_games] Error saving fixtures to database: {db_error}", exc_info=True)
+                        logger.error(f"[fetch_upcoming_games] Error queueing fixtures save to database: {db_error}", exc_info=True)
                     
                     # Push notification to SSE stream (instructs frontend to fetch from API)
                     print(f"[DEBUG fetch_upcoming_games] Sending notification for {len(fixtures_list)} fixtures to stream with session_id: {effective_session_id}")
@@ -1288,22 +1695,105 @@ def fetch_available_leagues(sport: Optional[str] = None) -> str:
 
 
 @tool
-def fetch_available_markets() -> str:
-    """Fetch available market types using OpticOdds /markets/active endpoint.
+def fetch_available_markets(
+    fixture_id: Optional[str] = None,
+    sportsbook: Optional[str] = None,
+) -> str:
+    """🚨 IMPORTANT: Fetch available MARKET NAMES (not market types) using OpticOdds /markets/active endpoint.
     
-    This tool returns market types that are currently available.
-    Use this to discover valid market_types parameter values (e.g., 'moneyline', 'spread', 'total').
+    ⚠️ CRITICAL: This tool returns actual MARKET NAMES that can be used directly in fetch_live_odds.
+    These are NOT market type names - they are the exact market names the API expects.
+    
+    🔑 USE THIS BEFORE REQUESTING ODDS: When you need to request odds for specific markets,
+    call this tool FIRST with the fixture_id and sportsbook to get the correct market names,
+    then use those exact market names in fetch_live_odds.
+    
+    Example workflow:
+    1. Call fetch_available_markets(fixture_id="123", sportsbook="draftkings")
+    2. Get market names like "Player Points", "Player Receptions", "Moneyline"
+    3. Use those EXACT names in fetch_live_odds(market="Player Points,Player Receptions")
+    
+    ⚠️ DO NOT use market type names (like "player_total", "player_yes_no") - those are NOT valid market names.
+    Use the actual market names returned by this tool.
+    
+    When fixture_id and sportsbook are provided, returns markets available for that specific 
+    fixture and sportsbook combination. This ensures you get market names that are actually
+    available for that game and sportsbook.
+    
+    Args:
+        fixture_id: Optional fixture ID to filter markets available for this specific fixture.
+                   RECOMMENDED: Always provide this to get markets for the specific game.
+        sportsbook: Optional sportsbook name or ID to filter markets available for this sportsbook.
+                   RECOMMENDED: Provide this to get markets available for the specific sportsbook.
+                   Can be comma-separated list (e.g., "draftkings,fanduel") or single sportsbook.
     
     Returns:
-        Formatted string with markets information including IDs, names, and market types
+        Formatted string with market information including:
+        - market_name: The EXACT market name to use in fetch_live_odds (e.g., "Player Points", "Moneyline")
+        - market_type: The underlying market type (for reference only, do NOT use this in API calls)
+        - market_id: Market ID (for reference)
+        - market_slug: Market slug (for reference)
+    
+    IMPORTANT: Use the "market_name" field when calling fetch_live_odds. Do NOT use market_type.
     """
     try:
         client = get_client()
-        result = client.get_active_markets()
+        
+        # Handle sportsbook parameter - can be comma-separated string or single value
+        resolved_sportsbook = None
+        if sportsbook:
+            if isinstance(sportsbook, str) and ',' in sportsbook:
+                # Multiple sportsbooks - pass as list
+                resolved_sportsbook = [sb.strip().lower() for sb in sportsbook.split(',') if sb.strip()][:5]
+            elif isinstance(sportsbook, str):
+                resolved_sportsbook = sportsbook.strip().lower()
+        
+        result = client.get_active_markets(
+            fixture_id=fixture_id if fixture_id else None,
+            sportsbook=resolved_sportsbook
+        )
         formatted = format_markets_response(result)
         return formatted
     except Exception as e:
         return f"Error fetching available markets: {str(e)}"
+
+
+@tool
+def fetch_market_types() -> str:
+    """Get all available market type definitions (embedded in codebase for fast access).
+    
+    This tool returns all market type definitions with their IDs, names, selection templates, and notes.
+    Use this to understand which market types are available and how to use them.
+    
+    Market types define the structure of betting markets (e.g., "moneyline", "spread", "player_total").
+    Each market type has:
+    - id: Numeric ID for the market type
+    - name: The market type name (use this in API requests)
+    - selections: Template strings showing how selections are formatted
+    - notes: Additional information about the market type
+    
+    IMPORTANT: When requesting odds, use the market type "name" (e.g., "moneyline", "spread", "player_total").
+    Do NOT use display names like "Moneyline" or "Player Props" - use the exact market type name.
+    
+    Player prop market types include:
+    - player_only: Player-specific markets
+    - player_total: Player over/under totals
+    - player_total_combo: Combined player totals
+    - player_yes_no: Player yes/no markets
+    - player_h2h_ml: Player head-to-head moneyline
+    - player_h2h_spread: Player head-to-head spread
+    - player_golf_hole_score_qualifier: Golf-specific player markets
+    
+    Returns:
+        Formatted string with all market type definitions including IDs, names, selections, and notes
+    """
+    try:
+        from app.core.market_types import MARKET_TYPES
+        # Use embedded market types data for instant access (no API call needed)
+        formatted = format_market_types_response(MARKET_TYPES)
+        return formatted
+    except Exception as e:
+        return f"Error fetching market types: {str(e)}"
 
 
 @tool
@@ -1342,6 +1832,814 @@ def fetch_available_sportsbooks(
         return formatted
     except Exception as e:
         return f"Error fetching available sportsbooks: {str(e)}"
+
+
+@tool
+def fetch_players(
+    league: Optional[str] = None,
+    team_id: Optional[str] = None,
+    player_id: Optional[str] = None,
+    player_name: Optional[str] = None,
+    include_statsperform_id: bool = False,
+    paginate: bool = True,
+) -> str:
+    """🚨 MANDATORY: Fetch player details and get player_id using OpticOdds /players endpoint.
+    
+    ⚡ FAST DATABASE LOOKUP FOR NFL: For NFL players, this tool uses a fast database lookup first 
+    (hashmap-like performance), then falls back to the API if needed. This provides instant access 
+    to all NFL players without API calls.
+    
+    ⚠️ CRITICAL WORKFLOW FOR PLAYER-SPECIFIC REQUESTS:
+    When user requests odds for a specific player (e.g., "show me odds for Jameson Williams"):
+    1. FIRST: Call this tool to get the player_id
+       Example: fetch_players(league="nfl", player_name="Jameson Williams")
+    2. Extract the player_id from the response
+    3. THEN: Call build_opticodds_url with player_id included
+       Example: build_opticodds_url(..., player_id=player_id, fixture_id=...)
+    4. FINALLY: Call fetch_live_odds with player_id included
+       Example: fetch_live_odds(..., player_id=player_id, fixture_id=...)
+    
+    The player_id MUST be included in the URL so the frontend can filter odds for that specific player.
+    Do NOT skip this step - always get player_id first, then use it in build_opticodds_url and fetch_live_odds.
+    
+    CRITICAL: Player IDs are unique per league. The same player can have different IDs 
+    across different leagues. For example, Lionel Messi has:
+    - C7231134C08F for USA - Major League Soccer
+    - 7D915F8BDA8E for CONMEBOL - Copa America
+    
+    IMPORTANT: When using player_id in fetch_live_odds or fetch_player_props, you MUST 
+    use the player_id that matches the league you're querying. Always pass the league 
+    parameter to get the correct league-specific player ID.
+    
+    Use this tool when:
+    - User asks about a specific player (e.g., "show me odds for Jameson Williams")
+    - User asks for player props but you don't have the player_id yet
+    - You need to find a player's ID for a specific league
+    - You need to verify a player exists in a league before fetching odds
+    
+    TIP: For NFL, you can use fetch_teams(league="nfl", team_name="...") first to get team_id instantly,
+    then use that team_id here to filter players by team. This triggers the fast database lookup 
+    and makes the search much faster and more accurate. The tool automatically uses the database 
+    for NFL lookups when team_id is provided.
+    
+    Args:
+        league: REQUIRED (unless player_id is provided). League name or ID (e.g., 'nfl', 'nba', 'nhl').
+                This ensures you get the correct league-specific player ID.
+        team_id: Optional. Team ID to filter players by team. For NFL, get this instantly from fetch_teams(league="nfl", team_name="...").
+                 Using team_id significantly speeds up player searches and makes them more accurate.
+        player_id: Optional. Specific player ID. If provided, returns data for that player 
+                  (including inactive players). Use this to get details for a known player ID.
+        player_name: REQUIRED when user requests a specific player. Player name to search for. 
+                     The tool will filter results to match this name (case-insensitive partial match). 
+                     Note: API doesn't support name filtering directly, so results are filtered client-side.
+                     TIP: For NFL, combine with team_id from fetch_teams for faster, more accurate results.
+        include_statsperform_id: If True, includes StatsPerform IDs in response. Default: False.
+        paginate: If True, fetches all pages of results. Default: True.
+    
+    Returns:
+        Formatted string with player information including:
+        - Player ID (league-specific - CRITICAL: Extract this and use in fetch_live_odds with player_id parameter)
+        - Player name
+        - Team information
+        - League information
+        - Other player details
+    
+    Example workflow for "show me odds for Jameson Williams":
+        OPTION 1 (Recommended for NFL - faster with team filter):
+        1. fetch_teams(league="nfl", team_name="Detroit Lions")  # Instant - uses embedded data
+           → Returns: team_id="43412DC9CDCA"
+        2. fetch_players(league="nfl", player_name="Jameson Williams", team_id="43412DC9CDCA")
+           → Returns: player_id="ABC123..." (faster search with team filter)
+        3. build_opticodds_url(tool_name="fetch_live_odds", player_id="ABC123", fixture_id="...", sportsbook="...")
+           → Returns: URL with player_id included
+        4. fetch_live_odds(player_id="ABC123", fixture_id="...", sportsbook="...")
+           → Returns: Odds filtered for that player
+        
+        OPTION 2 (If team is unknown):
+        1. fetch_players(league="nfl", player_name="Jameson Williams")
+           → Returns: player_id="ABC123..."
+        2. build_opticodds_url(tool_name="fetch_live_odds", player_id="ABC123", fixture_id="...", sportsbook="...")
+           → Returns: URL with player_id included
+        3. fetch_live_odds(player_id="ABC123", fixture_id="...", sportsbook="...")
+           → Returns: Odds filtered for that player
+    """
+    try:
+        # For NFL, try database first for fast lookups (hashmap-like performance)
+        league_lower = league.lower() if league else ""
+        if league_lower == "nfl":
+            try:
+                from app.core.nfl_players_db import (
+                    get_players_by_team,
+                    get_player_by_id,
+                    get_player_by_name as db_get_player_by_name,
+                )
+                
+                db_players = []
+                use_db = False
+                
+                # Try database lookup based on provided parameters
+                if player_id:
+                    # Lookup by player_id
+                    player = get_player_by_id(player_id)
+                    if player:
+                        db_players = [player]
+                        use_db = True
+                        logger.info(f"[fetch_players] Using database lookup for NFL player_id={player_id}")
+                
+                elif team_id:
+                    # Lookup by team_id (fast hashmap-like lookup)
+                    if player_name:
+                        # Team + name search
+                        db_players = db_get_player_by_name(player_name, team_id=team_id, active_only=True)
+                        use_db = True
+                        logger.info(f"[fetch_players] Using database lookup for NFL team_id={team_id}, player_name={player_name}")
+                    else:
+                        # All players for team
+                        db_players = get_players_by_team(team_id, active_only=True)
+                        use_db = True
+                        logger.info(f"[fetch_players] Using database lookup for NFL team_id={team_id}")
+                
+                elif player_name:
+                    # Name search without team filter
+                    db_players = db_get_player_by_name(player_name, team_id=None, active_only=True)
+                    use_db = True
+                    logger.info(f"[fetch_players] Using database lookup for NFL player_name={player_name}")
+                
+                # If we found players in database, convert to API format and return
+                if use_db and db_players:
+                    # Convert NFLPlayer objects to API response format
+                    api_format_players = []
+                    for db_player in db_players:
+                        player_dict = {
+                            "id": db_player.id,
+                            "name": db_player.name,
+                            "first_name": db_player.first_name,
+                            "last_name": db_player.last_name,
+                            "position": db_player.position,
+                            "number": db_player.number,
+                            "age": db_player.age,
+                            "height": db_player.height,
+                            "weight": db_player.weight,
+                            "experience": db_player.experience,
+                            "is_active": db_player.is_active,
+                            "numerical_id": db_player.numerical_id,
+                            "base_id": db_player.base_id,
+                            "logo": db_player.logo,
+                            "source_ids": db_player.source_ids if db_player.source_ids else {},
+                            "team": {
+                                "id": db_player.team_id,
+                                "name": db_player.team_name or "Unknown",
+                            },
+                            "league": {
+                                "id": "nfl",
+                                "name": "NFL",
+                                "numerical_id": 367,
+                            },
+                            "sport": {
+                                "id": "football",
+                                "name": "Football",
+                                "numerical_id": 9,
+                            },
+                        }
+                        api_format_players.append(player_dict)
+                    
+                    result = {
+                        "data": api_format_players,
+                        "page": 1,
+                        "total_pages": 1,
+                    }
+                    
+                    formatted = format_players_response(result, player_name=player_name, league=league)
+                    return formatted
+                
+                # If database lookup returned no results, fall through to API
+                if use_db and not db_players:
+                    logger.info(f"[fetch_players] Database lookup returned no results, falling back to API")
+            
+            except Exception as db_error:
+                # If database lookup fails, fall back to API
+                logger.warning(f"[fetch_players] Database lookup failed: {db_error}, falling back to API")
+        
+        # For non-NFL leagues or if database lookup failed/returned no results, use API
+        client = get_client()
+        
+        # Validate: must provide at least one of league, player_id, or sport
+        if not league and not player_id:
+            return "Error: Must provide at least one of: league (recommended) or player_id. League is required to get accurate league-specific player IDs."
+        
+        # Build params
+        params = {}
+        if league:
+            params["league"] = league
+        if player_id:
+            params["id"] = player_id
+        if include_statsperform_id:
+            params["include_statsperform_id"] = "true"
+        
+        # Note: OpticOdds API /players endpoint doesn't support team_id parameter directly
+        # We'll filter by team_id client-side after fetching if provided
+        
+        # Fetch players from API
+        logger.info(f"[fetch_players] Using API lookup for league={league}")
+        result = client.get_players(paginate=paginate, **params)
+        
+        # Filter by team_id if provided (client-side filtering)
+        if team_id and result and result.get("data"):
+            players_list = result.get("data", [])
+            if isinstance(players_list, list):
+                filtered_players = []
+                for player in players_list:
+                    if isinstance(player, dict):
+                        # Check if player's team matches team_id
+                        team_info = player.get("team", {})
+                        if isinstance(team_info, dict):
+                            if team_info.get("id") == team_id:
+                                filtered_players.append(player)
+                        # Also check direct team_id field if present
+                        elif player.get("team_id") == team_id:
+                            filtered_players.append(player)
+                result["data"] = filtered_players
+        
+        # Format response
+        formatted = format_players_response(result, player_name=player_name, league=league)
+        return formatted
+        
+    except Exception as e:
+        logger.error(f"Error fetching players: {e}")
+        return f"Error fetching players: {str(e)}"
+
+
+@tool
+def fetch_teams(
+    league: Optional[str] = None,
+    team_id: Optional[str] = None,
+    team_name: Optional[str] = None,
+    sport: Optional[str] = None,
+    division: Optional[str] = None,
+    conference: Optional[str] = None,
+    include_statsperform_id: bool = False,
+    paginate: bool = True,
+) -> str:
+    """Fetch team details using OpticOdds /teams endpoint.
+    
+    ⚡ FAST ACCESS FOR NFL: For NFL teams, this tool uses embedded data (no API call needed).
+    This provides instant access to all 32 NFL teams with their IDs, names, abbreviations, etc.
+    
+    CRITICAL: Team IDs are unique per league. The same team can have different IDs 
+    across different leagues. For example, Manchester City FC has:
+    - 578E2130DC1B for UEFA - Champions League
+    - E69E55FFCF65 for England - Premier League
+    
+    IMPORTANT: When using team_id in fetch_live_odds or fetch_players, you MUST 
+    use the team_id that matches the league you're querying. Always pass the league 
+    parameter to get the correct league-specific team ID.
+    
+    This tool is useful for:
+    - Finding team IDs when you only know the team name (especially for NFL - instant access)
+    - Getting team information (abbreviation, division, conference, etc.)
+    - Filtering teams by division or conference
+    - Verifying team names before making other API calls
+    - Getting team_id to filter players by team (fetch_players with team_id parameter)
+    
+    Note: For NFL, this tool uses embedded data for instant access. For other leagues, 
+    the API doesn't support direct name filtering, so this tool fetches all teams 
+    for the league and filters client-side.
+    
+    Use this tool when:
+    - User asks about a specific team (e.g., "show me Dallas Cowboys", "find Lions")
+    - You need to find a team's ID for a specific league (especially NFL)
+    - User asks for team odds but you don't have the team_id yet
+    - You need to verify a team exists in a league before fetching odds
+    - You want to filter teams by division or conference (NFL, NBA, etc.)
+    - You need team_id to filter players by team (e.g., fetch_players(league="nfl", team_id=...))
+    
+    Args:
+        league: REQUIRED (unless team_id is provided). League name or ID (e.g., 'nfl', 'nba', 'nhl').
+                This ensures you get the correct league-specific team ID.
+                For NFL, uses embedded data for instant access.
+        team_id: Optional. Specific team ID. If provided, returns data for that team 
+                (including inactive teams). Use this to get details for a known team ID.
+        team_name: Optional. Team name to search for. The tool will filter results to match 
+                   this name (case-insensitive partial match). 
+                   For NFL: Supports full name, city, mascot, or abbreviation (e.g., "Lions", "Detroit", "DET").
+                   For other leagues: API doesn't support name filtering directly, so results are filtered client-side.
+        sport: Optional. Sport name or ID (e.g., 'football', 'basketball'). Usually not needed 
+               if league is provided.
+        division: Optional. Division name to filter by (e.g., 'West', 'East' for NBA; 'North', 'South' for NFL).
+        conference: Optional. Conference name to filter by (e.g., 'NFC', 'AFC' for NFL; 'Eastern', 'Western' for NBA).
+        include_statsperform_id: If True, includes StatsPerform IDs in response. Default: False.
+        paginate: If True, fetches all pages of results. Default: True.
+    
+    Returns:
+        Formatted string with team information including:
+        - Team ID (league-specific - CRITICAL for use in fetch_live_odds and fetch_players)
+        - Team name, abbreviation, city, mascot
+        - Division and conference (if available)
+        - base_id (for cross-league linking)
+        - League and sport information
+        - Logo URL
+    
+    Example for NFL (uses embedded data - instant):
+        fetch_teams(league="nfl", team_name="Detroit Lions")
+        # Returns: team_id="43412DC9CDCA" (instant, no API call)
+    
+    Example for other leagues (uses API):
+        fetch_teams(league="nba", team_name="Lakers")
+        # Returns: team with NBA-specific ID
+    """
+    try:
+        # For NFL, use embedded data for fast access (no API call needed)
+        league_lower = league.lower() if league else ""
+        if league_lower == "nfl":
+            from app.core.nfl_teams import (
+                get_nfl_teams,
+                get_team_by_name,
+                get_team_by_id,
+                get_team_by_abbreviation,
+                get_teams_by_division,
+                get_teams_by_conference
+            )
+            
+            # Get all NFL teams
+            nfl_teams_data = get_nfl_teams()
+            teams_list = nfl_teams_data.get("data", [])
+            
+            # Filter by team_id if provided
+            if team_id:
+                team = get_team_by_id(team_id)
+                if team:
+                    teams_list = [team]
+                else:
+                    teams_list = []
+            
+            # Filter by team_name if provided
+            elif team_name:
+                team = get_team_by_name(team_name)
+                if team:
+                    teams_list = [team]
+                else:
+                    # Try abbreviation
+                    team = get_team_by_abbreviation(team_name)
+                    if team:
+                        teams_list = [team]
+                    else:
+                        teams_list = []
+            
+            # Filter by division if provided
+            elif division:
+                teams_list = get_teams_by_division(division)
+            
+            # Filter by conference if provided
+            elif conference:
+                teams_list = get_teams_by_conference(conference)
+            
+            # Create result structure matching API format
+            result = {
+                "data": teams_list,
+                "page": 1,
+                "total_pages": 1
+            }
+            
+            # Format response
+            formatted = format_teams_response(result, team_name=team_name, league=league)
+            return formatted
+        
+        # For other leagues, use API
+        client = get_client()
+        
+        # Validate: must provide at least one of league, team_id, or sport
+        if not league and not team_id and not sport:
+            return "Error: Must provide at least one of: league (recommended), team_id, or sport. League is required to get accurate league-specific team IDs."
+        
+        # Build params
+        params = {}
+        if league:
+            params["league"] = league
+        if team_id:
+            params["id"] = team_id
+        if sport:
+            params["sport"] = sport
+        if division:
+            params["division"] = division
+        if conference:
+            params["conference"] = conference
+        if include_statsperform_id:
+            params["include_statsperform_id"] = include_statsperform_id
+        
+        # Fetch teams
+        result = client.get_teams(paginate=paginate, **params)
+        
+        # Format response
+        formatted = format_teams_response(result, team_name=team_name, league=league)
+        return formatted
+        
+    except Exception as e:
+        logger.error(f"Error fetching teams: {e}")
+        return f"Error fetching teams: {str(e)}"
+
+
+@tool
+def query_odds_entries(
+    fixture_id: str,
+    session_id: Optional[str] = None,
+    sportsbook: Optional[str] = None,
+    market: Optional[str] = None,
+    limit: Optional[int] = 50,
+    offset: Optional[int] = 0,
+    main_markets_only: bool = False,
+) -> str:
+    """Query odds entries from the database with filters. Use this for large odds datasets that can't be streamed all at once.
+    
+    This tool allows efficient querying and chunked retrieval of odds data stored in PostgreSQL.
+    Use this when fetch_live_odds returns very large responses (thousands of odds entries).
+    
+    IMPORTANT: Use this tool when:
+    - User asks for odds but the response is too large to stream all at once
+    - You need to filter odds by market (e.g., "Moneyline", "Spread", "Total")
+    - You need to filter by sportsbook
+    - You need to get odds in chunks (use offset and limit for pagination)
+    - You only need main markets (Moneyline, Spread, Total) - set main_markets_only=True
+    
+    Args:
+        fixture_id: REQUIRED. Fixture ID to query odds for
+        session_id: Optional session identifier. If not provided, uses current session from context.
+        sportsbook: Optional sportsbook name to filter (e.g., "DraftKings", "FanDuel")
+        market: Optional market name to filter (e.g., "Moneyline", "Spread", "Total", "Player Props")
+        limit: Maximum number of entries to return (default: 50, max recommended: 100)
+        offset: Offset for pagination (default: 0). Use this to get next chunk.
+        main_markets_only: If True, only return main markets (Moneyline, Spread, Total). Faster query.
+    
+    Returns:
+        Formatted string with odds entries. If main_markets_only=True, returns main markets grouped by market type.
+        Includes pagination info if there are more entries.
+    """
+    try:
+        from app.core.odds_db import get_odds_entries_chunked, get_main_markets_odds
+        import json
+        
+        # Get session_id from context if not provided
+        effective_session_id = session_id or (_current_session_id.get() if _current_session_id.get() else None) or "default"
+        
+        if main_markets_only:
+            # Get main markets only (faster)
+            main_markets = get_main_markets_odds(
+                fixture_id=fixture_id,
+                session_id=effective_session_id,
+                sportsbook=sportsbook,
+            )
+            
+            if not main_markets:
+                return f"No main markets odds found for fixture_id={fixture_id}" + (
+                    f", sportsbook={sportsbook}" if sportsbook else ""
+                )
+            
+            formatted_lines = []
+            formatted_lines.append(f"Main markets odds for fixture {fixture_id}:\n")
+            
+            for market_name, entries in main_markets.items():
+                formatted_lines.append(f"\n{market_name}:")
+                for entry in entries:
+                    selection = entry.get("selection", "")
+                    price = entry.get("price")
+                    sportsbook_name = entry.get("sportsbook", "")
+                    selection_line = entry.get("selection_line")
+                    
+                    price_str = f"{price:+.0f}" if price else "N/A"
+                    line_str = f" ({selection_line})" if selection_line else ""
+                    formatted_lines.append(f"  • {selection}{line_str}: {price_str} ({sportsbook_name})")
+            
+            return "\n".join(formatted_lines)
+        else:
+            # Get chunked odds entries
+            chunk_result = get_odds_entries_chunked(
+                fixture_id=fixture_id,
+                session_id=effective_session_id,
+                sportsbook=sportsbook,
+                market=market,
+                chunk_size=limit or 50,
+                offset=offset or 0,
+            )
+            
+            entries = chunk_result.get("entries", [])
+            total = chunk_result.get("total", 0)
+            has_more = chunk_result.get("has_more", False)
+            next_offset = chunk_result.get("next_offset")
+            
+            if not entries:
+                return f"No odds entries found for fixture_id={fixture_id}" + (
+                    f", sportsbook={sportsbook}" if sportsbook else ""
+                ) + (
+                    f", market={market}" if market else ""
+                )
+            
+            formatted_lines = []
+            start_num = (offset or 0) + 1
+            end_num = (offset or 0) + len(entries)
+            formatted_lines.append(f"Found {len(entries)} odds entries (showing {start_num}-{end_num} of {total}):\n")
+            
+            # Group by market for better readability
+            markets_dict = {}
+            for entry in entries:
+                market_name = entry.get("market", "Unknown")
+                if market_name not in markets_dict:
+                    markets_dict[market_name] = []
+                markets_dict[market_name].append(entry)
+            
+            for market_name, market_entries in markets_dict.items():
+                formatted_lines.append(f"\n{market_name}:")
+                for entry in market_entries:
+                    selection = entry.get("selection", "")
+                    price = entry.get("price")
+                    sportsbook_name = entry.get("sportsbook", "")
+                    selection_line = entry.get("selection_line")
+                    
+                    price_str = f"{price:+.0f}" if price else "N/A"
+                    line_str = f" ({selection_line})" if selection_line else ""
+                    formatted_lines.append(f"  • {selection}{line_str}: {price_str} ({sportsbook_name})")
+            
+            if has_more:
+                formatted_lines.append(f"\n\nThere are {total - (offset or 0) - len(entries)} more entries available.")
+                formatted_lines.append(f"Use query_odds_entries with offset={next_offset} to get the next batch.")
+            
+            return "\n".join(formatted_lines)
+            
+    except Exception as e:
+        logger.error(f"Error querying odds entries: {e}")
+        return f"Error querying odds entries: {str(e)}"
+
+
+@tool
+def filter_odds_from_json(
+    json_data: str,
+    market: Optional[str] = None,
+    sportsbook: Optional[str] = None,
+    player_id: Optional[str] = None,
+    team_id: Optional[str] = None,
+    main_markets_only: bool = False,
+    keep_markets: Optional[str] = None,
+    remove_markets: Optional[str] = None,
+) -> str:
+    """Filter odds from JSON data while preserving the complete JSON structure.
+    
+    This tool intelligently filters odds entries from a JSON response (like from fetch_live_odds)
+    while maintaining the full fixture structure. All fixture fields are preserved; only the
+    odds arrays within each fixture are filtered.
+    
+    Use this when:
+    - You have a large JSON response with many odds and need to reduce it to only relevant odds
+    - You want to keep only specific markets (e.g., "Moneyline", "Spread", "Total")
+    - You want to remove specific markets (e.g., remove all player props)
+    - You want to filter by sportsbook, player, or team
+    - You need to return a clean JSON structure with only the needed odds
+    
+    IMPORTANT:
+    - The input json_data can be a JSON string or a file path
+    - All fixture metadata (teams, venue, dates, etc.) is preserved
+    - Only the odds arrays are filtered
+    - Returns complete, valid JSON with the same structure as input
+    
+    Args:
+        json_data: JSON string containing fixtures with odds, or path to JSON file.
+                  Expected format: {"data": [{"id": "...", "odds": [...]}, ...]} or
+                  [{"id": "...", "odds": [...]}, ...]
+        market: Optional. Filter to keep only this market (e.g., "Moneyline", "Spread", "Total Points")
+        sportsbook: Optional. Filter to keep only odds from this sportsbook (e.g., "DraftKings", "FanDuel")
+        player_id: Optional. Filter to keep only odds for this player
+        team_id: Optional. Filter to keep only odds for this team
+        main_markets_only: If True, keep only main markets (Moneyline, Spread/Point Spread, Total Points/Total)
+        keep_markets: Optional. Comma-separated list of markets to keep (e.g., "Moneyline,Spread,Total")
+        remove_markets: Optional. Comma-separated list of markets to remove (e.g., "Player Props,Anytime Touchdown Scorer")
+    
+    Returns:
+        JSON string with filtered odds, maintaining complete fixture structure.
+        Format: Same as input but with filtered odds arrays.
+    """
+    try:
+        import os
+        
+        # Try to parse json_data as JSON first, if that fails, try as file path
+        try:
+            data = json.loads(json_data)
+        except (json.JSONDecodeError, ValueError):
+            # Try as file path
+            if os.path.exists(json_data):
+                with open(json_data, 'r') as f:
+                    data = json.load(f)
+            else:
+                return f"Error: json_data is not valid JSON and file path '{json_data}' does not exist"
+        
+        # Normalize data structure - handle both {"data": [...]} and [...] formats
+        if isinstance(data, dict) and "data" in data:
+            fixtures = data["data"]
+            is_wrapped = True
+        elif isinstance(data, list):
+            fixtures = data
+            is_wrapped = False
+        else:
+            return f"Error: Expected JSON with 'data' array or array of fixtures, got {type(data).__name__}"
+        
+        # Define main markets
+        main_markets = ["Moneyline", "Point Spread", "Spread", "Total Points", "Total", "Run Line", "Total Runs"]
+        
+        # Parse keep_markets and remove_markets
+        keep_markets_list = []
+        if keep_markets:
+            keep_markets_list = [m.strip() for m in keep_markets.split(",")]
+        
+        remove_markets_list = []
+        if remove_markets:
+            remove_markets_list = [m.strip() for m in remove_markets.split(",")]
+        
+        # Process each fixture
+        filtered_fixtures = []
+        for fixture in fixtures:
+            # Create a copy of the fixture to preserve all fields
+            filtered_fixture = fixture.copy()
+            
+            # Get odds array
+            odds = fixture.get("odds", [])
+            if not odds:
+                # If no odds, keep fixture as-is
+                filtered_fixtures.append(filtered_fixture)
+                continue
+            
+            # Filter odds
+            filtered_odds = []
+            for odd in odds:
+                # Apply filters
+                keep_odd = True
+                
+                # Filter by market
+                if market:
+                    odd_market = odd.get("market", "")
+                    if odd_market != market:
+                        keep_odd = False
+                
+                # Filter by sportsbook
+                if sportsbook and keep_odd:
+                    odd_sportsbook = odd.get("sportsbook", "")
+                    if odd_sportsbook.lower() != sportsbook.lower():
+                        keep_odd = False
+                
+                # Filter by player_id
+                if player_id and keep_odd:
+                    odd_player_id = odd.get("player_id")
+                    if str(odd_player_id) != str(player_id):
+                        keep_odd = False
+                
+                # Filter by team_id
+                if team_id and keep_odd:
+                    odd_team_id = odd.get("team_id")
+                    if str(odd_team_id) != str(team_id):
+                        keep_odd = False
+                
+                # Filter by main_markets_only
+                if main_markets_only and keep_odd:
+                    odd_market = odd.get("market", "")
+                    if odd_market not in main_markets:
+                        keep_odd = False
+                
+                # Filter by keep_markets
+                if keep_markets_list and keep_odd:
+                    odd_market = odd.get("market", "")
+                    if odd_market not in keep_markets_list:
+                        keep_odd = False
+                
+                # Filter by remove_markets
+                if remove_markets_list and keep_odd:
+                    odd_market = odd.get("market", "")
+                    # Check if any remove_markets pattern matches
+                    for remove_pattern in remove_markets_list:
+                        if remove_pattern.lower() in odd_market.lower():
+                            keep_odd = False
+                            break
+                
+                if keep_odd:
+                    filtered_odds.append(odd)
+            
+            # Update fixture with filtered odds
+            filtered_fixture["odds"] = filtered_odds
+            filtered_fixtures.append(filtered_fixture)
+        
+        # Reconstruct JSON structure
+        if is_wrapped:
+            result = {"data": filtered_fixtures}
+        else:
+            result = filtered_fixtures
+        
+        # Return as formatted JSON string
+        return json.dumps(result, indent=2)
+        
+    except Exception as e:
+        logger.error(f"Error filtering odds from JSON: {e}")
+        return f"Error filtering odds from JSON: {str(e)}"
+
+
+@tool
+def query_tool_results(
+    session_id: Optional[str] = None,
+    tool_name: Optional[str] = None,
+    fixture_id: Optional[str] = None,
+    field_name: Optional[str] = None,
+    field_value: Optional[str] = None,
+) -> str:
+    """Query stored tool results from the database by session_id, tool_name, fixture_id, or any field.
+    
+    This tool allows the agent to find related data that was previously fetched and stored.
+    For example, if a user selects a fixture_id in the frontend, you can use this tool to find
+    all related odds, fixtures, and props that were previously fetched for that fixture.
+    
+    IMPORTANT: Use this tool when:
+    - User selects a fixture_id and you need to find related odds/fixtures from previous queries
+    - You want to find all results from a specific tool (e.g., all fetch_live_odds results)
+    - You need to search by any field (fixture_id, team_id, player_id, league_id)
+    
+    Args:
+        session_id: Session identifier (user_id or thread_id). If not provided, uses current session from context.
+        tool_name: Optional tool name to filter results (e.g., "fetch_live_odds", "fetch_upcoming_games")
+        fixture_id: Optional fixture ID to search for - finds all tool results related to this fixture
+        field_name: Optional field name to search (fixture_id, team_id, player_id, league_id)
+        field_value: Optional field value to search for (used with field_name)
+    
+    Returns:
+        Formatted string with matching tool results, including structured data
+    """
+    try:
+        from app.core.tool_result_db import (
+            get_tool_results_by_session,
+            get_tool_results_by_fixture_id,
+            get_tool_results_by_field,
+            search_tool_results
+        )
+        import json
+        
+        # Get session_id from context if not provided
+        # _current_session_id is already imported at module level
+        effective_session_id = session_id or (_current_session_id.get() if _current_session_id.get() else None) or "default"
+        
+        results = []
+        
+        # Determine which query function to use
+        if fixture_id:
+            # Search by fixture_id (most common use case)
+            results = get_tool_results_by_fixture_id(effective_session_id, fixture_id)
+        elif field_name and field_value:
+            # Search by specific field
+            results = get_tool_results_by_field(effective_session_id, field_name, field_value)
+        elif tool_name or fixture_id or field_name:
+            # Use flexible search
+            query = {}
+            if tool_name:
+                query["tool_name"] = tool_name
+            if fixture_id:
+                query["fixture_id"] = fixture_id
+            if field_name and field_value:
+                query[field_name] = field_value
+            results = search_tool_results(effective_session_id, query)
+        else:
+            # Get all results for session, optionally filtered by tool_name
+            results = get_tool_results_by_session(effective_session_id, tool_name)
+        
+        if not results:
+            return f"No tool results found for session_id={effective_session_id}" + (
+                f", tool_name={tool_name}" if tool_name else ""
+            ) + (
+                f", fixture_id={fixture_id}" if fixture_id else ""
+            ) + (
+                f", {field_name}={field_value}" if field_name and field_value else ""
+            )
+        
+        # Format results
+        formatted_lines = []
+        formatted_lines.append(f"Found {len(results)} tool result(s):\n")
+        
+        for i, result in enumerate(results, 1):
+            formatted_lines.append(f"\n{'='*60}")
+            formatted_lines.append(f"Result {i}:")
+            formatted_lines.append(f"Tool: {result['tool_name']}")
+            formatted_lines.append(f"Tool Call ID: {result['tool_call_id']}")
+            if result.get('fixture_id'):
+                formatted_lines.append(f"Fixture ID: {result['fixture_id']}")
+            if result.get('team_id'):
+                formatted_lines.append(f"Team ID: {result['team_id']}")
+            if result.get('player_id'):
+                formatted_lines.append(f"Player ID: {result['player_id']}")
+            if result.get('league_id'):
+                formatted_lines.append(f"League ID: {result['league_id']}")
+            if result.get('created_at'):
+                formatted_lines.append(f"Created At: {result['created_at']}")
+            
+            # Include structured data
+            if result.get('structured_data'):
+                formatted_lines.append(f"\nStructured Data:")
+                try:
+                    formatted_lines.append(json.dumps(result['structured_data'], indent=2))
+                except (TypeError, ValueError):
+                    formatted_lines.append(str(result['structured_data']))
+        
+        return "\n".join(formatted_lines)
+    except Exception as e:
+        return f"Error querying tool results: {str(e)}"
 
 
 # Helper functions for formatting responses
@@ -1440,33 +2738,13 @@ def extract_fixture_ids_from_objects(fixtures_input: Optional[str]) -> List[str]
 
 
 def format_odds_response(data: Dict[str, Any]) -> str:
-    """Format odds response for display with structured data for frontend parsing.
+    """Format odds response with short summary and full JSON.
     
-    Expected API response structure:
-    {
-        "data": [
-            {
-                "id": "fixture_id",
-                "home_competitors": [{"name": "..."}],
-                "away_competitors": [{"name": "..."}],
-                "odds": [
-                    {
-                        "sportsbook": "FanDuel",
-                        "market": "Moneyline",
-                        "name": "Dallas Cowboys",
-                        "selection": "Dallas Cowboys",
-                        "price": 1800,  # American odds (1800 = +1800)
-                        "deep_link": {"desktop": "...", "android": "...", "ios": "..."}
-                    }
-                ]
-            }
-        ]
-    }
+    Returns a concise summary followed by the complete JSON data in the proper format.
     """
     if not data:
         return "No odds data available - API returned empty response"
     
-    formatted_lines = []
     fixtures = data.get("data", [])
     
     # Handle case where data might be a single fixture object
@@ -1485,118 +2763,25 @@ def format_odds_response(data: Dict[str, Any]) -> str:
         error_msg += "\nTry calling fetch_available_sportsbooks with fixture_id to see which sportsbooks have odds."
         return error_msg
     
-    # Collect structured data for frontend
-    structured_odds = []
-    
+    # Count fixtures and markets for summary
+    total_markets = set()
     for fixture in fixtures:
-        if not fixture:
-            continue
-        
-        # Extract fixture information
-        fixture_id = fixture.get("id")
-        
-        # Extract team names from competitors arrays
-        home_competitors = fixture.get("home_competitors", [])
-        away_competitors = fixture.get("away_competitors", [])
-        home_team = home_competitors[0].get("name", "") if home_competitors and isinstance(home_competitors[0], dict) else fixture.get("home_team_display", "")
-        away_team = away_competitors[0].get("name", "") if away_competitors and isinstance(away_competitors[0], dict) else fixture.get("away_team_display", "")
-        
-        # Fallback to display names if competitors not available
-        if not home_team:
-            home_team = fixture.get("home_team_display", "")
-        if not away_team:
-            away_team = fixture.get("away_team_display", "")
-        
-        if home_team or away_team:
-            formatted_lines.append(f"\n{'='*60}")
-            formatted_lines.append(f"{home_team} vs {away_team}")
-            formatted_lines.append(f"{'='*60}")
-        
-        # Get odds array (flat structure, not nested)
-        odds_list = fixture.get("odds", [])
-        if not isinstance(odds_list, list):
-            odds_list = [odds_list] if odds_list else []
-        
-        if not odds_list:
-            formatted_lines.append("\nNo odds available for this fixture.")
-            continue
-        
-        # Group odds by market for better organization
-        markets_dict = {}
-        for odds_entry in odds_list:
-            if not isinstance(odds_entry, dict):
-                continue
-            
-            market_name = odds_entry.get("market", "Unknown Market")
-            if market_name not in markets_dict:
-                markets_dict[market_name] = []
-            markets_dict[market_name].append(odds_entry)
-        
-        # Format each market
-        for market_name, market_odds in markets_dict.items():
-            formatted_lines.append(f"\n{market_name.upper()}:")
-            
-            # Group by selection name to show all sportsbooks for each selection
-            selections_dict = {}
-            for odds_entry in market_odds:
-                selection_name = odds_entry.get("name") or odds_entry.get("selection", "Unknown")
-                if selection_name not in selections_dict:
-                    selections_dict[selection_name] = []
-                selections_dict[selection_name].append(odds_entry)
-            
-            # Display each selection with all its odds
-            for selection_name, selection_odds in selections_dict.items():
-                odds_strings = []
-                for odds_entry in selection_odds:
-                    sportsbook_name = odds_entry.get("sportsbook", "Unknown")
-                    price = odds_entry.get("price")
-                    
-                    # Convert price to American odds format
-                    if price is not None:
-                        if price >= 100:
-                            american_odds = f"+{price}"
-                        elif price <= -100:
-                            american_odds = str(price)
-                        else:
-                            # Handle edge cases
-                            american_odds = f"+{price}" if price > 0 else str(price)
-                    else:
-                        american_odds = "N/A"
-                    
-                    odds_strings.append(f"{american_odds} ({sportsbook_name})")
-                    
-                    # Extract deep link
-                    deep_link_obj = odds_entry.get("deep_link", {})
-                    deep_link = None
-                    if isinstance(deep_link_obj, dict):
-                        deep_link = deep_link_obj.get("desktop") or deep_link_obj.get("android") or deep_link_obj.get("ios")
-                    
-                    # Add structured data
-                    structured_odds.append({
-                        "fixture_id": fixture_id,
-                        "fixture": f"{home_team} vs {away_team}",
-                        "market": market_name,
-                        "market_id": odds_entry.get("market_id"),
-                        "selection": selection_name,
-                        "selection_id": odds_entry.get("id"),
-                        "sportsbook": sportsbook_name,
-                        "sportsbook_id": None,  # API doesn't return sportsbook ID in this format
-                        "american_odds": american_odds,
-                        "price": price,
-                        "deep_link": deep_link,
-                        "player_id": odds_entry.get("player_id"),
-                        "team_id": odds_entry.get("team_id"),
-                    })
-                
-                # Format selection line with all odds
-                odds_display = " | ".join(odds_strings)
-                formatted_lines.append(f"  • {selection_name}: {odds_display}")
+        if fixture and isinstance(fixture, dict):
+            odds_list = fixture.get("odds", [])
+            if isinstance(odds_list, list):
+                for odd in odds_list:
+                    if isinstance(odd, dict):
+                        market = odd.get("market")
+                        if market:
+                            total_markets.add(market)
     
-    # Add structured JSON block for frontend parsing
-    if structured_odds:
-        formatted_lines.append(f"\n\n<!-- ODDS_DATA_START -->\n{json.dumps({'odds': structured_odds}, indent=2)}\n<!-- ODDS_DATA_END -->")
+    # Create short summary
+    fixture_count = len(fixtures)
+    market_count = len(total_markets)
+    summary = f"Here are the odds you requested for {fixture_count} fixture(s) with {market_count} market(s)."
     
-    return "\n".join(formatted_lines) if formatted_lines else "No odds available"
+    # Return summary only - no JSON markers
+    return summary
 
 
 def format_player_props_response(player_results: Dict[str, Any], odds: Dict[str, Any]) -> str:
@@ -2141,9 +3326,17 @@ def format_markets_response(data: Dict[str, Any]) -> str:
     if not markets:
         return "No markets found"
     
-    formatted_lines.append("Available Market Types:\n")
+    formatted_lines.append("Available Market Names (use these EXACT names in fetch_live_odds):\n")
+    formatted_lines.append("=" * 80)
+    formatted_lines.append("⚠️ IMPORTANT: Use the 'market_name' field below when calling fetch_live_odds.")
+    formatted_lines.append("Do NOT use market_type - that's for reference only.\n")
     
     structured_markets = []
+    
+    # Group by market_type for easier reading
+    player_prop_markets = []
+    main_markets = []
+    other_markets = []
     
     for market in markets:
         if not market:
@@ -2154,13 +3347,44 @@ def format_markets_response(data: Dict[str, Any]) -> str:
         market_type = market.get("market_type", "")
         market_slug = market.get("slug", "")
         
-        formatted_lines.append(f"\n{market_name}")
-        if market_type:
-            formatted_lines.append(f"  Market Type: {market_type}")
-        if market_id:
-            formatted_lines.append(f"  Market ID: {market_id}")
-        if market_slug:
-            formatted_lines.append(f"  Slug: {market_slug}")
+        # Categorize for better organization
+        if market_type and market_type.startswith("player_"):
+            player_prop_markets.append(market)
+        elif market_type in ["moneyline", "spread", "total", "asian_handicap", "asian_total", "team_total"]:
+            main_markets.append(market)
+        else:
+            other_markets.append(market)
+        
+        structured_markets.append({
+            "market_id": market_id,
+            "market_name": market_name,  # THIS is what to use in fetch_live_odds
+            "market_type": market_type,  # For reference only
+            "market_slug": market_slug,
+        })
+    
+    # Format main markets
+    if main_markets:
+        formatted_lines.append("\n--- Main Markets (use market_name in fetch_live_odds) ---")
+        for market in sorted(main_markets, key=lambda x: x.get("name", "")):
+            market_name = market.get("name", "Unknown")
+            market_type = market.get("market_type", "")
+            formatted_lines.append(f"  ✅ {market_name} (market_type: {market_type})")
+    
+    # Format player prop markets
+    if player_prop_markets:
+        formatted_lines.append("\n--- Player Prop Markets (use market_name in fetch_live_odds) ---")
+        for market in sorted(player_prop_markets, key=lambda x: x.get("name", "")):
+            market_name = market.get("name", "Unknown")
+            market_type = market.get("market_type", "")
+            formatted_lines.append(f"  ✅ {market_name} (market_type: {market_type})")
+    
+    # Format other markets
+    if other_markets:
+        formatted_lines.append("\n--- Other Markets (use market_name in fetch_live_odds) ---")
+        for market in sorted(other_markets, key=lambda x: x.get("name", "")):
+            market_name = market.get("name", "Unknown")
+            market_type = market.get("market_type", "")
+            formatted_lines.append(f"  ✅ {market_name} (market_type: {market_type})")
         
         structured_markets.append({
             "market_id": market_id,
@@ -2174,6 +3398,377 @@ def format_markets_response(data: Dict[str, Any]) -> str:
         formatted_lines.append(f"\n\n<!-- MARKETS_DATA_START -->\n{json.dumps({'markets': structured_markets}, indent=2)}\n<!-- MARKETS_DATA_END -->")
     
     return "\n".join(formatted_lines) if formatted_lines else "No markets available"
+
+
+def format_market_types_response(data: Dict[str, Any]) -> str:
+    """Format market types response with structured data for frontend parsing."""
+    if not data:
+        return "No market types data available"
+    
+    formatted_lines = []
+    market_types = data.get("data", [])
+    
+    if not isinstance(market_types, list):
+        market_types = [market_types] if market_types else []
+    
+    if not market_types:
+        return "No market types found"
+    
+    formatted_lines.append("Available Market Types:\n")
+    formatted_lines.append("=" * 60)
+    formatted_lines.append("\nIMPORTANT: Use the exact 'name' field when requesting odds (e.g., 'moneyline', 'spread', 'player_total').")
+    formatted_lines.append("Do NOT use display names - use the exact market type name from the 'name' field.\n")
+    
+    structured_market_types = []
+    
+    # Group by category for easier reading
+    player_prop_types = []
+    main_market_types = []
+    other_types = []
+    
+    for market_type in market_types:
+        if not market_type:
+            continue
+        
+        market_id = market_type.get("id")
+        market_name = market_type.get("name", "Unknown")
+        selections = market_type.get("selections", [])
+        notes = market_type.get("notes")
+        
+        # Categorize
+        if market_name.startswith("player_"):
+            player_prop_types.append(market_type)
+        elif market_name in ["moneyline", "spread", "total", "asian_handicap", "asian_total", "team_total"]:
+            main_market_types.append(market_type)
+        else:
+            other_types.append(market_type)
+        
+        structured_market_types.append({
+            "id": market_id,
+            "name": market_name,
+            "selections": selections,
+            "notes": notes,
+        })
+    
+    # Format main markets
+    if main_market_types:
+        formatted_lines.append("\n--- Main Market Types ---")
+        for market_type in sorted(main_market_types, key=lambda x: x.get("id", 0)):
+            market_id = market_type.get("id")
+            market_name = market_type.get("name", "Unknown")
+            selections = market_type.get("selections", [])
+            notes = market_type.get("notes")
+            
+            formatted_lines.append(f"\n{market_name} (ID: {market_id})")
+            if selections:
+                formatted_lines.append(f"  Selections: {', '.join(selections[:3])}{'...' if len(selections) > 3 else ''}")
+            if notes:
+                formatted_lines.append(f"  Notes: {notes}")
+    
+    # Format player prop types
+    if player_prop_types:
+        formatted_lines.append("\n--- Player Prop Market Types ---")
+        for market_type in sorted(player_prop_types, key=lambda x: x.get("id", 0)):
+            market_id = market_type.get("id")
+            market_name = market_type.get("name", "Unknown")
+            selections = market_type.get("selections", [])
+            notes = market_type.get("notes")
+            
+            formatted_lines.append(f"\n{market_name} (ID: {market_id})")
+            if selections:
+                formatted_lines.append(f"  Selections: {', '.join(selections[:3])}{'...' if len(selections) > 3 else ''}")
+            if notes:
+                formatted_lines.append(f"  Notes: {notes}")
+    
+    # Format other types
+    if other_types:
+        formatted_lines.append("\n--- Other Market Types ---")
+        for market_type in sorted(other_types, key=lambda x: x.get("id", 0)):
+            market_id = market_type.get("id")
+            market_name = market_type.get("name", "Unknown")
+            selections = market_type.get("selections", [])
+            notes = market_type.get("notes")
+            
+            formatted_lines.append(f"\n{market_name} (ID: {market_id})")
+            if selections:
+                formatted_lines.append(f"  Selections: {', '.join(selections[:3])}{'...' if len(selections) > 3 else ''}")
+            if notes:
+                formatted_lines.append(f"  Notes: {notes}")
+    
+    # Add structured JSON block for frontend parsing
+    if structured_market_types:
+        formatted_lines.append(f"\n\n<!-- MARKET_TYPES_DATA_START -->\n{json.dumps({'market_types': structured_market_types}, indent=2)}\n<!-- MARKET_TYPES_DATA_END -->")
+    
+    return "\n".join(formatted_lines) if formatted_lines else "No market types available"
+
+
+def format_players_response(data: Dict[str, Any], player_name: Optional[str] = None, league: Optional[str] = None) -> str:
+    """Format players response with structured data for frontend parsing."""
+    if not data:
+        return "No players data available"
+    
+    formatted_lines = []
+    players = data.get("data", [])
+    
+    if not isinstance(players, list):
+        players = [players] if players else []
+    
+    # Filter by player_name if provided (case-insensitive partial match)
+    if player_name:
+        player_name_lower = player_name.lower()
+        players = [
+            p for p in players 
+            if p and player_name_lower in p.get("name", "").lower()
+        ]
+    
+    if not players:
+        if player_name:
+            return f"No players found matching '{player_name}'" + (f" in league '{league}'" if league else "")
+        return "No players found" + (f" in league '{league}'" if league else "")
+    
+    # Header
+    if player_name:
+        formatted_lines.append(f"Players matching '{player_name}':" + (f" (League: {league})" if league else ""))
+    else:
+        formatted_lines.append("Players:" + (f" (League: {league})" if league else ""))
+    
+    formatted_lines.append(f"Found {len(players)} player(s)\n")
+    
+    structured_players = []
+    
+    for player in players:
+        if not player:
+            continue
+        
+        player_id = player.get("id")
+        player_name_display = player.get("name", "Unknown")
+        numerical_id = player.get("numerical_id")
+        
+        # Get team info
+        team_info = player.get("team")
+        team_name = team_info.get("name", "Unknown") if isinstance(team_info, dict) else "Unknown"
+        team_id = team_info.get("id") if isinstance(team_info, dict) else None
+        
+        # Get league info
+        league_info = player.get("league")
+        league_name = league_info.get("name", "Unknown") if isinstance(league_info, dict) else "Unknown"
+        league_id = league_info.get("id") if isinstance(league_info, dict) else None
+        
+        # Get sport info
+        sport_info = player.get("sport")
+        sport_name = sport_info.get("name", "Unknown") if isinstance(sport_info, dict) else "Unknown"
+        
+        # Format player entry
+        formatted_lines.append(f"\n{player_name_display}")
+        formatted_lines.append(f"  Player ID: {player_id} (LEAGUE-SPECIFIC - use this ID for {league_name or league})")
+        if numerical_id:
+            formatted_lines.append(f"  Numerical ID: {numerical_id}")
+        formatted_lines.append(f"  Team: {team_name}" + (f" (ID: {team_id})" if team_id else ""))
+        formatted_lines.append(f"  League: {league_name}" + (f" (ID: {league_id})" if league_id else ""))
+        formatted_lines.append(f"  Sport: {sport_name}")
+        
+        # Additional info
+        position = player.get("position")
+        if position:
+            formatted_lines.append(f"  Position: {position}")
+        
+        structured_players.append({
+            "player_id": player_id,
+            "player_name": player_name_display,
+            "numerical_id": numerical_id,
+            "team": {
+                "id": team_id,
+                "name": team_name,
+            } if team_id else None,
+            "league": {
+                "id": league_id,
+                "name": league_name,
+            } if league_id else None,
+            "sport": {
+                "name": sport_name,
+            },
+            "position": position,
+        })
+    
+    # Add structured JSON block for frontend parsing
+    if structured_players:
+        formatted_lines.append(f"\n\n<!-- PLAYERS_DATA_START -->\n{json.dumps({'players': structured_players}, indent=2)}\n<!-- PLAYERS_DATA_END -->")
+    
+    # Add warning about league-specific IDs
+    formatted_lines.append("\n\n⚠️ IMPORTANT: Player IDs are league-specific!")
+    formatted_lines.append("When using player_id in fetch_live_odds or fetch_player_props, make sure")
+    formatted_lines.append(f"the player_id matches the league you're querying ({league_name or league or 'the specified league'}).")
+    
+    return "\n".join(formatted_lines) if formatted_lines else "No players available"
+
+
+def format_teams_response(data: Dict[str, Any], team_name: Optional[str] = None, league: Optional[str] = None) -> str:
+    """Format teams response with structured data for frontend parsing."""
+    if not data:
+        return "No teams data available"
+    
+    formatted_lines = []
+    teams = data.get("data", [])
+    
+    if not isinstance(teams, list):
+        teams = [teams] if teams else []
+    
+    # Filter by team_name if provided (case-insensitive partial match)
+    if team_name:
+        team_name_lower = team_name.lower()
+        teams = [
+            t for t in teams 
+            if t and team_name_lower in t.get("name", "").lower()
+        ]
+    
+    if not teams:
+        if team_name:
+            return f"No teams found matching '{team_name}'" + (f" in league '{league}'" if league else "")
+        return "No teams found" + (f" in league '{league}'" if league else "")
+    
+    # Header
+    if team_name:
+        formatted_lines.append(f"Teams matching '{team_name}':" + (f" (League: {league})" if league else ""))
+    else:
+        formatted_lines.append("Teams:" + (f" (League: {league})" if league else ""))
+    
+    formatted_lines.append(f"Found {len(teams)} team(s)\n")
+    
+    structured_teams = []
+    
+    # Group teams by division/conference if applicable
+    teams_by_division = {}
+    teams_by_conference = {}
+    ungrouped_teams = []
+    
+    for team in teams:
+        if not team:
+            continue
+        
+        division = team.get("division")
+        conference = team.get("conference")
+        
+        if division:
+            if division not in teams_by_division:
+                teams_by_division[division] = []
+            teams_by_division[division].append(team)
+        elif conference:
+            if conference not in teams_by_conference:
+                teams_by_conference[conference] = []
+            teams_by_conference[conference].append(team)
+        else:
+            ungrouped_teams.append(team)
+    
+    # Format teams grouped by division/conference
+    def format_team_entry(team):
+        team_id = team.get("id")
+        team_name_display = team.get("name", "Unknown")
+        abbreviation = team.get("abbreviation", "")
+        city = team.get("city", "")
+        mascot = team.get("mascot", "")
+        nickname = team.get("nickname", "")
+        numerical_id = team.get("numerical_id")
+        base_id = team.get("base_id")
+        division = team.get("division")
+        conference = team.get("conference")
+        logo = team.get("logo", "")
+        is_active = team.get("is_active", True)
+        
+        # Get league info
+        league_info = team.get("league")
+        league_name = league_info.get("name", "Unknown") if isinstance(league_info, dict) else "Unknown"
+        league_id = league_info.get("id") if isinstance(league_info, dict) else None
+        
+        # Get sport info
+        sport_info = team.get("sport")
+        sport_name = sport_info.get("name", "Unknown") if isinstance(sport_info, dict) else "Unknown"
+        
+        # Format team entry
+        formatted_lines.append(f"\n{team_name_display}")
+        formatted_lines.append(f"  Team ID: {team_id} (LEAGUE-SPECIFIC - use this ID for {league_name or league})")
+        if abbreviation:
+            formatted_lines.append(f"  Abbreviation: {abbreviation}")
+        if city:
+            formatted_lines.append(f"  City: {city}")
+        if mascot:
+            formatted_lines.append(f"  Mascot: {mascot}")
+        if nickname and nickname != mascot:
+            formatted_lines.append(f"  Nickname: {nickname}")
+        if division:
+            formatted_lines.append(f"  Division: {division}")
+        if conference:
+            formatted_lines.append(f"  Conference: {conference}")
+        if base_id:
+            formatted_lines.append(f"  Base ID: {base_id} (for cross-league linking)")
+        if numerical_id:
+            formatted_lines.append(f"  Numerical ID: {numerical_id}")
+        formatted_lines.append(f"  League: {league_name}" + (f" (ID: {league_id})" if league_id else ""))
+        formatted_lines.append(f"  Sport: {sport_name}")
+        if logo:
+            formatted_lines.append(f"  Logo: {logo}")
+        if not is_active:
+            formatted_lines.append(f"  Status: Inactive")
+        
+        structured_teams.append({
+            "team_id": team_id,
+            "team_name": team_name_display,
+            "abbreviation": abbreviation,
+            "city": city,
+            "mascot": mascot,
+            "nickname": nickname,
+            "numerical_id": numerical_id,
+            "base_id": base_id,
+            "division": division,
+            "conference": conference,
+            "logo": logo,
+            "is_active": is_active,
+            "league": {
+                "id": league_id,
+                "name": league_name,
+            } if league_id else None,
+            "sport": {
+                "name": sport_name,
+            },
+        })
+    
+    # Display teams grouped by division if available
+    if teams_by_division:
+        for division, div_teams in sorted(teams_by_division.items()):
+            formatted_lines.append(f"\n{'='*60}")
+            formatted_lines.append(f"Division: {division}")
+            formatted_lines.append(f"{'='*60}")
+            for team in div_teams:
+                format_team_entry(team)
+    
+    # Display teams grouped by conference if available (and not already in division)
+    if teams_by_conference:
+        for conference, conf_teams in sorted(teams_by_conference.items()):
+            formatted_lines.append(f"\n{'='*60}")
+            formatted_lines.append(f"Conference: {conference}")
+            formatted_lines.append(f"{'='*60}")
+            for team in conf_teams:
+                format_team_entry(team)
+    
+    # Display ungrouped teams
+    if ungrouped_teams:
+        if teams_by_division or teams_by_conference:
+            formatted_lines.append(f"\n{'='*60}")
+            formatted_lines.append("Other Teams")
+            formatted_lines.append(f"{'='*60}")
+        for team in ungrouped_teams:
+            format_team_entry(team)
+    
+    # Add structured JSON block for frontend parsing
+    if structured_teams:
+        formatted_lines.append(f"\n\n<!-- TEAMS_DATA_START -->\n{json.dumps({'teams': structured_teams}, indent=2)}\n<!-- TEAMS_DATA_END -->")
+    
+    # Add warning about league-specific IDs
+    formatted_lines.append("\n\n⚠️ IMPORTANT: Team IDs are league-specific!")
+    formatted_lines.append("When using team_id in fetch_live_odds or other tools, make sure")
+    formatted_lines.append(f"the team_id matches the league you're querying ({league or 'the specified league'}).")
+    formatted_lines.append("base_id can help link teams across leagues but isn't 100% reliable for all sports.")
+    
+    return "\n".join(formatted_lines) if formatted_lines else "No teams available"
 
 
 def format_sportsbooks_response(data: Dict[str, Any]) -> str:

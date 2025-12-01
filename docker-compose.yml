@@ -1,7 +1,7 @@
 services:
   api:
     build: .
-    container_name: chatbot-api
+    container_name: bettorchat-api
     ports:
       - "127.0.0.1:8000:8000"
     env_file:
@@ -9,47 +9,57 @@ services:
     environment:
       - ENVIRONMENT=production
       - DEBUG=false
-      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/chatbotdb
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/bettorchatdb
       - REDIS_URL=redis://redis:6379/0
     depends_on:
-      - postgres
-      - redis
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     volumes:
       - ./app:/app/app
     restart: unless-stopped
     networks:
-      - chatbot-network
+      - bettorchat-network
 
   postgres:
     image: postgres:15-alpine
-    container_name: chatbot-postgres
+    container_name: bettorchat-postgres
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=chatbotdb
+      - POSTGRES_DB=bettorchatdb
     ports:
-      - "5432:5432"
+      - "5436:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres-init:/docker-entrypoint-initdb.d:ro
+      - ./docker/ensure-db-always.sh:/usr/local/bin/ensure-db.sh:ro
     restart: unless-stopped
     networks:
-      - chatbot-network
+      - bettorchat-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
+      test: >
+        sh -c "
+          pg_isready -U postgres &&
+          (psql -U postgres -d bettorchatdb -c 'SELECT 1' > /dev/null 2>&1 || 
+           (sh /usr/local/bin/ensure-db.sh && psql -U postgres -d bettorchatdb -c 'SELECT 1' > /dev/null 2>&1))
+        "
+      interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 20
+      start_period: 15s
 
   redis:
     image: redis:7-alpine
-    container_name: chatbot-redis
+    container_name: bettorchat-redis
     ports:
-      - "6379:6379"
+      - "6380:6379"
     volumes:
       - redis_data:/data
     restart: unless-stopped
     networks:
-      - chatbot-network
+      - bettorchat-network
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
@@ -58,10 +68,11 @@ services:
     command: redis-server --appendonly yes
 
 networks:
-  chatbot-network:
+  bettorchat-network:
     driver: bridge
 
 volumes:
   postgres_data:
+    name: bettorchat_postgres_data
   redis_data:
 
