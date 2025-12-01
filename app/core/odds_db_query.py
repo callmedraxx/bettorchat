@@ -19,8 +19,8 @@ def query_odds_from_db(
     sportsbook: Optional[str] = None,
     market_id: Optional[str] = None,
     market: Optional[str] = None,
-    market_category: Optional[str] = None,
-    player_id: Optional[str] = None,
+    market_category: Optional[List[str]] = None,
+    player_id: Optional[List[str]] = None,
     team_id: Optional[str] = None,
     selection: Optional[str] = None,
     normalized_selection: Optional[str] = None,
@@ -55,9 +55,38 @@ def query_odds_from_db(
         if market:
             query = query.filter(NFLOdds.market.ilike(f"%{market}%"))
         if market_category:
-            query = query.filter(NFLOdds.market_category == market_category.lower())
+            # Support multiple categories with OR logic
+            if isinstance(market_category, list):
+                from sqlalchemy import or_
+                market_cat_lower = [cat.lower() if isinstance(cat, str) else str(cat).lower() for cat in market_category]
+                query = query.filter(or_(*[NFLOdds.market_category == cat for cat in market_cat_lower]))
+            else:
+                query = query.filter(NFLOdds.market_category == market_category.lower())
+        
+        # Handle player_id filter - need special logic for mixed queries
+        # If we have both market_category (with moneyline) and player_id, we need:
+        # (moneyline entries with NULL player_id) OR (player_prop entries with matching player_id)
         if player_id:
-            query = query.filter(NFLOdds.player_id == player_id)
+            from sqlalchemy import or_
+            player_ids_list = player_id if isinstance(player_id, list) else [player_id]
+            
+            # Check if we're querying for moneyline (which has NULL player_id)
+            has_moneyline = False
+            if market_category:
+                market_cats = market_category if isinstance(market_category, list) else [market_category]
+                has_moneyline = any(cat.lower() == "moneyline" for cat in market_cats)
+            
+            if has_moneyline and isinstance(market_category, list) and len(market_category) > 1:
+                # Mixed query: moneyline (NULL player_id) OR player_prop (matching player_id)
+                query = query.filter(
+                    or_(
+                        NFLOdds.player_id.is_(None),  # Moneyline entries
+                        NFLOdds.player_id.in_(player_ids_list)  # Player prop entries
+                    )
+                )
+            else:
+                # Only player props or single category - filter by player_id normally
+                query = query.filter(NFLOdds.player_id.in_(player_ids_list))
         if team_id:
             query = query.filter(NFLOdds.team_id == team_id)
         if selection:

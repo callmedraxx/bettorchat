@@ -426,10 +426,41 @@ def build_opticodds_url_from_tool_call(tool_name: str, tool_args: Dict[str, Any]
     )
     
     # Check if this is for NFL odds - if so, use local endpoint instead of OpticOdds proxy
-    is_nfl_odds = (
-        (tool_name == "fetch_live_odds" or tool_name == "fetch_player_props") and
-        ("fixture_id" in params or "fixture_id" in tool_args)
-    )
+    # For NFL, we can detect by checking if fixture_id exists and is NFL, or if player_id is provided and league is NFL
+    is_nfl_odds = False
+    if tool_name == "fetch_live_odds" or tool_name == "fetch_player_props":
+        # Check if fixture_id is provided and if it's an NFL fixture
+        fixture_ids_to_check = []
+        if "fixture_id" in params:
+            if isinstance(params["fixture_id"], list):
+                fixture_ids_to_check = params["fixture_id"]
+            else:
+                fixture_ids_to_check = [params["fixture_id"]]
+        elif "fixture_id" in tool_args:
+            fixture_id = tool_args["fixture_id"]
+            if isinstance(fixture_id, str) and ',' in fixture_id:
+                fixture_ids_to_check = [fid.strip() for fid in fixture_id.split(',') if fid.strip()]
+            else:
+                fixture_ids_to_check = [str(fixture_id)]
+        
+        # If we have fixture_ids, check if they're NFL fixtures
+        if fixture_ids_to_check:
+            try:
+                from app.core.database import SessionLocal
+                from app.models.nfl_fixture import NFLFixture
+                db = SessionLocal()
+                try:
+                    nfl_fixture = db.query(NFLFixture).filter(NFLFixture.id.in_(fixture_ids_to_check[:1])).first()
+                    if nfl_fixture:
+                        is_nfl_odds = True
+                finally:
+                    db.close()
+            except Exception:
+                # If check fails, assume not NFL (fallback to API)
+                pass
+        # If no fixture_id but player_id is provided and it's fetch_player_props, we can't easily check
+        # In this case, we'll let it go to the API (or we could check league parameter if provided)
+        # For now, if fixture_id is not provided, we won't use the database
     
     # Build the proxy URL instead of direct OpticOdds URL
     # This allows the frontend to call through the backend to avoid CORS issues
@@ -478,7 +509,11 @@ def build_opticodds_url_from_tool_call(tool_name: str, tool_args: Dict[str, Any]
                 if len(market_list) == 1:
                     proxy_params["market"] = market_list[0]
             if "player_id" in params:
-                proxy_params["player_id"] = params["player_id"]
+                # Support multiple player_ids
+                if isinstance(params["player_id"], list):
+                    proxy_params["player_id"] = params["player_id"]
+                else:
+                    proxy_params["player_id"] = [params["player_id"]]
             if "team_id" in params:
                 proxy_params["team_id"] = params["team_id"]
             

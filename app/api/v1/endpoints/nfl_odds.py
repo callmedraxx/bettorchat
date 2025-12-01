@@ -79,9 +79,9 @@ async def get_nfl_odds(
     sportsbook: Optional[str] = Query(None, description="Filter by sportsbook name"),
     market_id: Optional[str] = Query(None, description="Filter by market ID (e.g., moneyline, point_spread, total_points)"),
     market: Optional[str] = Query(None, description="Filter by market name (e.g., Moneyline, Point Spread)"),
-    market_category: Optional[str] = Query(None, description="Filter by market category: moneyline, spread, total, team_total, player_prop, other"),
-    market_type: Optional[str] = Query(None, description="Alias for market_category (same functionality)"),
-    player_id: Optional[str] = Query(None, description="Filter by player ID"),
+    market_category: Optional[List[str]] = Query(None, description="Filter by market category (can specify multiple with OR logic): moneyline, spread, total, team_total, player_prop, other"),
+    market_type: Optional[List[str]] = Query(None, description="Alias for market_category (same functionality, can specify multiple)"),
+    player_id: Optional[List[str]] = Query(None, description="Filter by player ID (can specify multiple)"),
     team_id: Optional[str] = Query(None, description="Filter by team ID"),
     selection: Optional[str] = Query(None, description="Filter by selection name (partial match)"),
     normalized_selection: Optional[str] = Query(None, description="Filter by normalized selection name"),
@@ -117,11 +117,41 @@ async def get_nfl_odds(
         if market:
             query = query.filter(NFLOdds.market.ilike(f"%{market}%"))
         # Handle market_category or market_type (they're the same)
+        # Support multiple categories with OR logic
         market_cat = market_category or market_type
         if market_cat:
-            query = query.filter(NFLOdds.market_category == market_cat.lower())
+            if isinstance(market_cat, list):
+                # Multiple categories - use OR logic
+                from sqlalchemy import or_
+                market_cat_lower = [cat.lower() if isinstance(cat, str) else str(cat).lower() for cat in market_cat]
+                query = query.filter(or_(*[NFLOdds.market_category == cat for cat in market_cat_lower]))
+            else:
+                query = query.filter(NFLOdds.market_category == market_cat.lower())
+        
+        # Handle player_id filter - need special logic for mixed queries
+        # If we have both market_category (with moneyline) and player_id, we need:
+        # (moneyline entries with NULL player_id) OR (player_prop entries with matching player_id)
         if player_id:
-            query = query.filter(NFLOdds.player_id == player_id)
+            from sqlalchemy import or_
+            player_ids_list = player_id if isinstance(player_id, list) else [player_id]
+            
+            # Check if we're querying for moneyline (which has NULL player_id)
+            has_moneyline = False
+            if market_cat:
+                market_cats = market_cat if isinstance(market_cat, list) else [market_cat]
+                has_moneyline = any(cat.lower() == "moneyline" for cat in market_cats)
+            
+            if has_moneyline and isinstance(market_cat, list) and len(market_cat) > 1:
+                # Mixed query: moneyline (NULL player_id) OR player_prop (matching player_id)
+                query = query.filter(
+                    or_(
+                        NFLOdds.player_id.is_(None),  # Moneyline entries
+                        NFLOdds.player_id.in_(player_ids_list)  # Player prop entries
+                    )
+                )
+            else:
+                # Only player props or single category - filter by player_id normally
+                query = query.filter(NFLOdds.player_id.in_(player_ids_list))
         if team_id:
             query = query.filter(NFLOdds.team_id == team_id)
         if selection:

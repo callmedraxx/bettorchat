@@ -551,17 +551,39 @@ def fetch_live_odds(
                 resolved_market_category = None
                 if resolved_market:
                     # Try to map market names to market_category
+                    # Support multiple market categories
+                    market_categories = []
                     market_lower = " ".join(resolved_market).lower() if isinstance(resolved_market, list) else resolved_market.lower()
-                    if "moneyline" in market_lower or "ml" in market_lower:
-                        resolved_market_category = "moneyline"
-                    elif "spread" in market_lower or "point spread" in market_lower:
-                        resolved_market_category = "spread"
-                    elif "total" in market_lower and "team total" not in market_lower:
-                        resolved_market_category = "total"
-                    elif "team total" in market_lower:
-                        resolved_market_category = "team_total"
-                    elif "player" in market_lower:
-                        resolved_market_category = "player_prop"
+                    market_list = resolved_market if isinstance(resolved_market, list) else [resolved_market]
+                    
+                    for market in market_list:
+                        market_str = str(market).lower()
+                        if "moneyline" in market_str or "ml" in market_str:
+                            market_categories.append("moneyline")
+                        elif "spread" in market_str or "point spread" in market_str:
+                            market_categories.append("spread")
+                        elif "total" in market_str and "team total" not in market_str:
+                            market_categories.append("total")
+                        elif "team total" in market_str:
+                            market_categories.append("team_total")
+                        elif "player" in market_str:
+                            market_categories.append("player_prop")
+                    
+                    # Use list if multiple categories, single value if one
+                    if len(market_categories) > 1:
+                        resolved_market_category = list(set(market_categories))  # Remove duplicates
+                    elif len(market_categories) == 1:
+                        resolved_market_category = market_categories[0]
+                
+                # Handle multiple player_ids if provided as comma-separated string
+                player_ids_list = None
+                if player_id:
+                    if isinstance(player_id, str) and ',' in player_id:
+                        player_ids_list = [pid.strip() for pid in player_id.split(',') if pid.strip()]
+                    elif isinstance(player_id, list):
+                        player_ids_list = player_id
+                    else:
+                        player_ids_list = [str(player_id)]
                 
                 # Query database
                 result = query_odds_from_db(
@@ -569,7 +591,7 @@ def fetch_live_odds(
                     sportsbook=resolved_sportsbook[0] if resolved_sportsbook and len(resolved_sportsbook) == 1 else None,  # For now, handle single sportsbook
                     market=resolved_market[0] if resolved_market and len(resolved_market) == 1 else None,
                     market_category=resolved_market_category,
-                    player_id=str(player_id) if player_id else None,
+                    player_id=player_ids_list,
                     team_id=str(team_id) if team_id else None,
                     limit=1000,
                 )
