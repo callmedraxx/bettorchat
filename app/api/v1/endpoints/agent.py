@@ -65,7 +65,13 @@ async def chat(request: ChatRequest):
     logger.info(f"[chat] REQUEST RECEIVED - session_id: {session_id}, messages: {message_count}, last_message: {last_message}...")
     
     try:
-        agent = create_betting_agent()
+        # Clear cache to ensure fresh agent with latest model and tools
+        from app.agents.agent import clear_agent_cache
+        clear_agent_cache()
+        
+        # Use cached agent instance for faster response (reuses agent, only creates once)
+        # Note: Cache is cleared above to ensure fresh agent
+        agent = create_betting_agent(use_cache=True)
         
         # Convert request messages to the format expected by the agent
         messages = [{"role": msg.role, "content": msg.content} for msg in request.messages]
@@ -81,6 +87,7 @@ async def chat(request: ChatRequest):
         # Create a config with thread_id for the checkpointer
         config = {"configurable": {"thread_id": thread_id}}
         
+        # Use invoke (non-streaming) for faster, synchronous response
         result = agent.invoke({"messages": messages}, config=config)
         
         # Use LangChain's built-in message serialization
@@ -369,7 +376,6 @@ async def chat_stream(request: ChatRequest):
                     "fetch_available_markets",  # Used to find available markets
                     "fetch_players",  # Used to find player_id for other queries
                     "fetch_teams",  # Used to find team_id for other queries
-                    "get_current_datetime",  # Used to get current date for queries
                     "query_tool_results",  # Used to find previously fetched data
                     "query_odds_entries",  # Used to query stored odds
                 }

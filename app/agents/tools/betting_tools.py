@@ -50,53 +50,7 @@ def get_client() -> OpticOddsClient:
     return _client
 
 
-def get_user_timezone(user_id: Optional[str] = None, timezone_override: Optional[str] = None) -> ZoneInfo:
-    """Get user's timezone from cache/preferences, defaulting to EST/EDT.
-    
-    Args:
-        user_id: Optional user ID to look up preferences
-        timezone_override: Optional timezone string to use (e.g., "America/Los_Angeles")
-    
-    Returns:
-        ZoneInfo object for the user's timezone
-    """
-    # Default to Eastern Time
-    default_tz = ZoneInfo("America/New_York")
-    
-    # If timezone override provided, use it
-    if timezone_override:
-        try:
-            return ZoneInfo(timezone_override)
-        except Exception:
-            return default_tz
-    
-    # Try to get from cache if user_id provided
-    if user_id and user_id in _user_timezone_cache:
-        try:
-            return ZoneInfo(_user_timezone_cache[user_id])
-        except Exception:
-            return default_tz
-    
-    return default_tz
 
-
-def set_user_timezone(user_id: str, timezone: str) -> bool:
-    """Set user's timezone in cache.
-    
-    Args:
-        user_id: User ID
-        timezone: Timezone string (e.g., "America/Los_Angeles")
-    
-    Returns:
-        True if successful
-    """
-    try:
-        # Validate timezone
-        ZoneInfo(timezone)
-        _user_timezone_cache[user_id] = timezone
-        return True
-    except Exception:
-        return False
 
 
 def get_default_sportsbooks(sport_id: Optional[str] = None, league_id: Optional[str] = None) -> List[str]:
@@ -164,141 +118,6 @@ def get_default_sportsbooks(sport_id: Optional[str] = None, league_id: Optional[
     _sportsbooks_cache = fallback_sportsbooks
     _sportsbooks_cache_timestamp = current_time
     return fallback_sportsbooks
-
-
-@tool
-def get_current_datetime(user_id: Optional[str] = None, timezone: Optional[str] = None) -> str:
-    """Get the current date, time, timezone, and day of week in the user's timezone.
-    
-    This tool should be called whenever the user mentions dates like "today", "tomorrow", 
-    "next week", or any relative date references. Always use this tool to get the current 
-    date before interpreting date-related queries.
-    
-    The timezone is determined by:
-    1. timezone parameter (if provided)
-    2. User's saved timezone preference (if user_id provided and preference exists)
-    3. Default to Eastern Time (EST/EDT) if no preference
-    
-    Args:
-        user_id: Optional user ID to look up timezone preference
-        timezone: Optional timezone string (e.g., "America/Los_Angeles", "America/New_York")
-    
-    Returns:
-        Formatted string with current date, time, timezone, and day of week
-    """
-    # Get user's timezone (defaults to EST/EDT)
-    tz = get_user_timezone(user_id, timezone)
-    now = datetime.now(tz)
-    
-    # Get timezone name for display
-    tz_name = str(tz).split("/")[-1].replace("_", " ")
-    tz_abbr = now.strftime('%Z')
-    
-    # Format date and time information
-    formatted = f"""Current Date and Time Information ({tz_abbr}):
-
-Date: {now.strftime('%A, %B %d, %Y')}
-Time: {now.strftime('%I:%M %p')} {tz_abbr}
-Timezone: {tz_abbr} ({tz_name}) (UTC{now.strftime('%z')})
-Day of Week: {now.strftime('%A')}
-ISO Format: {now.isoformat()}
-
-Use this information to interpret relative dates:
-- "Today" = {now.strftime('%B %d, %Y')}
-- "Tomorrow" = {(now + timedelta(days=1)).strftime('%B %d, %Y')}
-- "This week" = Week of {now.strftime('%B %d, %Y')}
-
-Note: Times are displayed in your local timezone ({tz_abbr}). If you'd like to change your timezone, use the detect_user_location tool or set it in your preferences.
-"""
-    
-    return formatted
-
-
-@tool
-def detect_user_location(ip_address: Optional[str] = None, user_id: Optional[str] = None) -> str:
-    """Detect user's location and timezone from IP address or set location preference.
-    
-    This tool detects the user's location using IP geolocation and automatically sets
-    their timezone preference. If IP address is not provided, it will use a free
-    geolocation service to detect from the current request.
-    
-    Args:
-        ip_address: Optional IP address to geolocate. If not provided, attempts to detect automatically.
-        user_id: Optional user ID to save location/timezone preference
-    
-    Returns:
-        Formatted string with detected location and timezone information
-    """
-    try:
-        # Use a free IP geolocation service
-        if ip_address:
-            # Use ip-api.com (free, no API key required)
-            geo_url = f"http://ip-api.com/json/{ip_address}"
-        else:
-            # Get location from current IP
-            geo_url = "http://ip-api.com/json/"
-        
-        response = httpx.get(geo_url, timeout=5.0)
-        response.raise_for_status()
-        geo_data = response.json()
-        
-        if geo_data.get("status") == "fail":
-            error_msg = geo_data.get("message", "Unknown error")
-            return f"Error detecting location: {error_msg}. Defaulting to Eastern Time (EST/EDT)."
-        
-        # Extract location data
-        city = geo_data.get("city", "Unknown")
-        region = geo_data.get("regionName", geo_data.get("region", "Unknown"))
-        country = geo_data.get("country", "Unknown")
-        country_code = geo_data.get("countryCode", "")
-        timezone_str = geo_data.get("timezone", "America/New_York")
-        lat = geo_data.get("lat")
-        lon = geo_data.get("lon")
-        
-        # Convert timezone string to ZoneInfo
-        try:
-            tz = ZoneInfo(timezone_str)
-        except Exception:
-            # Fallback to EST if timezone is invalid
-            tz = ZoneInfo("America/New_York")
-            timezone_str = "America/New_York"
-        
-        # Get current time in detected timezone
-        now = datetime.now(tz)
-        tz_abbr = now.strftime('%Z')
-        
-        location_info = {
-            "city": city,
-            "region": region,
-            "country": country,
-            "country_code": country_code,
-            "timezone": timezone_str,
-            "latitude": lat,
-            "longitude": lon,
-        }
-        
-        # Save timezone to cache if user_id provided
-        if user_id:
-            set_user_timezone(user_id, timezone_str)
-        
-        formatted = f"""Location Detected:
-
-City: {city}
-Region/State: {region}
-Country: {country}
-Timezone: {tz_abbr} ({timezone_str})
-Current Time: {now.strftime('%I:%M %p %Z')} on {now.strftime('%B %d, %Y')}
-
-Your timezone preference has been set to {tz_abbr}. All times will now be displayed in your local timezone.
-"""
-        
-        # Add structured data for agent to save to preferences
-        formatted += f"\n\n<!-- LOCATION_DATA_START -->\n{json.dumps(location_info, indent=2)}\n<!-- LOCATION_DATA_END -->"
-        
-        return formatted
-        
-    except Exception as e:
-        return f"Error detecting location: {str(e)}. Defaulting to Eastern Time (EST/EDT). You can manually set your timezone preference."
 
 
 @tool
@@ -924,9 +743,14 @@ def fetch_upcoming_games(
     stream_output: bool = True,
     session_id: Optional[str] = None,
 ) -> str:
-    """Fetch upcoming game schedules/fixtures using OpticOdds /fixtures endpoint.
+    """🚨 RARELY NEEDED: Fetch upcoming game schedules/fixtures using OpticOdds /fixtures endpoint.
     
-    This is the PRIMARY tool for getting game schedules. Use this before falling back to web search.
+    ⚠️ CRITICAL: DO NOT call this tool if you've already called build_opticodds_url!
+    Once build_opticodds_url returns a URL, your job is done - the frontend will fetch the data.
+    Only call this tool if you need a specific fixture_id that's not available from query_tool_results.
+    
+    This tool should ONLY be used when you need to extract a specific fixture_id from the response.
+    For simple requests like "show me NFL games", use build_opticodds_url with league="nfl" instead.
     
     IMPORTANT: Use as many filters as possible to narrow down results:
     - Always specify league when possible
@@ -1076,84 +900,6 @@ def fetch_upcoming_games(
         return f"Error fetching upcoming games: {str(e)}"
 
 
-@tool
-def emit_fixture_objects(
-    fixtures: Optional[str] = None,
-    fixture_ids: Optional[str] = None,
-    session_id: Optional[str] = None,
-) -> str:
-    """Emit full fixture JSON objects to frontend via SSE stream.
-    
-    This tool filters and emits complete fixture objects that were already retrieved
-    from previous tool calls (like fetch_upcoming_games). It pushes the filtered JSON data
-    to an SSE endpoint which streams it to the frontend.
-    
-    IMPORTANT: Extract fixture objects from previous tool responses (e.g., from the 
-    <!-- FIXTURES_DATA_START --> block in fetch_upcoming_games response) and pass them here.
-    The tool will filter/validate the data and push it to the SSE stream.
-    
-    Args:
-        fixtures: JSON string containing full fixture objects extracted from previous tool responses.
-                 This should be the complete fixture objects from fetch_upcoming_games or other tools.
-                 Can be a single object or array of objects.
-                 Example: '[{"id": "20251127E5C64DE0", "numerical_id": 258739, ...}, {...}]'
-        fixture_ids: Comma-separated string of fixture IDs. If provided, you must extract the 
-                    corresponding fixture objects from previous tool responses and pass them 
-                    in the fixtures parameter. This parameter is mainly for reference.
-        session_id: Optional session identifier (user_id or thread_id). If not provided, uses "default".
-                    Frontend should connect to /api/v1/fixtures/stream?session_id=<same_id> to receive data.
-    
-    Returns:
-        Confirmation message indicating that fixture data has been pushed to the SSE stream.
-        The frontend will receive the full JSON data via Server-Sent Events.
-    
-    Examples:
-        - emit_fixture_objects(fixtures='[{{"id": "20251127E5C64DE0", ...}}]', session_id='user123')
-        - Extract fixtures from fetch_upcoming_games response, then call emit_fixture_objects(fixtures=extracted_fixtures)
-    """
-    try:
-        fixture_objects = []
-        
-        if not fixtures:
-            if fixture_ids:
-                return f"Error: When using fixture_ids parameter, you must extract the corresponding fixture objects from previous tool responses and pass them in the 'fixtures' parameter. The fixture_ids '{fixture_ids}' are for reference only - extract the full objects from fetch_upcoming_games response."
-            return "Error: Must provide 'fixtures' parameter with full fixture objects extracted from previous tool responses."
-        
-        # Parse fixtures JSON
-        try:
-            fixtures_data = json.loads(fixtures) if isinstance(fixtures, str) else fixtures
-            
-            # Handle array of fixtures
-            if isinstance(fixtures_data, list):
-                for fixture_obj in fixtures_data:
-                    if isinstance(fixture_obj, dict):
-                        fixture_objects.append(fixture_obj)
-            # Handle single fixture object
-            elif isinstance(fixtures_data, dict):
-                fixture_objects.append(fixtures_data)
-            else:
-                return f"Error: Invalid fixtures format. Expected JSON object or array of objects, got {type(fixtures_data)}"
-        except (json.JSONDecodeError, ValueError, TypeError) as e:
-            return f"Error parsing fixtures JSON: {str(e)}. Please provide valid JSON with full fixture objects from previous tool responses."
-        
-        if not fixture_objects:
-            return "Error: No valid fixture objects found in the provided fixtures parameter."
-        
-        # Push filtered fixture data to SSE stream
-        session = session_id or "default"
-        success = fixture_stream_manager.push_fixtures_sync(session, fixture_objects)
-        
-        if not success:
-            return f"Error: Failed to push fixture data to SSE stream. Data was filtered but could not be streamed."
-        
-        # Return confirmation message
-        return (
-            f"Successfully pushed {len(fixture_objects)} fixture object(s) to SSE stream.\n"
-            f"Frontend connected to /api/v1/fixtures/stream?session_id={session} will receive the full JSON data.\n"
-            f"The fixture data has been filtered and is ready for streaming."
-        )
-    except Exception as e:
-        return f"Error emitting fixture objects: {str(e)}"
 
 
 @tool

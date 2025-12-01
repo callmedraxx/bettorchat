@@ -20,12 +20,8 @@ from app.agents.tools import (
     fetch_historical_odds,
     calculate_parlay_odds,
     image_to_bet_analysis,
-    generate_bet_deep_link,
     read_url_content,
-    get_current_datetime,
-    detect_user_location,
     fetch_upcoming_games,
-    emit_fixture_objects,
     fetch_available_sports,
     fetch_available_leagues,
     fetch_available_markets,
@@ -39,7 +35,7 @@ from app.agents.tools import (
     python_repl,
 )
 from app.agents.tools.betting_tools import build_opticodds_url
-from app.agents.prompts import SPORTS_BETTING_INSTRUCTIONS
+from app.agents.prompts import SPORTS_BETTING_INSTRUCTIONS, get_current_datetime_string
 from app.agents.subagents import ALL_SUBAGENTS
 from app.core.config import settings
 
@@ -51,6 +47,15 @@ _store_instance = None
 # Keep context managers alive to prevent connection closure
 _checkpointer_cm = None
 _store_cm = None
+
+# Global agent instance cache (singleton pattern for faster responses)
+# NOTE: Cache is keyed by model_name to auto-invalidate when model changes
+_agent_instance_cache: dict = {}
+
+def clear_agent_cache():
+    """Clear the cached agent instance. Useful when model or prompt changes."""
+    global _agent_instance_cache
+    _agent_instance_cache = {}
 
 
 def _get_store() -> BaseStore:
@@ -169,9 +174,10 @@ def _get_checkpointer(force_memory: bool = False):
 
 
 def create_betting_agent(
-    model_name: str = "claude-sonnet-4-5-20250929",
+    model_name: str = "claude-haiku-4-5-20251001",
     user_id: str = "default",
     checkpointer=None,
+    use_cache: bool = True,
 ):
     """Create a sports betting agent with deep agent capabilities.
     
@@ -184,10 +190,22 @@ def create_betting_agent(
         user_id: User ID for personalization
         checkpointer: Optional checkpointer instance. If None, uses _get_checkpointer().
                      Use MemorySaver for async streaming (PostgresSaver doesn't support async).
+        use_cache: If True, reuse cached agent instance for faster responses (default: True).
+                  Set to False to force creation of new agent instance.
     
     Returns:
         Configured deep agent that supports parallel tool execution
     """
+    global _agent_instance_cache
+    
+    # Return cached agent if available and caching is enabled
+    # Only cache if using default checkpointer (not custom one for async streaming)
+    # Cache is keyed by model_name to auto-invalidate when model changes
+    cache_key = model_name if use_cache and checkpointer is None else None
+    if cache_key and cache_key in _agent_instance_cache:
+        logger.debug(f"Reusing cached agent instance (model: {model_name}) for faster response")
+        return _agent_instance_cache[cache_key]
+    
     # Get API key with proper error handling
     api_key = settings.ANTHROPIC_API_KEY or os.environ.get("ANTHROPIC_API_KEY")
     if not api_key:
@@ -196,10 +214,15 @@ def create_betting_agent(
             "Please set it in LangSmith deployment settings."
         )
     
-    # Initialize model
+    # Initialize model with latency-optimized settings
+    # Haiku 4.5 is the smallest, fastest Claude model with minimal latency
     model = init_chat_model(
-        model_name,
+        model=model_name,  # Explicitly set model parameter to ensure Haiku is used
+        model_provider="anthropic",
         api_key=api_key,
+        temperature=0,  # Deterministic responses for faster, consistent output
+        timeout=10,  # Lower timeout for faster failure detection
+        max_retries=1,  # Minimal retries to avoid delay
     )
     
     # Create checkpointer for conversation persistence (PostgreSQL in production, MemorySaver in dev)
@@ -223,12 +246,9 @@ def create_betting_agent(
         )
     
     # All betting tools
-    betting_tools = [
-        get_current_datetime,  # Date/time awareness - should be called first for date queries
-        detect_user_location,  # Location detection and timezone setup
+    betting_tools = [ # Location detection and timezone setup
         build_opticodds_url,  # URL builder - MUST be called before data-fetching tools to send URL to frontend
-        fetch_upcoming_games,  # Primary tool for game schedules
-        emit_fixture_objects,  # Tool for emitting full fixture JSON objects
+        fetch_upcoming_games,  # Primary tool for game schedules  # Tool for emitting full fixture JSON objects
         fetch_players,  # REQUIRED for player-specific requests - get player_id for player props/odds
         fetch_teams,  # Get team_id for team-specific requests or to filter players by team
         fetch_live_odds,
@@ -241,7 +261,6 @@ def create_betting_agent(
         fetch_historical_odds,
         calculate_parlay_odds,
         image_to_bet_analysis,
-        generate_bet_deep_link,
         read_url_content,
         fetch_available_sports,  # Reference data: sports with active fixtures and odds
         fetch_available_leagues,  # Reference data: leagues with active fixtures and odds
@@ -254,32 +273,30 @@ def create_betting_agent(
         python_repl,  # Python REPL for data extraction and filtering from betting tool results
     ]
     
-    # Format system prompt with user information
-    system_prompt = SPORTS_BETTING_INSTRUCTIONS.format(user_id=user_id, user_name=user_id)
+    # Format system prompt with user information and current date/time
+    current_datetime = get_current_datetime_string()
+    system_prompt = SPORTS_BETTING_INSTRUCTIONS.format(
+        current_datetime=current_datetime
+    )
     
     # Create the deep agent
     agent = create_deep_agent(
-        model=model,
+        model,
         tools=betting_tools,
         system_prompt=system_prompt,
-        subagents=ALL_SUBAGENTS,
+        # subagents=ALL_SUBAGENTS,
         backend=make_backend,
         store=store,
         checkpointer=checkpointer,
     )
     
-    return agent
-
-
-def create_research_agent():
-    """Create a research agent with internet search capabilities.
+    # Cache agent instance if using default checkpointer (for non-streaming requests)
+    # Cache is keyed by model_name to auto-invalidate when model changes
+    cache_key = model_name if use_cache and checkpointer is None else None
+    if cache_key:
+        _agent_instance_cache[cache_key] = agent
+        logger.info(f"Cached agent instance with model: {model_name}")
     
-    DEPRECATED: Use create_betting_agent instead.
-    """
-    agent = create_deep_agent(
-        tools=[internet_search],
-        system_prompt=SPORTS_BETTING_INSTRUCTIONS
-    )
     return agent
 
 
