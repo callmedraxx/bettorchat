@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import and_, or_
 
 from app.core.database import SessionLocal
+from app.core.timezone_utils import convert_dict_timestamps_to_est
 from app.models.nfl_odds import NFLOdds
 from app.models.nfl_fixture import NFLFixture
 
@@ -29,6 +30,7 @@ def query_odds_from_db(
     price_max: Optional[int] = None,
     points_min: Optional[float] = None,
     points_max: Optional[float] = None,
+    prop_type: Optional[List[str]] = None,
     limit: int = 1000,
     offset: int = 0,
 ) -> Dict[str, Any]:
@@ -104,6 +106,19 @@ def query_odds_from_db(
         if points_max is not None:
             query = query.filter(NFLOdds.points <= points_max)
         
+        # Handle prop_type filter - filter by market name pattern (e.g., "passing", "rushing", "receiving")
+        # This allows precise filtering like "Dak Prescott passing props" to only return passing-related markets
+        if prop_type:
+            prop_types = prop_type if isinstance(prop_type, list) else [prop_type]
+            # Filter market field by pattern matching (case-insensitive)
+            # e.g., prop_type="passing" matches "Player Passing Yards", "Player Passing Touchdowns", etc.
+            prop_type_filters = []
+            for pt in prop_types:
+                if pt and isinstance(pt, str):
+                    prop_type_filters.append(NFLOdds.market.ilike(f"%{pt.strip()}%"))
+            if prop_type_filters:
+                query = query.filter(or_(*prop_type_filters))
+        
         # Order by fixture_id, then by sportsbook, then by market_id
         query = query.order_by(NFLOdds.fixture_id.asc(), NFLOdds.sportsbook.asc(), NFLOdds.market_id.asc())
         
@@ -136,7 +151,13 @@ def query_odds_from_db(
             # Add odds entry
             odds_dict = odds_entry.to_dict()
             if odds_dict:
+                # Convert timestamps to EST
+                odds_dict = convert_dict_timestamps_to_est(odds_dict)
                 fixtures_dict[fixture_id_str]["odds"].append(odds_dict)
+        
+        # Convert fixture timestamps to EST
+        for fixture_id_key, fixture_dict in fixtures_dict.items():
+            fixtures_dict[fixture_id_key] = convert_dict_timestamps_to_est(fixture_dict)
         
         # Convert to list
         fixture_data = list(fixtures_dict.values())

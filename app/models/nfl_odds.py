@@ -64,6 +64,9 @@ class NFLOdds(Base):
         Index('idx_nfl_odds_player_market_category', 'player_id', 'market_category'),
         Index('idx_nfl_odds_fixture_team_market_category', 'fixture_id', 'team_id', 'market_category'),
         Index('idx_nfl_odds_fixture_player_market_category', 'fixture_id', 'player_id', 'market_category'),
+        # Indexes for prop type filtering (pattern matching on market field)
+        Index('idx_nfl_odds_player_market_pattern', 'player_id', 'market'),
+        Index('idx_nfl_odds_fixture_player_market', 'fixture_id', 'player_id', 'market'),
     )
     
     # Primary key

@@ -128,6 +128,7 @@ def build_opticodds_url(
     team_id: Optional[str] = None,
     player_id: Optional[str] = None,
     market: Optional[str] = None,
+    prop_type: Optional[str] = None,
     league: Optional[str] = None,
     start_date_after: Optional[str] = None,
     start_date_before: Optional[str] = None,
@@ -169,6 +170,9 @@ def build_opticodds_url(
                    - The URL will include player_id so the frontend can filter odds for that specific player only
                    - Without player_id, the frontend will receive ALL player props, not just the requested player
         market: Market type(s), comma-separated (e.g., 'Moneyline,Spread,Total' or 'Player Points,Player Receptions')
+        prop_type: Prop type filter for precise filtering (e.g., 'passing', 'rushing', 'receiving'). 
+                  Use when user requests specific prop types like "Dak Prescott passing props".
+                  Can specify multiple comma-separated (e.g., 'passing,rushing').
         league: League name (e.g., 'nfl', 'nba')
         base_id: Base ID for player (fastest route for specific player info). Get this from stored player data in database.
         start_date_after: Start date filter (ISO format)
@@ -219,6 +223,8 @@ def build_opticodds_url(
         if market:
             # Resolve market names from user-friendly terms to correct API names
             args_dict["market"] = resolve_market_names(market)
+        if prop_type:
+            args_dict["prop_type"] = prop_type
         if league:
             args_dict["league"] = league
         if start_date_after:
@@ -330,6 +336,7 @@ def fetch_live_odds(
     market: Optional[str] = None,
     player_id: Optional[str] = None,
     team_id: Optional[str] = None,
+    prop_type: Optional[str] = None,
     session_id: Optional[str] = None,
     stream_output: bool = True,
 ) -> str:
@@ -398,6 +405,10 @@ def fetch_live_odds(
                    2. build_opticodds_url(..., player_id=player_id, fixture_id=...) → build URL with player_id
                    3. fetch_live_odds(..., player_id=player_id, fixture_id=...) → fetch odds with player_id
         team_id: Optional. Team ID to filter odds for a specific team.
+        prop_type: Optional. Prop type filter for precise filtering (e.g., 'passing', 'rushing', 'receiving').
+                  Use when user requests specific prop types like "Dak Prescott passing props".
+                  Can specify multiple comma-separated (e.g., 'passing,rushing').
+                  This filters market names by pattern matching to return only relevant prop types.
         session_id: Optional session identifier for SSE streaming. Defaults to "default".
         stream_output: Whether to emit odds data to SSE stream. Set to False when calling as intermediate step.
                       Defaults to True. Only set to True for the final tool call that directly answers user's request.
@@ -582,6 +593,16 @@ def fetch_live_odds(
                     else:
                         player_ids_list = [str(player_id)]
                 
+                # Handle prop_type parameter (comma-separated string to list)
+                prop_type_list = None
+                if prop_type:
+                    if isinstance(prop_type, str) and ',' in prop_type:
+                        prop_type_list = [pt.strip() for pt in prop_type.split(',') if pt.strip()]
+                    elif isinstance(prop_type, list):
+                        prop_type_list = prop_type
+                    else:
+                        prop_type_list = [str(prop_type)]
+                
                 # Query database
                 result = query_odds_from_db(
                     fixture_id=fixture_ids_list,
@@ -590,6 +611,7 @@ def fetch_live_odds(
                     market_category=resolved_market_category,
                     player_id=player_ids_list,
                     team_id=str(team_id) if team_id else None,
+                    prop_type=prop_type_list,
                     limit=1000,
                 )
                 

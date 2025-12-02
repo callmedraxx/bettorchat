@@ -149,6 +149,18 @@ def build_opticodds_url_from_tool_call(tool_name: str, tool_args: Dict[str, Any]
             # The response will need to be filtered by market_type on the frontend/backend
         # If user didn't specify market, don't add it to params - this will fetch all available markets per OpticOdds API
         
+        # Handle prop_type parameter - for precise prop type filtering (e.g., "passing", "rushing", "receiving")
+        if "prop_type" in tool_args and tool_args["prop_type"]:
+            prop_type = tool_args["prop_type"]
+            if isinstance(prop_type, str) and ',' in prop_type:
+                params["prop_type"] = [pt.strip() for pt in prop_type.split(',') if pt.strip()]
+            elif isinstance(prop_type, str):
+                params["prop_type"] = [prop_type.strip()]
+            elif isinstance(prop_type, list):
+                params["prop_type"] = [str(pt).strip() for pt in prop_type if pt]
+            else:
+                params["prop_type"] = [str(prop_type).strip()]
+        
         # Collect fixture IDs (up to 5) - same logic as tool
         fixture_ids_list: List[str] = []
         
@@ -461,6 +473,12 @@ def build_opticodds_url_from_tool_call(tool_name: str, tool_args: Dict[str, Any]
                     proxy_params["fixture_id"] = params["fixture_id"]
                 else:
                     proxy_params["fixture_id"] = [params["fixture_id"]]
+            # Include prop_type parameter if provided
+            if "prop_type" in params:
+                if isinstance(params["prop_type"], list):
+                    proxy_params["prop_type"] = params["prop_type"]
+                else:
+                    proxy_params["prop_type"] = [params["prop_type"]] if params["prop_type"] else None
             if "sportsbook" in params:
                 # Convert to proper format (capitalize first letter)
                 sportsbook_list = params["sportsbook"] if isinstance(params["sportsbook"], list) else [params["sportsbook"]]

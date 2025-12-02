@@ -11,6 +11,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import or_, and_
 
 from app.core.database import SessionLocal
+from app.core.timezone_utils import convert_dict_timestamps_to_est, convert_list_timestamps_to_est
 from app.models.nfl_fixture import NFLFixture
 
 logger = logging.getLogger(__name__)
@@ -139,6 +140,8 @@ async def get_nfl_fixtures(
         for fixture in fixtures:
             fixture_dict = fixture.to_dict()
             if fixture_dict:
+                # Convert timestamps to EST
+                fixture_dict = convert_dict_timestamps_to_est(fixture_dict)
                 fixture_data.append(fixture_dict)
         
         # Calculate total pages
@@ -185,6 +188,9 @@ async def get_nfl_fixture(
         fixture_dict = fixture.to_dict()
         if not fixture_dict:
             raise HTTPException(status_code=500, detail="Error converting fixture to dict")
+        
+        # Convert timestamps to EST
+        fixture_dict = convert_dict_timestamps_to_est(fixture_dict)
         
         return {
             "data": [fixture_dict],

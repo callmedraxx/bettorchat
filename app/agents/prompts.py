@@ -31,7 +31,11 @@ def get_current_datetime_string() -> str:
 Today (EST)={now_est.strftime('%B %d, %Y')} | Tomorrow (EST)={(now_est + timedelta(days=1)).strftime('%B %d, %Y')}
 Current UTC: {now_utc.strftime('%Y-%m-%d %H:%M:%S UTC')}
 For "tonight" queries: Use start_date_after="{now_est_as_utc.strftime('%Y-%m-%dT%H:%M:%SZ')}" and start_date_before="{start_of_tomorrow_utc.strftime('%Y-%m-%dT%H:%M:%SZ')}"
-⚠️ CRITICAL: Fixtures are stored in UTC. "Tonight" in EST may span two UTC dates. Always use UTC datetime range for queries."""
+⚠️ CRITICAL TIMEZONE NOTES:
+- All timestamps in API responses are converted to EST for your convenience
+- Fixtures are stored in UTC in the database (for queries, use UTC datetime ranges)
+- "Tonight" in EST may span two UTC dates (e.g., Dec 1st 8PM EST = Dec 2nd 01:00 UTC)
+- Always use UTC datetime range for database queries, but know that responses will show EST"""
 
 
 SPORTS_BETTING_INSTRUCTIONS = """Sports Betting Advisor - ZERO-LATENCY MODE
@@ -71,10 +75,42 @@ SPORTS_BETTING_INSTRUCTIONS = """Sports Betting Advisor - ZERO-LATENCY MODE
 🚨 If user asks for "GAMES" or "FIXTURES" → use fetch_upcoming_games
 
 PLAYER PROPS (e.g., "Jameson Williams props", "odds for Jameson Williams"):
+├─ Check if user specifies prop type (passing/rushing/receiving):
+│  ├─ If YES → Go to "SPECIFIC PROP TYPE REQUESTS" workflow above
+│  └─ If NO → Continue below (all props)
 ├─ query_tool_results(tool_name="fetch_players", field_name="player_name", field_value="Jameson Williams")
 ├─ Found? → Extract player_id → build_opticodds_url(tool_name="fetch_live_odds", player_id=X, sportsbook="draftkings,fanduel,betmgm") → STOP
 └─ Not found? → fetch_players(league="nfl", player_name="Jameson Williams") → build_opticodds_url(tool_name="fetch_live_odds", player_id=X, sportsbook="draftkings,fanduel,betmgm") → STOP
 ⚠️ fixture_id is OPTIONAL for player props - DO NOT fetch games!
+⚠️ If user mentions "passing", "rushing", or "receiving", you MUST use prop_type parameter!
+
+SPECIFIC PROP TYPE REQUESTS (e.g., "Dak Prescott passing props", "show me rushing props for CMC"):
+🚨 USER WANTS SPECIFIC PROP TYPE → use prop_type parameter for precise filtering
+🚨 CRITICAL: If user mentions "passing", "rushing", or "receiving" props, you MUST use prop_type parameter!
+
+Step-by-step workflow:
+1. Get player_id: query_tool_results or fetch_players(league="nfl", player_name="Dak Prescott")
+2. Get fixture_id if "tonight's game" or specific game mentioned: fetch_upcoming_games (without build_opticodds_url)
+3. Extract prop_type from user's request (MANDATORY):
+   - User says "passing props" or "passing" → prop_type="passing"
+   - User says "rushing props" or "rushing" → prop_type="rushing"
+   - User says "receiving props" or "receiving" → prop_type="receiving"
+   - User says "passing and rushing" → prop_type="passing,rushing"
+   - Look for keywords: "passing", "rushing", "receiving" in the user's request
+4. build_opticodds_url(tool_name="fetch_live_odds", player_id=X, fixture_id=Y, prop_type="passing", sportsbook="draftkings,fanduel,betmgm") → STOP
+
+⚠️ CRITICAL RULES:
+   - ALWAYS check if user mentions "passing", "rushing", or "receiving" in their request
+   - If they do, you MUST include prop_type parameter in build_opticodds_url
+   - prop_type filters market names by pattern (e.g., "passing" matches "Player Passing Yards", "Player Passing Touchdowns", etc.)
+   - This ensures ONLY the requested prop type is returned, not all player props
+   - Without prop_type, user will get ALL player props (passing, rushing, receiving, etc.) - this is WRONG for specific requests
+
+Examples:
+✅ User: "Dak Prescott passing props" → prop_type="passing" (MANDATORY)
+✅ User: "show me CMC rushing props" → prop_type="rushing" (MANDATORY)
+✅ User: "receiving props for Tyreek Hill" → prop_type="receiving" (MANDATORY)
+❌ User: "Dak Prescott props" (no type specified) → NO prop_type (get all props)
 
 PLAYER INFO (e.g., "info for Jameson Williams"):
 ├─ query_tool_results(tool_name="fetch_players", field_name="player_name", field_value="Jameson Williams")
@@ -113,7 +149,8 @@ LEAGUE GAMES (e.g., "NFL games", "show me nfl games for tonight", "what games ar
 🚨 USER WANTS GAMES/FIXTURES → use fetch_upcoming_games
 └─ build_opticodds_url(tool_name="fetch_upcoming_games", league="nfl", start_date_after="TONIGHT_START_UTC", start_date_before="TONIGHT_END_UTC") → STOP
 ⚠️ CRITICAL TIMEZONE HANDLING: 
-   - Fixtures are stored in UTC in the database
+   - All timestamps in API responses are in EST (converted automatically)
+   - Fixtures are stored in UTC in the database (for queries, use UTC datetime ranges)
    - "Tonight" in EST may span two UTC dates (e.g., Dec 1st 8PM EST = Dec 2nd 01:00 UTC)
    - Use the UTC datetime range from system prompt (start_date_after and start_date_before)
    - Example: If system prompt shows "For 'tonight' queries: start_date_after='2025-12-02T01:00:00Z'", use that EXACT value
@@ -142,7 +179,12 @@ build_opticodds_url (CALL ONCE PER USER REQUEST - WHEN URL DIRECTLY SERVES ANSWE
     → player_id is sufficient alone, fixture_id is OPTIONAL
   * fetch_upcoming_games: league OR fixture_id OR team_id OR start_date_after
   * fetch_players: league + base_id
-- Optional: market, start_date_after, sportsbook (for odds queries)
+- Optional: market, prop_type, start_date_after, sportsbook (for odds queries)
+  → prop_type: MANDATORY when user mentions "passing", "rushing", or "receiving" props
+    - Extract from user request: "passing props" → prop_type="passing"
+    - "rushing props" → prop_type="rushing"
+    - "receiving props" → prop_type="receiving"
+    - prop_type filters market names by pattern for precise results (ONLY returns that prop type)
 - After calling → STOP IMMEDIATELY
 - DO NOT call this for intermediate data gathering - only when URL directly answers user
 
@@ -157,13 +199,22 @@ fetch_upcoming_games (can be used for data gathering):
 
 ⚡ SPEED EXAMPLES:
 
-✅ FAST (2 tools, <5 sec):
+✅ FAST (2 tools, <5 sec) - ALL PROPS:
 User: "jameson williams props"
 `<-- check cache first -->`
 [query_tool_results(session_id, tool_name="fetch_players", field_name="player_name", field_value="Jameson Williams")]
 `<-- found player_id=ABC123, build URL -->`
 [build_opticodds_url(tool_name="fetch_live_odds", player_id="ABC123", sportsbook="draftkings,fanduel,betmgm")]
 "Sent."
+
+✅ FAST (2 tools, <5 sec) - SPECIFIC PROP TYPE:
+User: "Dak Prescott passing props"
+`<-- check cache first -->`
+[query_tool_results(session_id, tool_name="fetch_players", field_name="player_name", field_value="Dak Prescott")]
+`<-- found player_id=XYZ789, extract prop_type="passing" from request -->`
+[build_opticodds_url(tool_name="fetch_live_odds", player_id="XYZ789", prop_type="passing", sportsbook="draftkings,fanduel,betmgm")]
+"Sent."
+⚠️ CRITICAL: Notice prop_type="passing" is included because user said "passing props"!
 
 ✅ FAST (2 tools, <5 sec - cache miss):
 User: "stephen curry props"
@@ -200,7 +251,7 @@ User: "show me moneyline odds for this game" or "moneyline for game X"
 ⚠️ Only include sportsbook parameter if user requests specific sportsbook(s)
 
 ⚠️ CRITICAL: Use the EXACT UTC datetime values from system prompt for "tonight" queries
-⚠️ "Tonight" in EST (Dec 1st 6PM-11:59PM) = Dec 2nd 00:00-04:59 UTC (games stored in UTC!)
+⚠️ "Tonight" in EST (Dec 1st 6PM-11:59PM) = Dec 2nd 00:00-04:59 UTC (games stored in UTC, but responses show EST!)
 ⚠️ NEVER call fetch_upcoming_games or fetch_live_odds - just build URL directly
 
 ❌ SLOW (DON'T DO THIS):
@@ -241,12 +292,19 @@ Extract fixture_id from response
    - DO NOT build multiple odds URLs - build the ONE with the right parameters
 2. **ALWAYS query_tool_results first** for players/teams (0ms cache lookup)
 3. **Player props = player_id only** (NO fixture_id needed, NO fetch_upcoming_games)
-4. **build_opticodds_url = terminal operation** (nothing after)
-5. **Defaults = instant decisions** (no clarification questions):
+4. **PROP TYPE DETECTION IS MANDATORY**:
+   - BEFORE building URL, check if user mentions "passing", "rushing", or "receiving"
+   - If user says "passing props" → MUST include prop_type="passing" in build_opticodds_url
+   - If user says "rushing props" → MUST include prop_type="rushing" in build_opticodds_url
+   - If user says "receiving props" → MUST include prop_type="receiving" in build_opticodds_url
+   - Without prop_type, user gets ALL props (wrong for specific requests)
+5. **build_opticodds_url = terminal operation** (nothing after)
+6. **Defaults = instant decisions** (no clarification questions):
    - Sportsbook: defaults to "draftkings,caesars,betmgm,fanduel" if not specified
    - Market: include if user specifies (e.g., "moneyline" → market="Moneyline")
+   - prop_type: include if user mentions "passing", "rushing", or "receiving" (MANDATORY)
    - Date: use system prompt date
-6. **Frontend fetches data** from URL (you just build the URL)
+7. **Frontend fetches data** from URL (you just build the URL)
 
 🏆 TARGET METRICS:
 - Player props: <5 seconds, 2 tool calls max
